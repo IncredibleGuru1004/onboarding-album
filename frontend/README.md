@@ -16,18 +16,21 @@ This is the frontend application for the Image Gallery Site, built as part of a 
 ## Features
 
 ### User Interface
+
 - Responsive design (mobile, tablet, desktop)
 - Modern and clean UI with TailwindCSS
 - Infinite scroll loading for images
 - Image CRUD operations
 
 ### Developer Experience
+
 - Type-safe API integration with Swagger
 - Pre-commit hooks with Husky
 - Code formatting with Prettier
 - Linting with ESLint
 
 ### State Management
+
 - Centralized state with Redux Toolkit
 - Efficient data caching and updates
 
@@ -39,27 +42,32 @@ This is the frontend application for the Image Gallery Site, built as part of a 
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 ```
 
 Configure the following environment variables:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
 3. Generate API types from Swagger:
+
 ```bash
 npm run generate:api-types
 ```
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -116,19 +124,25 @@ npm run generate:api-types
 ### Code Quality Tools
 
 #### Prettier
+
 Code formatting is handled by Prettier. Format your code with:
+
 ```bash
 npm run format
 ```
 
 #### ESLint
+
 Linting is configured with ESLint. Check for issues:
+
 ```bash
 npm run lint
 ```
 
 #### Husky
+
 Pre-commit hooks are set up with Husky to ensure:
+
 - Code is formatted with Prettier
 - Linting passes before commits
 - Type checking is performed
@@ -153,6 +167,7 @@ API types are automatically generated from the backend Swagger documentation:
 
 1. Ensure the backend is running with Swagger enabled
 2. Run the type generation script:
+
 ```bash
 npm run generate:api-types
 ```
@@ -166,6 +181,7 @@ The project uses TailwindCSS for styling. Configuration is in `tailwind.config.j
 ### Responsive Design
 
 The application is fully responsive with breakpoints:
+
 - Mobile: Default (< 640px)
 - Tablet: `sm:` (640px+)
 - Desktop: `md:` (768px+)
@@ -185,6 +201,7 @@ The application will automatically deploy on every push to the main branch.
 ### Environment Variables for Production
 
 Make sure to set these in your Vercel project settings:
+
 - `NEXT_PUBLIC_API_URL` - Backend API URL
 - `NEXT_PUBLIC_GOOGLE_CLIENT_ID` - Google OAuth Client ID
 
@@ -193,6 +210,7 @@ Make sure to set these in your Vercel project settings:
 ### Infinite Scroll Loading
 
 Images are loaded progressively using infinite scroll. The implementation:
+
 - Uses Intersection Observer API
 - Integrates with Redux for state management
 - Handles loading and error states
@@ -200,6 +218,7 @@ Images are loaded progressively using infinite scroll. The implementation:
 ### Image CRUD Operations
 
 Full CRUD functionality for images:
+
 - **Create**: Upload new images
 - **Read**: Browse images with infinite scroll
 - **Update**: Edit image metadata
@@ -224,11 +243,13 @@ Full CRUD functionality for images:
 ## Troubleshooting
 
 ### API Types Not Generating
+
 - Ensure the backend is running
 - Check that Swagger is accessible at the configured URL
 - Verify network connectivity
 
 ### Build Errors
+
 - Clear `.next` directory: `rm -rf .next`
 - Reinstall dependencies: `rm -rf node_modules && npm install`
 - Check TypeScript errors: `npm run type-check`
@@ -236,4 +257,3 @@ Full CRUD functionality for images:
 ## License
 
 This project is part of an onboarding course.
-
