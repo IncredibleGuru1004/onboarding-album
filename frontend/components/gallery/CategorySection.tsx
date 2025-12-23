@@ -24,7 +24,7 @@ function GridItem({ children, className = "" }: GridItemProps) {
 
 export default function CategorySection() {
   return (
-    <div className="bg-gray-100 py-12 px-4">
+    <div className="py-12 px-4">
       <div className="mx-auto max-w-7xl">
         <div
           className={[

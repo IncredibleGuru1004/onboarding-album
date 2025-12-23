@@ -4,12 +4,7 @@ import Image from "next/image";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen bg-white flex items-center justify-center overflow-hidden">
-      {/* Background subtle brush stroke (peach/orange) */}
-      <div className="absolute inset-0 flex items-center justify-end pointer-events-none">
-        <div className="w-96 h-96 md:w-[600px] md:h-[600px] bg-gradient-to-br from-orange-200 to-pink-200 opacity-40 rounded-full blur-3xl translate-x-48 translate-y-32"></div>
-      </div>
-
+    <section className="relative bg-white flex items-center justify-center overflow-hidden">
       {/* Content Container */}
       <div className="relative container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-0 max-w-7xl">
         {/* Left: Text Content */}
