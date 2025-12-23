@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import Link from "next/link";
 
 type Tab = "home" | "collections";
 
@@ -18,7 +19,6 @@ export interface HeaderProps {
 export const Header = ({
   isAuthenticated = false,
   userName,
-  onLogout,
   initialTab = "home",
   onTabChange,
 }: HeaderProps) => {
@@ -88,12 +88,14 @@ export const Header = ({
                     {userName}
                   </span>
                 )}
-                <LogoutButton onLogout={onLogout} />
+                <LogoutButton />
               </div>
             ) : (
-              <Button className="bg-[#ff7b29] text-white" size="md">
-                Login / SignUp
-              </Button>
+              <Link href="/login">
+                <Button className="bg-[#ff7b29] text-white" size="md">
+                  Login / SignUp
+                </Button>
+              </Link>
             )}
           </div>
         </div>

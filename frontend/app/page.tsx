@@ -13,14 +13,17 @@ export default function Home() {
 
       <section className="container mx-auto px-4 py-12">
         <SectionTitle
-          title="Featured Collections"
-          subtitle="Handpicked galleries and trending collections"
+          title="Recently Added"
+          subtitle="Not thoughts all exercise blessing. Indulgence way everything joy alteration boisterous the attachment."
         />
         <GallerySection />
       </section>
 
       <section className="container mx-auto px-4 py-12">
-        <SectionTitle title="Categories" subtitle="Browse by category" />
+        <SectionTitle
+          title="Categories"
+          subtitle="Party we years to order allow asked of. We so opinion friends me message as delight."
+        />
         <CategorySection />
       </section>
 
