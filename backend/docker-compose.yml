@@ -5,11 +5,13 @@ services:
     image: mysql:8.0
     container_name: album-mysql
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      MYSQL_DATABASE: album_db
-      MYSQL_USER: album_user
-      MYSQL_PASSWORD: album_pass
-      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
