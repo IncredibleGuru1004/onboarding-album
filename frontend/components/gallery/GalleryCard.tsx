@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-interface AuctionCardProps {
+interface GalleryCardProps {
   title: string;
   currentBid: string;
   timeLeft: string;
@@ -10,14 +10,14 @@ interface AuctionCardProps {
   year?: string; // Optional: e.g., "Year 1012"
 }
 
-export default function AuctionCard({
+export default function GalleryCard({
   title,
   timeLeft,
   image,
   bidsCount = 32, // Default value for mock
   category = "Tools",
   year = "Year 1012",
-}: AuctionCardProps) {
+}: GalleryCardProps) {
   return (
     <div className="w-[386px] flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300">
       {/* Image section */}

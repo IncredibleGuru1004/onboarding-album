@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Card, CardContent, CardHeader } from "@/components/ui/AuctionCard";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@/components/gallery/GalleryCard";
 
 interface LoginFormProps {
   onSubmit?: (email: string, password: string) => Promise<void>;

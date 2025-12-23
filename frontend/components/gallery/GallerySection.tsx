@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import AuctionCard from "@/components/ui/AuctionCard";
+import GalleryCard from "@/components/gallery/GalleryCard";
 
 // Mock auction data (same as before)
 const mockAuctions = [
@@ -88,7 +88,7 @@ export default function GallerySection() {
           <div className="flex gap-6">
             {mockAuctions.map((auction) => (
               <div key={auction.id} className="flex-shrink-0">
-                <AuctionCard
+                <GalleryCard
                   title={auction.title}
                   currentBid={auction.currentBid}
                   timeLeft={auction.timeLeft}
