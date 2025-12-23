@@ -30,7 +30,7 @@ export const Header = ({
   };
 
   return (
-    <header className="bg-white dark:bg-zinc-900 dark:border-zinc-800 sticky top-0 z-40">
+    <header className="bg-white sticky top-0 z-40">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between text-[#2d3134]">
           {/* Logo */}
@@ -84,9 +84,7 @@ export const Header = ({
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 {userName && (
-                  <span className="text-base text-zinc-600 dark:text-zinc-400">
-                    {userName}
-                  </span>
+                  <span className="text-base text-zinc-600 ">{userName}</span>
                 )}
                 <LogoutButton />
               </div>

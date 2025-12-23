@@ -26,6 +26,48 @@ const mockAuctions = [
     timeLeft: "1d 8h",
     image: "/images/auctions/sculpture.png",
   },
+  {
+    id: 1,
+    title: "Modern Abstract Painting #42",
+    currentBid: "$3,200",
+    timeLeft: "2d 14h",
+    image: "/images/auctions/abstract1.png",
+  },
+  {
+    id: 2,
+    title: "Vintage Rolex Submariner 1968",
+    currentBid: "$12,500",
+    timeLeft: "5h 32m",
+    image: "/images/auctions/rolex.png",
+  },
+  {
+    id: 3,
+    title: 'Bronze Sculpture "Eternal Flow"',
+    currentBid: "$18,900",
+    timeLeft: "1d 8h",
+    image: "/images/auctions/sculpture.png",
+  },
+  {
+    id: 1,
+    title: "Modern Abstract Painting #42",
+    currentBid: "$3,200",
+    timeLeft: "2d 14h",
+    image: "/images/auctions/abstract1.png",
+  },
+  {
+    id: 2,
+    title: "Vintage Rolex Submariner 1968",
+    currentBid: "$12,500",
+    timeLeft: "5h 32m",
+    image: "/images/auctions/rolex.png",
+  },
+  {
+    id: 3,
+    title: 'Bronze Sculpture "Eternal Flow"',
+    currentBid: "$18,900",
+    timeLeft: "1d 8h",
+    image: "/images/auctions/sculpture.png",
+  },
 ];
 
 export default function GallerySection() {
