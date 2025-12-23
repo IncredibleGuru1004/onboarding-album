@@ -1,22 +1,19 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Inter, Poppins } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "700"], // Add weights you need
+  variable: "--font-inter", // CSS variable name
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const poppins = Poppins({
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-poppins",
+  display: "swap",
 });
-
-export const metadata: Metadata = {
-  title: "Image Gallery - Your Visual Story",
-  description:
-    "Browse and manage your images with our modern, responsive image gallery. Upload, organize, and share your visual memories.",
-};
 
 export default function RootLayout({
   children,
@@ -25,9 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${poppins.variable}`}>
         {children}
       </body>
     </html>
