@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import Link from "next/link";
@@ -20,33 +20,78 @@ export const Header = ({
   onCollectionsClick,
 }: HeaderProps) => {
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [currentSection, setCurrentSection] = useState<string>("home");
+  const ignoreScrollRef = useRef(false);
+  const ignoreTimerRef = useRef<number | null>(null);
 
-  // Detect scroll position
+  // Detect scroll position and active section
   useEffect(() => {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 0);
+
+      if (ignoreScrollRef.current) return;
+
+      const scrollMiddle = window.scrollY + window.innerHeight / 3;
+      const collectionsEl = document.getElementById("collections");
+
+      let active = "home";
+      if (collectionsEl) {
+        const top = collectionsEl.offsetTop;
+        const bottom = top + collectionsEl.offsetHeight;
+        if (scrollMiddle >= top && scrollMiddle < bottom) {
+          active = "collections";
+        }
+      }
+
+      setCurrentSection(active);
+    };
+
+    const handleHashChange = () => {
+      const hash = typeof window !== "undefined" ? window.location.hash : "";
+      setCurrentSection(hash ? hash.slice(1) : "home");
     };
 
     window.addEventListener("scroll", handleScroll);
-    // Initial check in case page loads already scrolled
+    window.addEventListener("hashchange", handleHashChange);
     handleScroll();
+    handleHashChange();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("hashchange", handleHashChange);
+      if (ignoreTimerRef.current) {
+        clearTimeout(ignoreTimerRef.current);
+        ignoreTimerRef.current = null;
+      }
+    };
   }, []);
-
-  const hash = typeof window !== "undefined" ? window.location.hash : "";
-  const currentSection = hash ? hash.slice(1) : "home";
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onHomeClick?.();
     window.history.pushState(null, "", "#home");
+    setCurrentSection("home");
+    // Ignore scroll updates briefly to avoid flicker while smooth-scrolling
+    ignoreScrollRef.current = true;
+    if (ignoreTimerRef.current) clearTimeout(ignoreTimerRef.current);
+    ignoreTimerRef.current = window.setTimeout(() => {
+      ignoreScrollRef.current = false;
+      ignoreTimerRef.current = null;
+    }, 600) as unknown as number;
   };
 
   const handleCollectionsClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onCollectionsClick?.();
     window.history.pushState(null, "", "#collections");
+    setCurrentSection("collections");
+    // Ignore scroll updates briefly to avoid flicker while smooth-scrolling
+    ignoreScrollRef.current = true;
+    if (ignoreTimerRef.current) clearTimeout(ignoreTimerRef.current);
+    ignoreTimerRef.current = window.setTimeout(() => {
+      ignoreScrollRef.current = false;
+      ignoreTimerRef.current = null;
+    }, 600) as unknown as number;
   };
 
   return (
@@ -71,11 +116,11 @@ export const Header = ({
               onClick={handleHomeClick}
               className={`
                 relative pb-[3px]
-                ${currentSection === "hero" ? "text-[#2d3134]" : "text-[#6a6f77]"}
+                ${currentSection === "home" ? "text-[#2d3134]" : "text-[#6a6f77]"}
               `}
             >
               Home
-              {currentSection === "hero" && (
+              {currentSection === "home" && (
                 <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
               )}
             </button>
