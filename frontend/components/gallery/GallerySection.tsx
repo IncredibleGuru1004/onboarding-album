@@ -185,7 +185,9 @@ export default function GallerySection() {
                   currentBid={auction.currentBid}
                   timeLeft={auction.timeLeft}
                   image={auction.image}
-                  onClick={() => openModal(auction)}
+                  onClick={() => {
+                    openModal(auction);
+                  }}
                 />
               </div>
             ))}
@@ -196,13 +198,13 @@ export default function GallerySection() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedAuction?.title || ""}
-        image={selectedAuction?.image || ""}
-        currentBid={selectedAuction?.currentBid || ""}
-        timeLeft={selectedAuction?.timeLeft || ""}
-        bidsCount={selectedAuction?.bidsCount || 0}
-        category={selectedAuction?.category || ""}
-        year={selectedAuction?.year || ""}
+        title={selectedAuction?.title ?? ""}
+        image={selectedAuction?.image ?? ""}
+        currentBid={selectedAuction?.currentBid ?? ""}
+        timeLeft={selectedAuction?.timeLeft ?? ""}
+        bidsCount={selectedAuction?.bidsCount ?? 0}
+        category={selectedAuction?.category ?? ""}
+        year={selectedAuction?.year ?? ""}
       />
 
       {/* Tailwind utility to hide scrollbar */}

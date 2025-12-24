@@ -15,8 +15,12 @@ export default function Home() {
   return (
     <>
       <Header
-        onHomeClick={() => scrollToSection("home")}
-        onCollectionsClick={() => scrollToSection("collections")}
+        onHomeClick={() => {
+          scrollToSection("home");
+        }}
+        onCollectionsClick={() => {
+          scrollToSection("collections");
+        }}
       />
 
       <section id="home">

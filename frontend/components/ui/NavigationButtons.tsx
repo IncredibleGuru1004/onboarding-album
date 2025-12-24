@@ -14,7 +14,9 @@ export const NavigationButtons = ({ onScroll }: NavigationButtonsProps) => {
       <button
         aria-label="Previous"
         className="w-[54px] h-[54px] rounded-full border border-[#ececec] bg-white flex items-center justify-center shadow-md"
-        onClick={() => onScroll("left")}
+        onClick={() => {
+          onScroll("left");
+        }}
       >
         <ArrowLeftIcon className="w-5 h-5 text-[#505050]" />
       </button>
@@ -23,7 +25,9 @@ export const NavigationButtons = ({ onScroll }: NavigationButtonsProps) => {
       <button
         aria-label="Next"
         className="w-[54px] h-[54px] rounded-full bg-[#ff7b29] flex items-center justify-center shadow-md"
-        onClick={() => onScroll("right")}
+        onClick={() => {
+          onScroll("right");
+        }}
       >
         <ArrowRightIcon className="w-5 h-5 text-white" />
       </button>

@@ -24,7 +24,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         <input
           type="text"
           value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
+          onChange={(e) => {
+            setNewCategory(e.target.value);
+          }}
           className="w-full px-4 py-2 border border-gray-300 rounded-md"
           placeholder="Enter new category"
         />
@@ -45,7 +47,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             <input
               type="checkbox"
               checked={selectedCategories.includes(category)}
-              onChange={() => onCategoryChange(category)}
+              onChange={() => {
+                onCategoryChange(category);
+              }}
               className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
             />
             <span className="text-gray-700">{category}</span>

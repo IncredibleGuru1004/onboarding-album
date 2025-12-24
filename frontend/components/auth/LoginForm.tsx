@@ -61,7 +61,7 @@ export const LoginForm = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Invalid email or password");
+        throw new Error(data.message ?? "Invalid email or password");
       }
 
       window.location.href = "/dashboard";

@@ -14,7 +14,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const hasError = !!error;
-    const inputId = id || name;
+    const inputId = id ?? name;
     const errorId = hasError && inputId ? `${inputId}-error` : undefined;
 
     return (
@@ -45,7 +45,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             } ${className}`}
             aria-invalid={hasError ? "true" : "false"}
             aria-describedby={errorId}
-            onInvalid={(e) => e.preventDefault()}
+            onInvalid={(e) => {
+              e.preventDefault();
+            }}
             {...props}
           />
           {rightIcon && (

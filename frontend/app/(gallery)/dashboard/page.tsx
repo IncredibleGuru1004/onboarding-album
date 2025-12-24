@@ -19,7 +19,7 @@ const mockData = Array.from({ length: 140 }, (_, i) => ({
   id: i + 1,
   title: `Gallery Item ${i + 1}`,
   category: categories[i % categories.length],
-  imageUrl: `https://via.placeholder.com/400x300?text=Item+${i + 1}`,
+  imageUrl: "/images/auctions/rolex.png",
 }));
 
 const sortOptions = [
@@ -29,7 +29,7 @@ const sortOptions = [
   { value: "title-desc", label: "Title Z-A" },
 ];
 
-const itemsPerPageOptions = [9, 12, 24, 48];
+const itemsPerPageOptions = [6, 12, 18, 24, 30];
 
 export default function GalleryPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);

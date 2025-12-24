@@ -98,7 +98,7 @@ export const SignupForm = () => {
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(
-          data.message || "Registration failed. Please try again.",
+          data.message ?? "Registration failed. Please try again.",
         );
       }
 

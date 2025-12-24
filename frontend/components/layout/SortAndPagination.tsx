@@ -82,7 +82,9 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
         {totalPages > 1 && (
           <nav className="flex justify-center gap-2 mt-6">
             <button
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => {
+                handlePageChange(currentPage - 1);
+              }}
               disabled={currentPage === 1}
               className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition"
             >
@@ -138,7 +140,9 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
                 ) : (
                   <button
                     key={page}
-                    onClick={() => handlePageChange(page as number)}
+                    onClick={() => {
+                      handlePageChange(page as number);
+                    }}
                     className={`px-4 py-2 border rounded-md transition ${
                       page === currentPage
                         ? "bg-blue-600 text-white border-blue-600"
@@ -152,7 +156,9 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
             })()}
 
             <button
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => {
+                handlePageChange(currentPage + 1);
+              }}
               disabled={currentPage === totalPages}
               className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition"
             >
