@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // ← Added Heroicon
 
 export const metadata = {
   title: "Log In",
@@ -12,24 +13,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl border border-gray-100 overflow-hidden">
           <div className="px-8 pt-10 pb-8">
-            {/* Back link */}
+            {/* Back link – now using Heroicon */}
             <Link
               href="/"
               className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
+              <ArrowLeftIcon className="w-4 h-4 mr-2" aria-hidden="true" />
               Back to Home
             </Link>
 
@@ -59,7 +48,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Optional subtle branding or illustration */}
+        {/* Optional subtle branding */}
         <p className="mt-8 text-center text-xs text-gray-500">
           Secured by industry-standard encryption
         </p>
