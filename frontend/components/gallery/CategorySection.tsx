@@ -2,6 +2,7 @@
 
 import React from "react";
 import CategoryCard from "@/components/gallery/CategoryCard";
+import { SectionTitle } from "../layout";
 
 // Define the type for the category data
 interface Category {
@@ -42,8 +43,12 @@ function GridItem({ children, className = "" }: GridItemProps) {
 
 export default function CategorySection() {
   return (
-    <div className="py-12 px-4">
-      <div className="mx-auto max-w-7xl">
+    <div className="py-12 px-0">
+      <SectionTitle
+        title="Categories"
+        subtitle="Party we years to order allow asked of. We so opinion friends me message as delight."
+      />
+      <div className="mx-auto py-4 ">
         <div
           className={[
             // base (small): stack

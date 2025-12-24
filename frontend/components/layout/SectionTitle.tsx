@@ -18,7 +18,7 @@ export const SectionTitle = ({
 }: SectionTitleProps) => {
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12 md:mb-16 ${className}`}
+      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12 ${className}`}
     >
       {/* Left side: Title + Subtitle */}
       <div className="flex-1">

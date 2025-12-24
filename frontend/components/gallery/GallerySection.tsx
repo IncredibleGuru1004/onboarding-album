@@ -3,6 +3,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "../ui/Modal";
+import { NavigationButtons } from "../ui/NavigationButtons";
+import { SectionTitle } from "../layout";
 
 // Define the Auction type
 interface Auction {
@@ -134,6 +136,24 @@ export default function GallerySection() {
     };
   }, []);
 
+  // Function to scroll the container left or right
+  const handleScroll = (direction: "left" | "right") => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const scrollAmount = 300; // Scroll amount (adjust as needed)
+    const newScrollPosition =
+      direction === "left"
+        ? container.scrollLeft - scrollAmount
+        : container.scrollLeft + scrollAmount;
+
+    // Use scrollTo with smooth behavior
+    container.scrollTo({
+      left: newScrollPosition,
+      behavior: "smooth",
+    });
+  };
+
   const openModal = (auction: Auction) => {
     setSelectedAuction(auction);
     setIsModalOpen(true);
@@ -146,11 +166,16 @@ export default function GallerySection() {
 
   return (
     <div>
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+      <SectionTitle
+        title="Recently Added"
+        subtitle="Not thoughts all exercise blessing. Indulgence way everything joy alteration boisterous the attachment."
+        rightContent={<NavigationButtons onScroll={handleScroll} />}
+      />
+      <section className="">
         {/* Hidden scrollbar + draggable container */}
         <div
           ref={scrollContainerRef}
-          className="overflow-x-auto pb-4 -mx-4 px-4 hide-scrollbar cursor-grab select-none"
+          className="overflow-x-auto py-4  hide-scrollbar cursor-grab select-none"
         >
           <div className="flex gap-6">
             {mockAuctions.map((auction) => (
