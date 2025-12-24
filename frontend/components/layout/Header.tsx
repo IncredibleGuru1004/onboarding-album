@@ -11,6 +11,7 @@ export interface HeaderProps {
   onLogout?: () => Promise<void>;
   onHomeClick?: () => void;
   onCollectionsClick?: () => void;
+  showNavLinks?: boolean; // Add this prop to control navigation link visibility
 }
 
 export const Header = ({
@@ -18,6 +19,7 @@ export const Header = ({
   userName,
   onHomeClick,
   onCollectionsClick,
+  showNavLinks = true, // Default to showing the nav links
 }: HeaderProps) => {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [currentSection, setCurrentSection] = useState<string>("home");
@@ -101,7 +103,7 @@ export const Header = ({
         ${hasScrolled ? "shadow-sm" : ""}
       `}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <nav className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between text-[#2d3134]">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -110,34 +112,36 @@ export const Header = ({
             </span>
           </div>
 
-          {/* Navigation Links */}
-          <div className="flex items-center gap-8 font-poppins font-medium text-base">
-            <button
-              onClick={handleHomeClick}
-              className={`
-                relative pb-[3px]
-                ${currentSection === "home" ? "text-[#2d3134]" : "text-[#6a6f77]"}
-              `}
-            >
-              Home
-              {currentSection === "home" && (
-                <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
-              )}
-            </button>
+          {/* Navigation Links - Conditionally render based on showNavLinks */}
+          {showNavLinks && (
+            <div className="flex items-center gap-8 font-poppins font-medium text-base">
+              <button
+                onClick={handleHomeClick}
+                className={`
+                  relative pb-[3px]
+                  ${currentSection === "home" ? "text-[#2d3134]" : "text-[#6a6f77]"}
+                `}
+              >
+                Home
+                {currentSection === "home" && (
+                  <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
+                )}
+              </button>
 
-            <button
-              onClick={handleCollectionsClick}
-              className={`
-                relative pb-[3px]
-                ${currentSection === "collections" ? "text-[#2d3134]" : "text-[#6a6f77]"}
-              `}
-            >
-              Collections
-              {currentSection === "collections" && (
-                <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
-              )}
-            </button>
-          </div>
+              <button
+                onClick={handleCollectionsClick}
+                className={`
+                  relative pb-[3px]
+                  ${currentSection === "collections" ? "text-[#2d3134]" : "text-[#6a6f77]"}
+                `}
+              >
+                Collections
+                {currentSection === "collections" && (
+                  <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
+                )}
+              </button>
+            </div>
+          )}
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-4">

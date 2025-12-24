@@ -22,7 +22,7 @@ export default function GalleryCard({
   return (
     <div
       onClick={onClick} // Trigger the onClick prop when the card is clicked
-      className="w-[386px] flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300 cursor-pointer"
+      className="flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300 cursor-pointer"
     >
       {/* Image section */}
       <div className="p-4">

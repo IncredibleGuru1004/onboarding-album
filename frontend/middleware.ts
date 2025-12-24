@@ -4,7 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // List of public paths (exact match, no trailing slash issues)
-  const publicPaths = ["/", "/login", "/register", "/forgot-password"];
+  const publicPaths = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/dashboard",
+  ];
 
   if (publicPaths.includes(pathname)) {
     return NextResponse.next(); // Allow access
