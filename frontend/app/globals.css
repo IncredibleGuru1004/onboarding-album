@@ -8,3 +8,8 @@
     var(--font-inter), sans-serif; /* Makes font-sans use your inter font */
   --font-serif: var(--font-poppins), serif;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px; /* Match your header height */
+}

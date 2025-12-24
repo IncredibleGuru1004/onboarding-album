@@ -5,11 +5,23 @@ import GallerySection from "@/components/gallery/GallerySection";
 import { Footer, Header, Hero, SectionTitle } from "@/components/layout";
 
 export default function Home() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
-      <Header />
+      <Header
+        onHomeClick={() => scrollToSection("home")}
+        onCollectionsClick={() => scrollToSection("collections")}
+      />
 
-      <Hero />
+      <section id="home">
+        <Hero />
+      </section>
 
       <section className="container mx-auto px-4 py-12">
         <SectionTitle
@@ -19,7 +31,7 @@ export default function Home() {
         <GallerySection />
       </section>
 
-      <section className="container mx-auto px-4 py-12">
+      <section id="collections" className="container mx-auto px-4 py-12">
         <SectionTitle
           title="Categories"
           subtitle="Party we years to order allow asked of. We so opinion friends me message as delight."

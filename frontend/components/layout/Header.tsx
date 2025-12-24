@@ -1,36 +1,61 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import Link from "next/link";
-
-type Tab = "home" | "collections";
 
 export interface HeaderProps {
   isAuthenticated?: boolean;
   userName?: string;
   onLogout?: () => Promise<void>;
-  // Optional: allow parent to control initial tab or get updates
-  initialTab?: Tab;
-  onTabChange?: (tab: Tab) => void;
+  onHomeClick?: () => void;
+  onCollectionsClick?: () => void;
 }
 
 export const Header = ({
   isAuthenticated = false,
   userName,
-  initialTab = "home",
-  onTabChange,
+  onHomeClick,
+  onCollectionsClick,
 }: HeaderProps) => {
-  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
-  const handleTabClick = (tab: Tab) => {
-    setActiveTab(tab);
-    onTabChange?.(tab); // Notify parent if needed
+  // Detect scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    // Initial check in case page loads already scrolled
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const hash = typeof window !== "undefined" ? window.location.hash : "";
+  const currentSection = hash ? hash.slice(1) : "home";
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onHomeClick?.();
+    window.history.pushState(null, "", "#home");
+  };
+
+  const handleCollectionsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onCollectionsClick?.();
+    window.history.pushState(null, "", "#collections");
   };
 
   return (
-    <header className="bg-white sticky top-0 z-40">
+    <header
+      className={`
+        bg-white sticky top-0 z-40 transition-shadow duration-300
+        ${hasScrolled ? "shadow-sm" : ""}
+      `}
+    >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between text-[#2d3134]">
           {/* Logo */}
@@ -40,41 +65,31 @@ export const Header = ({
             </span>
           </div>
 
-          {/* Tab Navigation */}
+          {/* Navigation Links */}
           <div className="flex items-center gap-8 font-poppins font-medium text-base">
             <button
-              onClick={() => handleTabClick("home")}
+              onClick={handleHomeClick}
               className={`
                 relative pb-[3px]
-                ${activeTab === "home" ? "text-[#2d3134]" : "text-[#6a6f77]"}
+                ${currentSection === "hero" ? "text-[#2d3134]" : "text-[#6a6f77]"}
               `}
             >
               Home
-              {activeTab === "home" && (
-                <span
-                  className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500"
-                  aria-hidden="true"
-                />
+              {currentSection === "hero" && (
+                <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
               )}
             </button>
 
             <button
-              onClick={() => handleTabClick("collections")}
+              onClick={handleCollectionsClick}
               className={`
                 relative pb-[3px]
-                ${
-                  activeTab === "collections"
-                    ? "text-[#2d3134]"
-                    : "text-[#6a6f77]"
-                }
+                ${currentSection === "collections" ? "text-[#2d3134]" : "text-[#6a6f77]"}
               `}
             >
               Collections
-              {activeTab === "collections" && (
-                <span
-                  className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500"
-                  aria-hidden="true"
-                />
+              {currentSection === "collections" && (
+                <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
               )}
             </button>
           </div>
@@ -84,7 +99,7 @@ export const Header = ({
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 {userName && (
-                  <span className="text-base text-zinc-600 ">{userName}</span>
+                  <span className="text-base text-zinc-600">{userName}</span>
                 )}
                 <LogoutButton />
               </div>
