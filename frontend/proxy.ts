@@ -1,7 +1,7 @@
 // proxy.ts (or src/proxy.ts)
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   // List of public paths (exact match, no trailing slash issues)
   const publicPaths = [
