@@ -3,6 +3,7 @@
 import React from "react";
 import CategoryCard from "@/components/gallery/CategoryCard";
 import { SectionTitle } from "../layout";
+import { Button } from "../ui/Button";
 
 // Define the type for the category data
 interface Category {
@@ -47,6 +48,14 @@ export default function CategorySection() {
       <SectionTitle
         title="Categories"
         subtitle="Party we years to order allow asked of. We so opinion friends me message as delight."
+        rightContent={
+          <Button
+            variant="outlined"
+            className="border-[#30BBD7] text-[#30BBD7]"
+          >
+            View Details
+          </Button>
+        }
       />
       <div className="mx-auto py-4 ">
         <div

@@ -1,26 +1,26 @@
 import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   children: React.ReactNode;
+  variant?: "solid" | "outlined"; // Added variant prop for outline style
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ size = "md", isLoading = false, className = "", ...props }, ref) => {
+  ({ isLoading = false, className = "", variant = "solid", ...props }, ref) => {
     const baseStyles =
-      "font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+      "font-medium rounded-[8px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed px-[24px] py-[16px] text-[14px] font-inter";
 
-    const sizeStyles = {
-      sm: "px-3 py-1 text-sm",
-      md: "px-[24px] py-[16px] text-[14px]",
-      lg: "px-6 py-3 text-lg",
+    // Added styles for outlined variant
+    const variantStyles = {
+      solid: "text-white border-none",
+      outlined: "bg-transparent border-2 ", // outline styles
     };
 
     return (
       <button
         ref={ref}
-        className={`${baseStyles} ${sizeStyles[size]} ${className}`}
+        className={`${baseStyles} ${variantStyles[variant]} ${className}`}
         disabled={isLoading || props.disabled}
         {...props}
       >

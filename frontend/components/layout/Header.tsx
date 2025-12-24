@@ -150,7 +150,7 @@ export const Header = ({
               </div>
             ) : (
               <Link href="/login">
-                <Button className="bg-[#ff7b29] text-white" size="md">
+                <Button className="bg-[#ff7b29] text-white">
                   Login / SignUp
                 </Button>
               </Link>
