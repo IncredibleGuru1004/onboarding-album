@@ -3,6 +3,24 @@
 import React from "react";
 import CategoryCard from "@/components/gallery/CategoryCard";
 
+// Define the type for the category data
+interface Category {
+  id: number;
+  title: string;
+  imageSrc: string;
+  count: number;
+}
+
+// Mockup array for Category Cards
+const categories: Category[] = [
+  { id: 1, title: "Weapons", imageSrc: "/images/weapons.png", count: 10 },
+  { id: 2, title: "Skulls", imageSrc: "/images/skulls.png", count: 200 },
+  { id: 3, title: "Status", imageSrc: "/images/status.png", count: 30 },
+  { id: 4, title: "Keep", imageSrc: "/images/keep.png", count: 400 },
+  { id: 5, title: "Watches", imageSrc: "/images/watches.png", count: 50 },
+  { id: 6, title: "Furniture", imageSrc: "/images/furniture.png", count: 632 },
+];
+
 type GridItemProps = {
   children: React.ReactNode;
   className?: string;
@@ -30,104 +48,39 @@ export default function CategorySection() {
           className={[
             // base (small): stack
             "grid gap-6 auto-rows-fr grid-cols-1",
-
             "md:grid-cols-2 md:auto-rows-fr",
-
-            // lg: your original 5x5 layout
+            // lg layout for 4 columns
             "lg:grid-cols-4 lg:grid-rows-2",
           ].join(" ")}
         >
-          {/* 1 */}
-          <GridItem
-            className={[
-              // md position
-              "md:col-start-1 md:row-start-1",
-              // lg: default flow for item 1
-              "lg:col-auto lg:row-auto",
-            ].join(" ")}
-          >
-            <CategoryCard
-              title="Weapons"
-              imageSrc="/images/weapons.png"
-              count={1}
-            />
-          </GridItem>
+          {categories.map((category, index) => (
+            <GridItem
+              key={category.id}
+              className={[
+                // md positions, ensure each item is placed correctly
+                index === 0 && "md:col-start-1 md:row-start-1",
+                index === 1 && "md:col-start-1 md:row-start-2",
+                index === 2 && "md:col-start-2 md:row-start-1 md:row-span-2",
+                index === 3 && "md:col-span-2 md:col-start-1 md:row-start-3",
+                index === 4 && "md:col-start-1 md:row-start-4", // Ensure this is visible
+                index === 5 && "md:col-start-2 md:row-start-4",
 
-          {/* 2 */}
-          <GridItem
-            className={[
-              // md position
-              "md:col-start-1 md:row-start-2",
-              // lg position (your original)
-              "lg:col-start-1 lg:row-start-2",
-            ].join(" ")}
-          >
-            <CategoryCard
-              title="Skulls"
-              imageSrc="/images/skulls.png"
-              count={2}
-            />
-          </GridItem>
-
-          {/* 3 (spans 2 rows in md and lg) */}
-          <GridItem
-            className={[
-              // md position + span
-              "md:col-start-2 md:row-start-1 md:row-span-2",
-              // lg position + span (your original)
-              "lg:col-start-2 lg:row-start-1 lg:row-span-2",
-            ].join(" ")}
-          >
-            <CategoryCard
-              title="Status"
-              imageSrc="/images/status.png"
-              count={3}
-            />
-          </GridItem>
-
-          {/* 4 (full width in md: spans both columns; in lg spans 2 columns starting at col 3) */}
-          <GridItem
-            className={[
-              // md: row 3, full width
-              "md:col-span-2 md:col-start-1 md:row-start-3",
-              // lg: your original
-              "lg:col-span-2 lg:col-start-3 lg:row-start-1",
-            ].join(" ")}
-          >
-            <CategoryCard title="Keep" imageSrc="/images/keep.png" count={4} />
-          </GridItem>
-
-          {/* 5 */}
-          <GridItem
-            className={[
-              // md: bottom-left
-              "md:col-start-1 md:row-start-4",
-              // lg: your original
-              "lg:col-start-3 lg:row-start-2",
-            ].join(" ")}
-          >
-            <CategoryCard
-              title="Watches"
-              imageSrc="/images/watches.png"
-              count={5}
-            />
-          </GridItem>
-
-          {/* 6 */}
-          <GridItem
-            className={[
-              // md: bottom-right
-              "md:col-start-2 md:row-start-4",
-              // lg: your original
-              "lg:col-start-4 lg:row-start-2",
-            ].join(" ")}
-          >
-            <CategoryCard
-              title="Furniture"
-              imageSrc="/images/furniture.png"
-              count={6}
-            />
-          </GridItem>
+                // lg positions, define the grid for larger screens
+                index === 0 && "lg:col-start-1 lg:row-start-1",
+                index === 1 && "lg:col-start-1 lg:row-start-2",
+                index === 2 && "lg:col-start-2 lg:row-start-1 lg:row-span-2",
+                index === 3 && "lg:col-start-3 lg:row-start-1 lg:col-span-2",
+                index === 4 && "lg:col-start-3 lg:row-start-2", // Make sure it's not off-screen
+                index === 5 && "lg:col-start-4 lg:row-start-2",
+              ].join(" ")}
+            >
+              <CategoryCard
+                title={category.title}
+                imageSrc={category.imageSrc}
+                count={category.count}
+              />
+            </GridItem>
+          ))}
         </div>
       </div>
     </div>

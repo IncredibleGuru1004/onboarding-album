@@ -11,13 +11,12 @@ export default function CategoryCard({
   title,
   count,
   imageSrc,
-  large = false,
 }: CategoryCardProps) {
   return (
     <div className="relative h-full w-full overflow-hidden shadow-2xl transition-transform hover:scale-[1.02] duration-300">
       {/* Count Badge */}
       <div className="absolute top-6 left-6 z-10">
-        <span className="bg-orange-500 text-white text-lg font-bold px-4 py-2 rounded-full shadow-md">
+        <span className="bg-white text-[#ff7b29] text-[14px] font-semibold px-4 py-2 rounded-full shadow-lg">
           {count}
         </span>
       </div>
@@ -34,13 +33,11 @@ export default function CategoryCard({
       </div>
 
       {/* Title Overlay */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 pt-20">
-        <h3
-          className={`font-bold text-white ${large ? "text-5xl" : "text-3xl"}`}
-        >
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#242428]/60 to-transparent p-8 pt-20">
+        <h3 className={`font-bold text-white text-[24px] font-inter`}>
           {title}
         </h3>
-        <p className={`text-white/90 ${large ? "text-xl" : "text-lg"}`}>
+        <p className={`text-white/90 text-[12px] font-medium font-inter`}>
           Worefall
         </p>
       </div>
