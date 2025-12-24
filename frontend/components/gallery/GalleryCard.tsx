@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 interface GalleryCardProps {
   title: string;
   currentBid: string;
@@ -8,6 +7,7 @@ interface GalleryCardProps {
   bidsCount?: number; // Optional: if you want to show "32 bids"
   category?: string; // Optional: e.g., "Tools", "Art", etc.
   year?: string; // Optional: e.g., "Year 1012"
+  onClick: () => void; // New prop to handle click
 }
 
 export default function GalleryCard({
@@ -17,9 +17,13 @@ export default function GalleryCard({
   bidsCount = 32, // Default value for mock
   category = "Tools",
   year = "Year 1012",
+  onClick, // Get the click handler from props
 }: GalleryCardProps) {
   return (
-    <div className="w-[386px] flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300">
+    <div
+      onClick={onClick} // Trigger the onClick prop when the card is clicked
+      className="w-[386px] flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300 cursor-pointer"
+    >
       {/* Image section */}
       <div className="p-4">
         <div className="relative w-full h-[190px] rounded-2xl overflow-hidden bg-gray-100">

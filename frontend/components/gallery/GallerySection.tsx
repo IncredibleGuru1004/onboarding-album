@@ -1,10 +1,23 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import GalleryCard from "@/components/gallery/GalleryCard";
+import Modal from "../ui/Modal";
+
+// Define the Auction type
+interface Auction {
+  id: number;
+  title: string;
+  currentBid: string;
+  timeLeft: string;
+  image: string;
+  bidsCount?: number;
+  category?: string;
+  year?: string;
+}
 
 // Mock auction data (same as before)
-const mockAuctions = [
+const mockAuctions: Auction[] = [
   {
     id: 1,
     title: "Modern Abstract Painting #42",
@@ -72,6 +85,8 @@ const mockAuctions = [
 
 export default function GallerySection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAuction, setSelectedAuction] = useState<Auction | null>(null);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -119,6 +134,16 @@ export default function GallerySection() {
     };
   }, []);
 
+  const openModal = (auction: Auction) => {
+    setSelectedAuction(auction);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAuction(null);
+  };
+
   return (
     <div>
       <section className="py-12 px-4 sm:px-6 lg:px-8">
@@ -135,12 +160,25 @@ export default function GallerySection() {
                   currentBid={auction.currentBid}
                   timeLeft={auction.timeLeft}
                   image={auction.image}
+                  onClick={() => openModal(auction)}
                 />
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={selectedAuction?.title || ""}
+        image={selectedAuction?.image || ""}
+        currentBid={selectedAuction?.currentBid || ""}
+        timeLeft={selectedAuction?.timeLeft || ""}
+        bidsCount={selectedAuction?.bidsCount || 0}
+        category={selectedAuction?.category || ""}
+        year={selectedAuction?.year || ""}
+      />
 
       {/* Tailwind utility to hide scrollbar */}
       <style jsx>{`

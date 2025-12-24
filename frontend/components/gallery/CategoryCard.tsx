@@ -14,7 +14,7 @@ export default function CategoryCard({
   large = false,
 }: CategoryCardProps) {
   return (
-    <div className="relative h-full w-full rounded-3xl overflow-hidden shadow-2xl">
+    <div className="relative h-full w-full overflow-hidden shadow-2xl transition-transform hover:scale-[1.02] duration-300">
       {/* Count Badge */}
       <div className="absolute top-6 left-6 z-10">
         <span className="bg-orange-500 text-white text-lg font-bold px-4 py-2 rounded-full shadow-md">
