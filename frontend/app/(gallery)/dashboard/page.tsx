@@ -109,7 +109,7 @@ function GalleryPageContent() {
     });
 
     return items;
-  }, [selectedCategories, sortBy, searchQuery]);
+  }, [selectedCategories, sortBy, searchQuery, auctions]);
 
   /* ---------- PAGINATION ---------- */
 
@@ -148,6 +148,18 @@ function GalleryPageContent() {
 
   const closeAddAuctionModal = () => {
     setIsAddAuctionModalOpen(false);
+  };
+
+  const handleUpdateAuction = (updatedAuction: Auction) => {
+    setAuctions((prev) =>
+      prev.map((auction) =>
+        auction.id === updatedAuction.id ? updatedAuction : auction,
+      ),
+    );
+    // Update selectedItem if it's the one being edited
+    if (selectedItem && selectedItem.id === updatedAuction.id) {
+      setSelectedItem(updatedAuction);
+    }
   };
 
   /* ---------- RESET PAGE ---------- */
@@ -230,18 +242,9 @@ function GalleryPageContent() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedItem?.title ?? ""}
-        image={selectedItem?.image ?? ""}
-        currentBid={selectedItem?.currentBid ?? ""}
-        timeLeft={selectedItem?.timeLeft ?? ""}
-        bidsCount={selectedItem?.bidsCount ?? 0}
-        category={
-          selectedItem?.categoryID
-            ? (allCategories.find((c) => c.id === selectedItem.categoryID)
-                ?.title ?? "")
-            : ""
-        }
-        year={selectedItem?.year ?? ""}
+        auction={selectedItem}
+        categories={allCategories}
+        onUpdate={handleUpdateAuction}
       />
       <AddAuctionModal
         isOpen={isAddAuctionModalOpen}

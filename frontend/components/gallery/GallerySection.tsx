@@ -223,18 +223,8 @@ export default function GallerySection() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedAuction?.title ?? ""}
-        image={selectedAuction?.image ?? ""}
-        currentBid={selectedAuction?.currentBid ?? ""}
-        timeLeft={selectedAuction?.timeLeft ?? ""}
-        bidsCount={selectedAuction?.bidsCount ?? 0}
-        category={
-          selectedAuction?.categoryID
-            ? (categories.find((c) => c.id === selectedAuction.categoryID)
-                ?.title ?? "")
-            : ""
-        }
-        year={selectedAuction?.year ?? ""}
+        auction={selectedAuction}
+        categories={categories}
       />
 
       {/* Tailwind utility to hide scrollbar */}

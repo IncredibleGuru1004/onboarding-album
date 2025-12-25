@@ -14,6 +14,8 @@ import {
   updateCategory,
   deleteCategory,
 } from "@/store/categorySlice";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 interface SidebarProps {
   selectedCategories: string[]; // category IDs
@@ -107,123 +109,154 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-64 bg-white shadow-md p-6 fixed h-full overflow-y-auto">
-      <h2 className="text-xl font-semibold mb-4 flex items-center justify-between">
-        Categories
-        <button
-          onClick={toggleEditMode}
-          className="text-blue-600 hover:text-blue-800"
-          title={isEditMode ? "Close edit mode" : "Edit categories"}
-        >
-          {isEditMode ? (
-            <XMarkIcon className="w-5 h-5" />
-          ) : (
-            <PencilIcon className="w-5 h-5" />
-          )}
-        </button>
-      </h2>
+    <aside className="w-64 bg-white border-r border-gray-200 shadow-sm p-6 fixed h-full overflow-y-auto">
+      {/* Header */}
+      <div className="mb-6 pb-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-gray-900">Categories</h2>
+          <button
+            onClick={toggleEditMode}
+            className={`p-2 rounded-lg transition-all ${
+              isEditMode
+                ? "bg-red-50 text-red-600 hover:bg-red-100"
+                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+            }`}
+            title={isEditMode ? "Close edit mode" : "Edit categories"}
+          >
+            {isEditMode ? (
+              <XMarkIcon className="w-5 h-5" />
+            ) : (
+              <PencilIcon className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* -------- ADD CATEGORY -------- */}
       {isEditMode && (
-        <div className="mb-6">
-          <input
-            type="text"
+        <div className="mb-6  ">
+          <Input
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Enter new category"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Enter category name"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleAddCategory();
+              }
+            }}
+            error={createErrorMessage}
           />
-
-          <button
+          <Button
             onClick={handleAddCategory}
-            className="w-full mt-2 px-4 py-2 bg-blue-600 text-white rounded-md"
+            className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white"
           >
             Add Category
-          </button>
-
-          {createErrorMessage && (
-            <p className="text-red-600 text-sm mt-2">{createErrorMessage}</p>
-          )}
+          </Button>
         </div>
       )}
 
       {/* -------- CATEGORY LIST -------- */}
-      <div className="space-y-3">
-        {allCategories.map((category) => (
-          <div key={category.id} className="flex items-center justify-between">
-            {editingcategoryID === category.id ? (
-              <div className="w-full">
-                <div className="flex items-center gap-3 w-full">
-                  <input
-                    type="text"
-                    value={editedCategoryName}
-                    onChange={(e) => setEditedCategoryName(e.target.value)}
-                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-md"
-                  />
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={handleSaveEdit}
-                      title="Save"
-                      className="text-green-600 hover:text-green-800"
-                    >
-                      <CheckIcon className="w-5 h-5" />
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setEditingcategoryID(null);
-                        setEditErrorMessage("");
-                      }}
-                      title="Cancel"
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      <XMarkIcon className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-
-                {editErrorMessage && (
-                  <p className="text-red-600 text-sm mt-2">
-                    {editErrorMessage}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(category.id)}
-                    onChange={() => onCategoryChange(category.id)}
-                    className="w-5 h-5 rounded"
-                  />
-                  <span className="text-gray-700">{category.title}</span>
-                </div>
-
-                {isEditMode && (
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => handleEditCategory(category)}
-                      title="Edit"
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
-
-                    <button
-                      onClick={() => handleDeleteCategory(category.id)}
-                      title="Delete"
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+      <div className="space-y-2">
+        {allCategories.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 text-sm">
+            No categories yet. Add one to get started!
           </div>
-        ))}
+        ) : (
+          allCategories.map((category) => (
+            <div
+              key={category.id}
+              className={`group relative rounded-lg transition-all ${
+                editingcategoryID === category.id
+                  ? "bg-blue-50 border-2 border-blue-200 p-3"
+                  : "hover:bg-gray-50 p-2"
+              }`}
+            >
+              {editingcategoryID === category.id ? (
+                <div className="w-full space-y-3">
+                  <div className="flex items-center gap-2 w-full">
+                    <Input
+                      value={editedCategoryName}
+                      onChange={(e) => setEditedCategoryName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSaveEdit();
+                        } else if (e.key === "Escape") {
+                          setEditingcategoryID(null);
+                          setEditErrorMessage("");
+                        }
+                      }}
+                      className="flex-1"
+                      autoFocus
+                    />
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={handleSaveEdit}
+                        title="Save"
+                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                      >
+                        <CheckIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingcategoryID(null);
+                          setEditErrorMessage("");
+                        }}
+                        title="Cancel"
+                        className="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                      >
+                        <XMarkIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {editErrorMessage && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-2">
+                      <p className="text-red-600 text-xs">{editErrorMessage}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <label className="flex items-center gap-3 flex-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(category.id)}
+                      onChange={() => onCategoryChange(category.id)}
+                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all"
+                    />
+                    <span
+                      className={`text-sm font-medium transition-colors ${
+                        selectedCategories.includes(category.id)
+                          ? "text-gray-900"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {category.title}
+                    </span>
+                  </label>
+
+                  {isEditMode && (
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditCategory(category)}
+                        title="Edit"
+                        className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                      >
+                        <PencilIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCategory(category.id)}
+                        title="Delete"
+                        className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </aside>
   );
