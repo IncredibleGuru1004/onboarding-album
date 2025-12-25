@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import CategoryCard from "@/components/gallery/CategoryCard";
 import { SectionTitle } from "../layout";
 import { Button } from "../ui/Button";
+import { RootState } from "@/store/store";
 
 // Define the type for the category data
 interface Category {
@@ -43,6 +46,30 @@ function GridItem({ children, className = "" }: GridItemProps) {
 }
 
 export default function CategorySection() {
+  const router = useRouter();
+  const reduxCategories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
+
+  const handleViewDetails = () => {
+    router.push("/dashboard");
+  };
+
+  const handleCategoryClick = (categoryTitle: string) => {
+    // Find matching category in Redux by title (case-insensitive)
+    const matchingCategory = reduxCategories.find(
+      (cat) => cat.title.toLowerCase() === categoryTitle.toLowerCase(),
+    );
+
+    if (matchingCategory) {
+      // Navigate to dashboard with the category ID as a search parameter
+      router.push(`/dashboard?categories=${matchingCategory.id}`);
+    } else {
+      // If no match found, navigate to dashboard without category filter
+      router.push("/dashboard");
+    }
+  };
+
   return (
     <div className="py-12 px-0">
       <SectionTitle
@@ -52,6 +79,7 @@ export default function CategorySection() {
           <Button
             variant="outlined"
             className="border-[#30BBD7] text-[#30BBD7]"
+            onClick={handleViewDetails}
           >
             View Details
           </Button>
@@ -92,6 +120,7 @@ export default function CategorySection() {
                 title={category.title}
                 imageSrc={category.imageSrc}
                 count={category.count}
+                onClick={() => handleCategoryClick(category.title)}
               />
             </GridItem>
           ))}

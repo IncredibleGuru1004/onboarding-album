@@ -5,15 +5,22 @@ type CategoryCardProps = {
   count: number;
   imageSrc: string;
   large?: boolean;
+  onClick?: () => void;
 };
 
 export default function CategoryCard({
   title,
   count,
   imageSrc,
+  onClick,
 }: CategoryCardProps) {
   return (
-    <div className="relative h-full w-full overflow-hidden shadow-2xl transition-transform hover:scale-[1.02] duration-300">
+    <div
+      onClick={onClick}
+      className={`relative h-full w-full overflow-hidden shadow-2xl transition-transform hover:scale-[1.02] duration-300 ${
+        onClick ? "cursor-pointer" : ""
+      }`}
+    >
       {/* Count Badge */}
       <div className="absolute top-6 left-6 z-10">
         <span className="bg-white text-[#ff7b29] text-[14px] font-semibold px-4 py-2 rounded-full shadow-lg">

@@ -6,12 +6,12 @@ interface CategoryState {
 }
 
 const initialCategories: Category[] = [
-  { id: "nature", title: "Nature" },
-  { id: "architecture", title: "Architecture" },
-  { id: "portrait", title: "Portrait" },
-  { id: "abstract", title: "Abstract" },
-  { id: "landscape", title: "Landscape" },
-  { id: "street", title: "Street" },
+  { id: "weapons", title: "Weapons" },
+  { id: "skulls", title: "Skulls" },
+  { id: "status", title: "Status" },
+  { id: "keep", title: "Keep" },
+  { id: "watches", title: "Watches" },
+  { id: "furniture", title: "Furniture" },
 ];
 
 const initialState: CategoryState = {
