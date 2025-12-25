@@ -5,6 +5,8 @@ import Sidebar from "@/components/layout/Sidebar";
 import SortAndPagination from "@/components/layout/SortAndPagination";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import { useMemo, useState } from "react";
+import Modal from "@/components/ui/Modal"; // Assuming Modal is available in your UI components
+import { Auction } from "@/types/auction";
 
 const categories = [
   "Nature",
@@ -15,11 +17,15 @@ const categories = [
   "Street",
 ];
 
-const mockData = Array.from({ length: 140 }, (_, i) => ({
+const mockData: Auction[] = Array.from({ length: 140 }, (_, i) => ({
   id: i + 1,
   title: `Gallery Item ${i + 1}`,
   category: categories[i % categories.length],
-  imageUrl: "/images/auctions/rolex.png",
+  image: "/images/auctions/rolex.png", // ✅ fixed
+  currentBid: `$${(i + 1) * 100}`, // ✅ required
+  timeLeft: "2d 5h", // ✅ required
+  bidsCount: 32 + i,
+  year: "2023",
 }));
 
 const sortOptions = [
@@ -36,15 +42,25 @@ export default function GalleryPage() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [itemsPerPage, setItemsPerPage] = useState<number>(12);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [newCategory, setNewCategory] = useState<string>("");
-  const [allCategories, setAllCategories] = useState<string[]>(categories);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const [allCategories, setAllCategories] = useState<string[]>(categories);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Auction | null>(null);
+
+  // Filtering and sorting logic
   const filteredAndSortedItems = useMemo(() => {
     let items = [...mockData];
 
     if (selectedCategories.length > 0) {
+      items = items.filter(
+        (item) => item.category && selectedCategories.includes(item.category),
+      );
+    }
+
+    if (searchQuery) {
       items = items.filter((item) =>
-        selectedCategories.includes(item.category),
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -57,7 +73,7 @@ export default function GalleryPage() {
     });
 
     return items;
-  }, [selectedCategories, sortBy]);
+  }, [selectedCategories, sortBy, searchQuery]);
 
   const totalItems = filteredAndSortedItems.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -67,6 +83,7 @@ export default function GalleryPage() {
     return filteredAndSortedItems.slice(start, start + itemsPerPage);
   }, [filteredAndSortedItems, currentPage, itemsPerPage]);
 
+  // Handling category change
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
@@ -76,13 +93,32 @@ export default function GalleryPage() {
     setCurrentPage(1); // Reset to first page on filter change
   };
 
-  const handleAddCategory = () => {
-    if (newCategory && !allCategories.includes(newCategory)) {
-      setAllCategories((prev) => [...prev, newCategory]);
-      setNewCategory(""); // Clear the input field
-    } else {
-      alert("Please enter a valid, unique category name!");
-    }
+  // Handling category update
+  const handleCategoryUpdate = (oldCategory: string, newCategory: string) => {
+    setAllCategories((prev) =>
+      prev.map((category) =>
+        category === oldCategory ? newCategory : category,
+      ),
+    );
+  };
+
+  // Handling category deletion
+  const handleCategoryDelete = (category: string) => {
+    setAllCategories((prev) => prev.filter((c) => c !== category));
+    // Remove the category from selected categories if it's selected
+    setSelectedCategories((prev) => prev.filter((c) => c !== category));
+  };
+
+  // Open modal with the clicked item
+  const openModal = (item: Auction) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  // Close the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
   };
 
   return (
@@ -95,10 +131,10 @@ export default function GalleryPage() {
         <Sidebar
           allCategories={allCategories}
           selectedCategories={selectedCategories}
-          newCategory={newCategory}
           onCategoryChange={handleCategoryChange}
-          onAddCategory={handleAddCategory}
-          setNewCategory={setNewCategory}
+          onCategoryUpdate={handleCategoryUpdate}
+          onCategoryDelete={handleCategoryDelete}
+          setAllCategories={setAllCategories}
         />
 
         {/* Main Content */}
@@ -114,17 +150,31 @@ export default function GalleryPage() {
             setCurrentPage={setCurrentPage}
             sortOptions={sortOptions}
             itemsPerPageOptions={itemsPerPageOptions}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
           >
-            {/* Gallery Grid */}
-            <GalleryGrid paginatedItems={paginatedItems} />
-          </SortAndPagination>
+            <GalleryGrid auctions={paginatedItems} openModal={openModal} />
 
-          {/* No items found */}
-          {paginatedItems.length === 0 && (
-            <p className="text-center text-gray-500 mt-12">No items found.</p>
-          )}
+            {/* No items found */}
+            {paginatedItems.length === 0 && (
+              <p className="text-center text-gray-500 mt-12">No items found.</p>
+            )}
+          </SortAndPagination>
         </main>
       </div>
+
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={selectedItem?.title ?? ""}
+        image={selectedItem?.image ?? ""}
+        currentBid={selectedItem?.currentBid ?? ""}
+        timeLeft={selectedItem?.timeLeft ?? ""}
+        bidsCount={selectedItem?.bidsCount ?? 0}
+        category={selectedItem?.category ?? ""}
+        year={selectedItem?.year ?? ""}
+      />
     </>
   );
 }

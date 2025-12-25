@@ -1,29 +1,20 @@
 import React from "react";
 import GalleryCard from "@/components/gallery/GalleryCard";
-
-// Define the type for the gallery items
-interface GalleryItem {
-  id: number;
-  title: string;
-  category: string;
-  imageUrl: string;
-}
+import { Auction } from "@/types/auction"; // Import the GalleryItem type
 
 interface GalleryGridProps {
-  paginatedItems: GalleryItem[]; // Use the defined type here
+  auctions: Auction[]; // Use the defined type here
+  openModal: (auction: Auction) => void; // New prop to handle opening the modal
 }
 
-const GalleryGrid: React.FC<GalleryGridProps> = ({ paginatedItems }) => {
+const GalleryGrid: React.FC<GalleryGridProps> = ({ auctions, openModal }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {paginatedItems.map((item) => (
-        <div key={item.id}>
+      {auctions.map((auction) => (
+        <div key={auction.id}>
           <GalleryCard
-            title={item.title}
-            currentBid={item.category}
-            image={item.imageUrl} // Use the actual image URL from the item
-            onClick={() => {}}
-            timeLeft="12"
+            auction={auction}
+            onClick={() => openModal(auction)} // Pass the auction to the modal when clicked
           />
         </div>
       ))}

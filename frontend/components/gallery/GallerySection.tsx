@@ -5,18 +5,7 @@ import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "../ui/Modal";
 import { NavigationButtons } from "../ui/NavigationButtons";
 import { SectionTitle } from "../layout";
-
-// Define the Auction type
-interface Auction {
-  id: number;
-  title: string;
-  currentBid: string;
-  timeLeft: string;
-  image: string;
-  bidsCount?: number;
-  category?: string;
-  year?: string;
-}
+import { Auction } from "@/types/auction";
 
 // Mock auction data (same as before)
 const mockAuctions: Auction[] = [
@@ -181,10 +170,7 @@ export default function GallerySection() {
             {mockAuctions.map((auction) => (
               <div key={auction.id} className="flex-shrink-0">
                 <GalleryCard
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  timeLeft={auction.timeLeft}
-                  image={auction.image}
+                  auction={auction}
                   onClick={() => {
                     openModal(auction);
                   }}

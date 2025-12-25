@@ -12,6 +12,8 @@ interface SortAndPaginationProps {
   sortOptions: { value: string; label: string }[];
   itemsPerPageOptions: number[];
   children: React.ReactNode; // To accept the GalleryGrid or any other content
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SortAndPagination: React.FC<SortAndPaginationProps> = ({
@@ -26,6 +28,8 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
   sortOptions,
   itemsPerPageOptions,
   children,
+  searchQuery,
+  setSearchQuery,
 }) => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -34,26 +38,39 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
   return (
     <div>
       {/* Sorting and Pagination Controls */}
-      <div className="mb-6 flex justify-between items-center">
-        <p className="text-gray-600">
-          Showing {totalItems > 0 ? totalItems : 0} items
-        </p>
+      <div className="mb-6">
+        <div className="flex justify-between items-center">
+          <p className="text-gray-600">
+            Showing {totalItems > 0 ? totalItems : 0} items
+          </p>
 
-        {/* Sort By Dropdown */}
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
-            setCurrentPage(1); // Reset to first page on sort change
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          {/* Centered Search Input with controlled width */}
+          <div className="flex justify-center mb-4 w-full sm:w-1/3 md:w-1/2 lg:w-1/3">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="px-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Sort By Dropdown */}
+          <select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              setCurrentPage(1); // Reset to first page on sort change
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Grid Content (Passed as children) */}
@@ -78,6 +95,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
             ))}
           </select>
         </div>
+
         {/* Pagination Controls */}
         {totalPages > 1 && (
           <nav className="flex justify-center gap-2 mt-6">
