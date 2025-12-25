@@ -6,8 +6,10 @@ import Modal from "../ui/Modal";
 import { NavigationButtons } from "../ui/NavigationButtons";
 import { SectionTitle } from "../layout";
 import { Auction } from "@/types/auction";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
-// Mock auction data (same as before)
+// Mock auction data
 const mockAuctions: Auction[] = [
   {
     id: 1,
@@ -15,6 +17,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$3,200",
     timeLeft: "2d 14h",
     image: "/images/auctions/abstract1.png",
+    categoryID: "abstract",
+    bidsCount: 32,
+    year: "2023",
   },
   {
     id: 2,
@@ -22,6 +27,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$12,500",
     timeLeft: "5h 32m",
     image: "/images/auctions/rolex.png",
+    categoryID: "watches",
+    bidsCount: 45,
+    year: "1968",
   },
   {
     id: 3,
@@ -29,6 +37,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$18,900",
     timeLeft: "1d 8h",
     image: "/images/auctions/sculpture.png",
+    categoryID: "sculpture",
+    bidsCount: 28,
+    year: "2022",
   },
   {
     id: 4,
@@ -36,6 +47,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$3,200",
     timeLeft: "2d 14h",
     image: "/images/auctions/abstract1.png",
+    categoryID: "abstract",
+    bidsCount: 32,
+    year: "2023",
   },
   {
     id: 5,
@@ -43,6 +57,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$12,500",
     timeLeft: "5h 32m",
     image: "/images/auctions/rolex.png",
+    categoryID: "watches",
+    bidsCount: 45,
+    year: "1968",
   },
   {
     id: 6,
@@ -50,6 +67,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$18,900",
     timeLeft: "1d 8h",
     image: "/images/auctions/sculpture.png",
+    categoryID: "sculpture",
+    bidsCount: 28,
+    year: "2022",
   },
   {
     id: 7,
@@ -57,6 +77,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$3,200",
     timeLeft: "2d 14h",
     image: "/images/auctions/abstract1.png",
+    categoryID: "abstract",
+    bidsCount: 32,
+    year: "2023",
   },
   {
     id: 8,
@@ -64,6 +87,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$12,500",
     timeLeft: "5h 32m",
     image: "/images/auctions/rolex.png",
+    categoryID: "watches",
+    bidsCount: 45,
+    year: "1968",
   },
   {
     id: 9,
@@ -71,6 +97,9 @@ const mockAuctions: Auction[] = [
     currentBid: "$18,900",
     timeLeft: "1d 8h",
     image: "/images/auctions/sculpture.png",
+    categoryID: "sculpture",
+    bidsCount: 28,
+    year: "2022",
   },
 ];
 
@@ -78,6 +107,9 @@ export default function GallerySection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAuction, setSelectedAuction] = useState<Auction | null>(null);
+  const categories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -167,16 +199,23 @@ export default function GallerySection() {
           className="overflow-x-auto py-4  hide-scrollbar cursor-grab select-none"
         >
           <div className="flex gap-6">
-            {mockAuctions.map((auction) => (
-              <div key={auction.id} className="flex-shrink-0">
-                <GalleryCard
-                  auction={auction}
-                  onClick={() => {
-                    openModal(auction);
-                  }}
-                />
-              </div>
-            ))}
+            {mockAuctions.map((auction) => {
+              const category = auction.categoryID
+                ? categories.find((c) => c.id === auction.categoryID)
+                : undefined;
+
+              return (
+                <div key={auction.id} className="flex-shrink-0">
+                  <GalleryCard
+                    auction={auction}
+                    onClick={() => {
+                      openModal(auction);
+                    }}
+                    categoryName={category?.title}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -189,7 +228,12 @@ export default function GallerySection() {
         currentBid={selectedAuction?.currentBid ?? ""}
         timeLeft={selectedAuction?.timeLeft ?? ""}
         bidsCount={selectedAuction?.bidsCount ?? 0}
-        category={selectedAuction?.category ?? ""}
+        category={
+          selectedAuction?.categoryID
+            ? (categories.find((c) => c.id === selectedAuction.categoryID)
+                ?.title ?? "")
+            : ""
+        }
         year={selectedAuction?.year ?? ""}
       />
 

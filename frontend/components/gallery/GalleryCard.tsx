@@ -4,15 +4,19 @@ import { Auction } from "@/types/auction";
 interface GalleryCardProps {
   auction: Auction;
   onClick: () => void;
+  categoryName?: string;
 }
 
-export default function GalleryCard({ auction, onClick }: GalleryCardProps) {
+export default function GalleryCard({
+  auction,
+  onClick,
+  categoryName,
+}: GalleryCardProps) {
   const {
     title,
     timeLeft,
     image,
     bidsCount = 32,
-    category = "Tools",
     year = "Year 1012",
   } = auction;
 
@@ -38,7 +42,12 @@ export default function GalleryCard({ auction, onClick }: GalleryCardProps) {
           {title}
         </h1>
         <p className="font-inter font-medium text-[12px] text-[#8a8a8a] mt-1">
-          {year} <span className="mx-1 text-gray-400">|</span> {category}
+          {year}{" "}
+          {categoryName && (
+            <>
+              <span className="mx-1 text-gray-400">|</span> {categoryName}
+            </>
+          )}
         </p>
 
         <div className="flex justify-between items-center mt-[40px]">

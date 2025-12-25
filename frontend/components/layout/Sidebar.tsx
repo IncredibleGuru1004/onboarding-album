@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   PencilIcon,
@@ -5,30 +6,36 @@ import {
   CheckIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
+import { Category } from "@/types/category";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import {
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/store/categorySlice";
 
 interface SidebarProps {
-  allCategories: string[];
-  selectedCategories: string[];
-  onCategoryChange: (category: string) => void;
-  onCategoryUpdate: (oldCategory: string, newCategory: string) => void;
-  onCategoryDelete: (category: string) => void;
-  setAllCategories: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedCategories: string[]; // category IDs
+  onCategoryChange: (categoryID: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  allCategories,
   selectedCategories,
   onCategoryChange,
-  onCategoryUpdate,
-  onCategoryDelete,
-  setAllCategories,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const allCategories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
   const [newCategory, setNewCategory] = useState("");
-  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [editingcategoryID, setEditingcategoryID] = useState<string | null>(
+    null,
+  );
   const [editedCategoryName, setEditedCategoryName] = useState("");
   const [createErrorMessage, setCreateErrorMessage] = useState("");
   const [editErrorMessage, setEditErrorMessage] = useState("");
-  const [isEditMode, setIsEditMode] = useState(false); // Track if we are in edit mode
+  const [isEditMode, setIsEditMode] = useState(false);
 
   /* ---------------- ADD CATEGORY ---------------- */
   const handleAddCategory = () => {
@@ -38,53 +45,64 @@ const Sidebar: React.FC<SidebarProps> = ({
     const value = newCategory.trim();
     if (!value) return;
 
-    if (allCategories.includes(value)) {
+    const exists = allCategories.some(
+      (c) => c.title.toLowerCase() === value.toLowerCase(),
+    );
+
+    if (exists) {
       setCreateErrorMessage("Category name already exists.");
       return;
     }
 
-    setAllCategories([...allCategories, value]);
+    dispatch(
+      addCategory({
+        id: crypto.randomUUID(),
+        title: value,
+      }),
+    );
+
     setNewCategory("");
-    setEditingCategory(null);
+    setEditingcategoryID(null);
   };
 
   /* ---------------- EDIT CATEGORY ---------------- */
-  const handleEditCategory = (category: string) => {
+  const handleEditCategory = (category: Category) => {
     setCreateErrorMessage("");
     setEditErrorMessage("");
-    setEditingCategory(category);
-    setEditedCategoryName(category);
+    setEditingcategoryID(category.id);
+    setEditedCategoryName(category.title);
   };
 
   const handleSaveEdit = () => {
-    setEditErrorMessage("");
-
-    if (!editingCategory) return;
+    if (!editingcategoryID) return;
 
     const value = editedCategoryName.trim();
     if (!value) return;
 
-    if (allCategories.includes(value) && value !== editingCategory) {
+    const exists = allCategories.some(
+      (c) =>
+        c.title.toLowerCase() === value.toLowerCase() &&
+        c.id !== editingcategoryID,
+    );
+
+    if (exists) {
       setEditErrorMessage("Category name already exists.");
       return;
     }
 
-    onCategoryUpdate(editingCategory, value);
-    setEditingCategory(null);
+    dispatch(updateCategory({ id: editingcategoryID, title: value }));
+    setEditingcategoryID(null);
   };
 
   /* ---------------- DELETE CATEGORY ---------------- */
-  const handleDeleteCategory = (category: string) => {
-    onCategoryDelete(category);
-    if (selectedCategories.includes(category)) {
-      onCategoryChange(category);
-    }
+  const handleDeleteCategory = (categoryID: string) => {
+    dispatch(deleteCategory(categoryID));
   };
 
   /* ---------------- TOGGLE EDIT MODE ---------------- */
   const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-    setEditingCategory(null); // Reset editing when exiting edit mode
+    setIsEditMode((prev) => !prev);
+    setEditingcategoryID(null);
     setEditErrorMessage("");
   };
 
@@ -105,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </h2>
 
-      {/* -------- ADD CATEGORY (Visible only in edit mode) -------- */}
+      {/* -------- ADD CATEGORY -------- */}
       {isEditMode && (
         <div className="mb-6">
           <input
@@ -132,11 +150,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* -------- CATEGORY LIST -------- */}
       <div className="space-y-3">
         {allCategories.map((category) => (
-          <div key={category} className="flex items-center justify-between">
-            {editingCategory === category ? (
+          <div key={category.id} className="flex items-center justify-between">
+            {editingcategoryID === category.id ? (
               <div className="w-full">
                 <div className="flex items-center gap-3 w-full">
-                  {/* Input */}
                   <input
                     type="text"
                     value={editedCategoryName}
@@ -144,29 +161,26 @@ const Sidebar: React.FC<SidebarProps> = ({
                     className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-md"
                   />
 
-                  {/* Actions (Visible only in edit mode) */}
-                  {isEditMode && (
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={handleSaveEdit}
-                        title="Save"
-                        className="text-green-600 hover:text-green-800"
-                      >
-                        <CheckIcon className="w-5 h-5" />
-                      </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={handleSaveEdit}
+                      title="Save"
+                      className="text-green-600 hover:text-green-800"
+                    >
+                      <CheckIcon className="w-5 h-5" />
+                    </button>
 
-                      <button
-                        onClick={() => {
-                          setEditingCategory(null);
-                          setEditErrorMessage("");
-                        }}
-                        title="Cancel"
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        <XMarkIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
+                    <button
+                      onClick={() => {
+                        setEditingcategoryID(null);
+                        setEditErrorMessage("");
+                      }}
+                      title="Cancel"
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <XMarkIcon className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
                 {editErrorMessage && (
@@ -177,18 +191,16 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
-                {/* Left */}
                 <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
-                    checked={selectedCategories.includes(category)}
-                    onChange={() => onCategoryChange(category)}
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => onCategoryChange(category.id)}
                     className="w-5 h-5 rounded"
                   />
-                  <span className="text-gray-700">{category}</span>
+                  <span className="text-gray-700">{category.title}</span>
                 </div>
 
-                {/* Right (Visible only in edit mode) */}
                 {isEditMode && (
                   <div className="flex items-center gap-3">
                     <button
@@ -200,7 +212,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </button>
 
                     <button
-                      onClick={() => handleDeleteCategory(category)}
+                      onClick={() => handleDeleteCategory(category.id)}
                       title="Delete"
                       className="text-red-600 hover:text-red-800"
                     >

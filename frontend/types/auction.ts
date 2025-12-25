@@ -5,6 +5,6 @@ export interface Auction {
   timeLeft: string;
   image: string;
   bidsCount?: number;
-  category?: string;
+  categoryID?: string;
   year?: string;
 }

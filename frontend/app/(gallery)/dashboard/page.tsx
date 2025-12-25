@@ -4,29 +4,31 @@ import { Header } from "@/components/layout";
 import Sidebar from "@/components/layout/Sidebar";
 import SortAndPagination from "@/components/layout/SortAndPagination";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
-import { useMemo, useState } from "react";
-import Modal from "@/components/ui/Modal"; // Assuming Modal is available in your UI components
+import Modal from "@/components/ui/Modal";
 import { Auction } from "@/types/auction";
 
-const categories = [
-  "Nature",
-  "Architecture",
-  "Portrait",
-  "Abstract",
-  "Landscape",
-  "Street",
-];
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import AddAuctionModal from "@/components/ui/AddAuctionModal";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
-const mockData: Auction[] = Array.from({ length: 140 }, (_, i) => ({
-  id: i + 1,
-  title: `Gallery Item ${i + 1}`,
-  category: categories[i % categories.length],
-  image: "/images/auctions/rolex.png", // ✅ fixed
-  currentBid: `$${(i + 1) * 100}`, // ✅ required
-  timeLeft: "2d 5h", // ✅ required
-  bidsCount: 32 + i,
-  year: "2023",
-}));
+/* ---------------------------------- */
+/* Mock Data */
+/* ---------------------------------- */
+
+const getInitialAuctions = (categories: { id: string }[]): Auction[] => {
+  return Array.from({ length: 140 }, (_, i) => ({
+    id: i + 1,
+    title: `Gallery Item ${i + 1}`,
+    categoryID: categories[i % categories.length]?.id,
+    image: "/images/auctions/rolex.png",
+    currentBid: `$${(i + 1) * 100}`,
+    timeLeft: "2d 5h",
+    bidsCount: 32 + i,
+    year: "2023",
+  }));
+};
 
 const sortOptions = [
   { value: "newest", label: "Newest First" },
@@ -37,24 +39,58 @@ const sortOptions = [
 
 const itemsPerPageOptions = [6, 12, 18, 24, 30];
 
-export default function GalleryPage() {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<string>("newest");
+/* ---------------------------------- */
+/* Page */
+/* ---------------------------------- */
+
+function GalleryPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasMounted = useRef(false);
+
+  // Get categories from Redux
+  const allCategories = useSelector(
+    (state: RootState) => state.categories.categories,
+  );
+
+  /* ---------- URL → STATE ---------- */
+
+  const initialCategories = searchParams.get("categories")?.split(",") ?? [];
+
+  const initialPage = Number(searchParams.get("page")) || 1;
+  const initialSortBy = searchParams.get("sortBy") ?? "newest";
+
+  /* ---------- STATE ---------- */
+
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(initialCategories);
+  const [auctions, setAuctions] = useState<Auction[]>(() =>
+    getInitialAuctions(allCategories),
+  );
+
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
+
+  const [sortBy, setSortBy] = useState<string>(initialSortBy);
+
   const [itemsPerPage, setItemsPerPage] = useState<number>(12);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const [allCategories, setAllCategories] = useState<string[]>(categories);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [selectedItem, setSelectedItem] = useState<Auction | null>(null);
 
-  // Filtering and sorting logic
-  const filteredAndSortedItems = useMemo(() => {
-    let items = [...mockData];
+  const [isAddAuctionModalOpen, setIsAddAuctionModalOpen] = useState(false);
 
-    if (selectedCategories.length > 0) {
+  /* ---------- FILTER + SORT ---------- */
+
+  const filteredAndSortedItems = useMemo(() => {
+    let items = [...auctions];
+
+    if (selectedCategories.length) {
       items = items.filter(
-        (item) => item.category && selectedCategories.includes(item.category),
+        (item) =>
+          item.categoryID && selectedCategories.includes(item.categoryID),
       );
     }
 
@@ -75,6 +111,8 @@ export default function GalleryPage() {
     return items;
   }, [selectedCategories, sortBy, searchQuery]);
 
+  /* ---------- PAGINATION ---------- */
+
   const totalItems = filteredAndSortedItems.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -83,61 +121,88 @@ export default function GalleryPage() {
     return filteredAndSortedItems.slice(start, start + itemsPerPage);
   }, [filteredAndSortedItems, currentPage, itemsPerPage]);
 
-  // Handling category change
-  const handleCategoryChange = (category: string) => {
+  /* ---------- HANDLERS ---------- */
+
+  const handleCategoryChange = (categoryID: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category],
-    );
-    setCurrentPage(1); // Reset to first page on filter change
-  };
-
-  // Handling category update
-  const handleCategoryUpdate = (oldCategory: string, newCategory: string) => {
-    setAllCategories((prev) =>
-      prev.map((category) =>
-        category === oldCategory ? newCategory : category,
-      ),
+      prev.includes(categoryID)
+        ? prev.filter((c) => c !== categoryID)
+        : [...prev, categoryID],
     );
   };
 
-  // Handling category deletion
-  const handleCategoryDelete = (category: string) => {
-    setAllCategories((prev) => prev.filter((c) => c !== category));
-    // Remove the category from selected categories if it's selected
-    setSelectedCategories((prev) => prev.filter((c) => c !== category));
+  /* ---------- SYNC SELECTED CATEGORIES WITH REDUX ---------- */
+  useEffect(() => {
+    // Remove selected categories that no longer exist in Redux
+    setSelectedCategories((prev) =>
+      prev.filter((id) => allCategories.some((c) => c.id === id)),
+    );
+  }, [allCategories]);
+
+  const openAddAuctionModal = () => {
+    setIsAddAuctionModalOpen(true);
+  };
+  const handleAddAuction = (auction: Auction) => {
+    setAuctions((prev) => [auction, ...prev]);
   };
 
-  // Open modal with the clicked item
+  const closeAddAuctionModal = () => {
+    setIsAddAuctionModalOpen(false);
+  };
+
+  /* ---------- RESET PAGE ---------- */
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+    setCurrentPage(1);
+  }, [selectedCategories, sortBy]);
+
+  /* ---------- SYNC STATE → URL ---------- */
+
+  useEffect(() => {
+    if (!hasMounted.current) return;
+
+    const params = new URLSearchParams();
+
+    if (selectedCategories.length) {
+      params.set("categories", selectedCategories.join(","));
+    }
+
+    params.set("page", currentPage.toString());
+    params.set("sortBy", sortBy);
+
+    router.replace(`?${params.toString()}`, {
+      scroll: false,
+    });
+  }, [selectedCategories, currentPage, sortBy, router]);
+
+  /* ---------- MODAL ---------- */
+
   const openModal = (item: Auction) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
 
-  // Close the modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
 
+  /* ---------- RENDER ---------- */
+
   return (
     <>
-      {/* Header */}
       <Header showNavLinks={false} />
 
       <div className="flex min-h-screen bg-gray-50">
-        {/* Left Sidebar */}
         <Sidebar
-          allCategories={allCategories}
           selectedCategories={selectedCategories}
           onCategoryChange={handleCategoryChange}
-          onCategoryUpdate={handleCategoryUpdate}
-          onCategoryDelete={handleCategoryDelete}
-          setAllCategories={setAllCategories}
         />
 
-        {/* Main Content */}
         <main className="ml-64 flex-1 p-8">
           <SortAndPagination
             sortBy={sortBy}
@@ -155,15 +220,13 @@ export default function GalleryPage() {
           >
             <GalleryGrid auctions={paginatedItems} openModal={openModal} />
 
-            {/* No items found */}
             {paginatedItems.length === 0 && (
-              <p className="text-center text-gray-500 mt-12">No items found.</p>
+              <p className="mt-12 text-center text-gray-500">No items found.</p>
             )}
           </SortAndPagination>
         </main>
       </div>
 
-      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -172,9 +235,53 @@ export default function GalleryPage() {
         currentBid={selectedItem?.currentBid ?? ""}
         timeLeft={selectedItem?.timeLeft ?? ""}
         bidsCount={selectedItem?.bidsCount ?? 0}
-        category={selectedItem?.category ?? ""}
+        category={
+          selectedItem?.categoryID
+            ? (allCategories.find((c) => c.id === selectedItem.categoryID)
+                ?.title ?? "")
+            : ""
+        }
         year={selectedItem?.year ?? ""}
       />
+      <AddAuctionModal
+        isOpen={isAddAuctionModalOpen}
+        onClose={closeAddAuctionModal}
+        onAddAuction={handleAddAuction}
+      />
+
+      <button
+        onClick={openAddAuctionModal}
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 hover:scale-105 transition"
+        aria-label="Add new auction"
+      >
+        <svg
+          className="w-7 h-7"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2.5}
+            d="M12 5v14M5 12h14"
+          />
+        </svg>
+      </button>
     </>
+  );
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <GalleryPageContent />
+    </Suspense>
   );
 }

@@ -31,6 +31,5 @@ export const config = {
     // - /_next (static files, images, etc.)
     // - favicon, robots.txt, etc.
     // - But DO include /login to allow direct access
-    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
   ],
 };
