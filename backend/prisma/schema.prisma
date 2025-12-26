@@ -36,12 +36,8 @@ model Category {
 model Auction {
   id         Int       @id @default(autoincrement())
   title      String
-  currentBid String
-  timeLeft   String
   image      String
-  bidsCount  Int?
   categoryID String?
-  year       String?
   userId     String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
