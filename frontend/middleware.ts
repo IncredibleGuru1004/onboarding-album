@@ -1,4 +1,6 @@
+import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { routing, type Locale } from "./i18n/routing";
 
 // Check if user is authenticated by looking for auth token in cookies
 function isAuthenticated(request: NextRequest): boolean {
@@ -16,15 +18,44 @@ function isAuthenticated(request: NextRequest): boolean {
   return !!token || !!hasAuthHeader;
 }
 
+// Create the next-intl middleware
+const intlMiddleware = createMiddleware(routing);
+
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // First, handle internationalization
+  const response = intlMiddleware(request);
+
+  // If intl middleware returns a redirect, return it immediately
+  if (response.status === 307 || response.status === 308) {
+    return response;
+  }
+
+  // Get the pathname (intl middleware should have already processed it)
+  const pathname = request.nextUrl.pathname;
+
+  // Extract locale from pathname (e.g., /en/..., /fr/...)
+  const pathnameHasLocale = routing.locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
+
+  // Get the pathname without locale for auth checks
+  let pathnameWithoutLocale = pathname;
+  let locale: string = routing.defaultLocale;
+
+  if (pathnameHasLocale) {
+    const extractedLocale = pathname.split("/")[1];
+    if (routing.locales.includes(extractedLocale as Locale)) {
+      locale = extractedLocale;
+      pathnameWithoutLocale = pathname.replace(`/${locale}`, "") || "/";
+    }
+  }
 
   // List of public paths that don't require authentication
   const publicPaths = ["/", "/login", "/register", "/forgot-password"];
 
   // Allow access to public paths
-  if (publicPaths.includes(pathname)) {
-    return NextResponse.next();
+  if (publicPaths.includes(pathnameWithoutLocale)) {
+    return response;
   }
 
   // Check if user is authenticated
@@ -32,14 +63,14 @@ export function middleware(request: NextRequest) {
 
   // If not authenticated, redirect to login
   if (!authenticated) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL(`/${locale}/login`, request.url);
     // Preserve the original path for redirect-back after login
     loginUrl.searchParams.set("redirect", pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
-  // User is authenticated, allow access
-  return NextResponse.next();
+  // User is authenticated, return the i18n response
+  return response;
 }
 
 export const config = {

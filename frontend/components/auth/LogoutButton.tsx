@@ -1,5 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export const LogoutButton = () => {
-  return <>Logout</>;
+  const t = useTranslations("auth");
+  return <>{t("logout")}</>;
 };

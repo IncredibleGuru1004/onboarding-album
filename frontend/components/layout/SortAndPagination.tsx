@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useTranslations } from "next-intl";
 
 interface SortAndPaginationProps {
   sortBy: string;
@@ -31,6 +34,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
   searchQuery,
   setSearchQuery,
 }) => {
+  const t = useTranslations("dashboard");
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -41,7 +45,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <p className="text-gray-600">
-            Showing {totalItems > 0 ? totalItems : 0} items
+            {t("showingItems", { count: totalItems > 0 ? totalItems : 0 })}
           </p>
 
           {/* Centered Search Input with controlled width */}
@@ -50,7 +54,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
+              placeholder={t("search")}
               className="px-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -79,7 +83,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
       <div className="mt-6 flex justify-between items-center">
         {/* Items Per Page Dropdown */}
         <div className="flex items-center gap-4">
-          <span className="text-gray-700">Items per page:</span>
+          <span className="text-gray-700">{t("itemsPerPage")}</span>
           <select
             value={itemsPerPage}
             onChange={(e) => {
@@ -106,7 +110,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
               disabled={currentPage === 1}
               className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition"
             >
-              Previous
+              {t("previous")}
             </button>
 
             {/* Pagination numbers */}
@@ -180,7 +184,7 @@ const SortAndPagination: React.FC<SortAndPaginationProps> = ({
               disabled={currentPage === totalPages}
               className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition"
             >
-              Next
+              {t("next")}
             </button>
           </nav>
         )}

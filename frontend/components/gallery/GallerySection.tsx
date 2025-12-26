@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "../ui/Modal";
 import { NavigationButtons } from "../ui/NavigationButtons";
@@ -185,11 +186,13 @@ export default function GallerySection() {
     setSelectedAuction(null);
   };
 
+  const t = useTranslations("home");
+
   return (
     <div>
       <SectionTitle
-        title="Recently Added"
-        subtitle="Not thoughts all exercise blessing. Indulgence way everything joy alteration boisterous the attachment."
+        title={t("recentlyAdded")}
+        subtitle={t("recentlyAddedSubtitle")}
         rightContent={<NavigationButtons onScroll={handleScroll} />}
       />
       <section className="">

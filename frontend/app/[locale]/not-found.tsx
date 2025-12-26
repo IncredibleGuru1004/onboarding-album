@@ -1,7 +1,20 @@
-import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { Link } from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
 
-export default function NotFound() {
+export default async function NotFound() {
+  // Get locale from next-intl (works for not-found pages)
+  let locale: string;
+  try {
+    locale = await getLocale();
+  } catch {
+    // Fallback to default locale if getLocale fails
+    locale = routing.defaultLocale;
+  }
+
+  const t = await getTranslations({ locale, namespace: "notFound" });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
@@ -14,29 +27,29 @@ export default function NotFound() {
                 aria-hidden="true"
               />
             </div>
-            <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+            <h1 className="text-6xl font-bold text-gray-900 mb-4">
+              {t("title")}
+            </h1>
             <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-              Page not found
+              {t("heading")}
             </h2>
-            <p className="text-gray-600 mb-8">
-              Sorry, we couldn't find the page you're looking for. It might have
-              been moved or doesn't exist.
-            </p>
+            <p className="text-gray-600 mb-8">{t("description")}</p>
 
             {/* Action Buttons */}
             <div className="space-y-4">
               <Link
                 href="/"
+                locale={locale}
                 className="inline-flex items-center justify-center w-full px-6 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg hover:from-blue-700 hover:to-purple-700 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
-                Go back home
+                {t("goHome")}
               </Link>
             </div>
           </div>
 
           {/* Optional subtle footer */}
           <div className="bg-gray-50 px-8 py-5 text-center text-xs text-gray-500 border-t border-gray-100">
-            Secured by industry-standard encryption
+            {t("footer")}
           </div>
         </div>
       </div>

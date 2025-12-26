@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -11,6 +13,8 @@ import {
 } from "@heroicons/react/24/solid";
 
 export const LoginForm = () => {
+  const t = useTranslations("login");
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,18 +30,18 @@ export const LoginForm = () => {
     setPasswordError("");
 
     if (!email.trim()) {
-      setEmailError("Email is required");
+      setEmailError(t("emailRequired"));
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError(t("emailInvalid"));
       isValid = false;
     }
 
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError(t("passwordRequired"));
       isValid = false;
     } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+      setPasswordError(t("passwordMinLength"));
       isValid = false;
     }
 
@@ -61,14 +65,12 @@ export const LoginForm = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.message ?? "Invalid email or password");
+        throw new Error(data.message ?? t("invalidCredentials"));
       }
 
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (err) {
-      setServerError(
-        err instanceof Error ? err.message : "Login failed. Please try again.",
-      );
+      setServerError(err instanceof Error ? err.message : t("loginFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +85,7 @@ export const LoginForm = () => {
       {/* Email Field */}
       <Input
         id="email"
-        label="Email address"
+        label={t("emailAddress")}
         type="email"
         value={email}
         onChange={(e) => {
@@ -104,13 +106,14 @@ export const LoginForm = () => {
             htmlFor="password"
             className="text-sm font-medium text-gray-700"
           >
-            Password<span className="text-red-600 ml-1">*</span>
+            {t("password")}
+            <span className="text-red-600 ml-1">*</span>
           </label>
           <Link
             href="/forgot-password"
             className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
           >
-            Forgot password?
+            {t("forgotPassword")}
           </Link>
         </div>
 
@@ -132,7 +135,7 @@ export const LoginForm = () => {
               type="button"
               onClick={togglePasswordVisibility}
               className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             >
               {showPassword ? (
                 <EyeSlashIcon className="h-5 w-5" aria-hidden="true" />
@@ -185,10 +188,10 @@ export const LoginForm = () => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            Logging in...
+            {t("loggingIn")}
           </span>
         ) : (
-          "Log In"
+          t("logIn")
         )}
       </Button>
     </form>

@@ -1,13 +1,19 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/routing";
 import { SignupForm } from "@/components/auth/SignupForm";
-import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // ← Heroicon
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
-export const metadata = {
-  title: "Sign Up",
-  description: "Create a new account",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("register");
+  return {
+    title: t("signUp"),
+    description: t("createAccount"),
+  };
+}
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const t = await getTranslations("register");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
@@ -19,17 +25,15 @@ export default function RegisterPage() {
               className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ArrowLeftIcon className="w-4 h-4 mr-2" aria-hidden="true" />
-              Back to Home
+              {t("backToHome")}
             </Link>
 
             {/* Header */}
             <div className="mt-8 text-center">
               <h2 className="text-3xl font-bold text-gray-900">
-                Create your account
+                {t("createAccount")}
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                Join us and get started today
-              </p>
+              <p className="mt-2 text-sm text-gray-600">{t("joinUs")}</p>
             </div>
 
             {/* Form */}
@@ -40,20 +44,18 @@ export default function RegisterPage() {
 
           {/* Footer */}
           <div className="bg-gray-50 px-8 py-5 text-center text-sm text-gray-600 border-t border-gray-100">
-            Already have an account?{" "}
+            {t("alreadyHaveAccount")}{" "}
             <Link
               href="/login"
               className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
-              Log in
+              {t("logIn")}
             </Link>
           </div>
         </div>
 
         {/* Optional subtle branding */}
-        <p className="mt-8 text-center text-xs text-gray-500">
-          Secured by industry-standard encryption
-        </p>
+        <p className="mt-8 text-center text-xs text-gray-500">{t("secured")}</p>
       </div>
     </div>
   );

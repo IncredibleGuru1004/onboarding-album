@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
@@ -21,6 +22,7 @@ const Modal = ({
   categories,
   onUpdate,
 }: ModalProps) => {
+  const t = useTranslations("modal");
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedAuction, setEditedAuction] = useState<Auction | null>(null);
   const [error, setError] = useState("");
@@ -86,7 +88,7 @@ const Modal = ({
       !editedAuction.currentBid ||
       !editedAuction.timeLeft
     ) {
-      setError("Please fill in all required fields.");
+      setError(t("fillRequiredFields"));
       return;
     }
 
@@ -122,7 +124,7 @@ const Modal = ({
           <button
             onClick={handleEdit}
             className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
-            aria-label="Edit auction"
+            aria-label={t("editAuctionLabel")}
           >
             <PencilIcon className="w-5 h-5" />
           </button>
@@ -132,14 +134,14 @@ const Modal = ({
             <button
               onClick={handleSave}
               className="bg-green-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
-              aria-label="Save changes"
+              aria-label={t("saveChanges")}
             >
               <CheckIcon className="w-5 h-5" />
             </button>
             <button
               onClick={handleCancel}
               className="bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
-              aria-label="Cancel editing"
+              aria-label={t("cancelEditing")}
             >
               <XMarkIcon className="w-5 h-5" />
             </button>
@@ -149,7 +151,7 @@ const Modal = ({
           <button
             onClick={onClose}
             className="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
-            aria-label="Close modal"
+            aria-label={t("closeModal")}
           >
             <svg
               className="w-6 h-6 text-gray-900"
@@ -176,17 +178,15 @@ const Modal = ({
             <div className="space-y-6">
               <div>
                 <h2 className="text-3xl font-semibold text-gray-900 mb-2">
-                  Edit Auction
+                  {t("editAuction")}
                 </h2>
-                <p className="text-gray-600 text-sm">
-                  Update the auction details below
-                </p>
+                <p className="text-gray-600 text-sm">{t("updateDetails")}</p>
               </div>
 
               {editedAuction && (
                 <>
                   <Input
-                    label="Title"
+                    label={t("title")}
                     value={editedAuction.title || ""}
                     onChange={(e) =>
                       setEditedAuction({
@@ -197,14 +197,15 @@ const Modal = ({
                     required
                     error={
                       error && !editedAuction.title
-                        ? "Title is required"
+                        ? t("titleRequired")
                         : undefined
                     }
                   />
 
                   <div className="w-full space-y-1">
                     <label className="block text-sm font-medium text-gray-700">
-                      Category <span className="text-red-600 ml-1">*</span>
+                      {t("category")}{" "}
+                      <span className="text-red-600 ml-1">*</span>
                     </label>
                     <select
                       value={editedAuction.categoryID || ""}
@@ -216,7 +217,7 @@ const Modal = ({
                       }
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-200 transition-colors"
                     >
-                      <option value="">Select a category</option>
+                      <option value="">{t("selectCategory")}</option>
                       {categories.map((c) => (
                         <option key={c.id} value={c.id}>
                           {c.title}
@@ -227,7 +228,7 @@ const Modal = ({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <Input
-                      label="Year"
+                      label={t("year")}
                       value={editedAuction.year || ""}
                       onChange={(e) =>
                         setEditedAuction({
@@ -238,7 +239,7 @@ const Modal = ({
                     />
 
                     <Input
-                      label="Time Left"
+                      label={t("timeLeft")}
                       value={editedAuction.timeLeft || ""}
                       onChange={(e) =>
                         setEditedAuction({
@@ -249,14 +250,14 @@ const Modal = ({
                       required
                       error={
                         error && !editedAuction.timeLeft
-                          ? "Time left is required"
+                          ? t("timeLeftRequired")
                           : undefined
                       }
                     />
                   </div>
 
                   <Input
-                    label="Current Bid"
+                    label={t("currentBid")}
                     value={editedAuction.currentBid || ""}
                     onChange={(e) =>
                       setEditedAuction({
@@ -267,13 +268,13 @@ const Modal = ({
                     required
                     error={
                       error && !editedAuction.currentBid
-                        ? "Current bid is required"
+                        ? t("currentBidRequired")
                         : undefined
                     }
                   />
 
                   <Input
-                    label="Image URL"
+                    label={t("imageUrl")}
                     value={editedAuction.image || ""}
                     onChange={(e) =>
                       setEditedAuction({
@@ -316,20 +317,20 @@ const Modal = ({
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <p className="text-lg text-gray-800">
                       <span className="font-medium text-gray-600">
-                        Current Bid:
+                        {t("currentBid")}:
                       </span>{" "}
                       {auction.currentBid}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-500">Closes in</p>
+                      <p className="text-sm text-gray-500">{t("closesIn")}</p>
                       <p className="text-gray-900 font-medium">
                         {auction.timeLeft}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Bids</p>
+                      <p className="text-sm text-gray-500">{t("bids")}</p>
                       <p className="text-gray-900 font-medium">
                         {auction.bidsCount || 0}
                       </p>
@@ -337,7 +338,7 @@ const Modal = ({
                   </div>
                   {categoryTitle && (
                     <div>
-                      <p className="text-sm text-gray-500">Category</p>
+                      <p className="text-sm text-gray-500">{t("category")}</p>
                       <p className="text-gray-900 font-medium">
                         {categoryTitle}
                       </p>
@@ -345,7 +346,7 @@ const Modal = ({
                   )}
                   {auction.year && (
                     <div>
-                      <p className="text-sm text-gray-500">Year</p>
+                      <p className="text-sm text-gray-500">{t("year")}</p>
                       <p className="text-gray-900 font-medium">
                         {auction.year}
                       </p>

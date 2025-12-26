@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export interface HeaderProps {
   isAuthenticated?: boolean;
@@ -21,6 +22,7 @@ export const Header = ({
   onCollectionsClick,
   showNavLinks = true, // Default to showing the nav links
 }: HeaderProps) => {
+  const t = useTranslations("header");
   const [hasScrolled, setHasScrolled] = useState(false);
   const [currentSection, setCurrentSection] = useState<string>("home");
   const ignoreScrollRef = useRef(false);
@@ -122,7 +124,7 @@ export const Header = ({
                   ${currentSection === "home" ? "text-[#2d3134]" : "text-[#6a6f77]"}
                 `}
               >
-                Home
+                {t("home")}
                 {currentSection === "home" && (
                   <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
                 )}
@@ -135,7 +137,7 @@ export const Header = ({
                   ${currentSection === "collections" ? "text-[#2d3134]" : "text-[#6a6f77]"}
                 `}
               >
-                Collections
+                {t("collections")}
                 {currentSection === "collections" && (
                   <span className="absolute left-[1px] bottom-0 w-[12px] h-[2px] bg-orange-500" />
                 )}
@@ -155,7 +157,7 @@ export const Header = ({
             ) : (
               <Link href="/login">
                 <Button className="bg-[#ff7b29] text-white">
-                  Login / SignUp
+                  {t("loginSignUp")}
                 </Button>
               </Link>
             )}

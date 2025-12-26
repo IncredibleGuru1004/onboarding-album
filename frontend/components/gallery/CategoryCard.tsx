@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 type CategoryCardProps = {
@@ -14,6 +17,7 @@ export default function CategoryCard({
   imageSrc,
   onClick,
 }: CategoryCardProps) {
+  const t = useTranslations("categoryCard");
   return (
     <div
       onClick={onClick}
@@ -45,7 +49,7 @@ export default function CategoryCard({
           {title}
         </h3>
         <p className={`text-white/90 text-[12px] font-medium font-inter`}>
-          Worefall
+          {t("worefall")}
         </p>
       </div>
     </div>

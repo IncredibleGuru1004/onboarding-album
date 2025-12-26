@@ -8,6 +8,7 @@ import Modal from "@/components/ui/Modal";
 import { Auction } from "@/types/auction";
 
 import { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import AddAuctionModal from "@/components/ui/AddAuctionModal";
 import { useSelector } from "react-redux";
@@ -30,12 +31,7 @@ const getInitialAuctions = (categories: { id: string }[]): Auction[] => {
   }));
 };
 
-const sortOptions = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "title-asc", label: "Title A-Z" },
-  { value: "title-desc", label: "Title Z-A" },
-];
+// sortOptions will be created in the component using translations
 
 const itemsPerPageOptions = [6, 12, 18, 24, 30];
 
@@ -44,6 +40,7 @@ const itemsPerPageOptions = [6, 12, 18, 24, 30];
 /* ---------------------------------- */
 
 function GalleryPageContent() {
+  const t = useTranslations("dashboard");
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasMounted = useRef(false);
@@ -52,6 +49,13 @@ function GalleryPageContent() {
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
+
+  const sortOptions = [
+    { value: "newest", label: t("newestFirst") },
+    { value: "oldest", label: t("oldestFirst") },
+    { value: "title-asc", label: t("titleAZ") },
+    { value: "title-desc", label: t("titleZA") },
+  ];
 
   /* ---------- URL → STATE ---------- */
 
@@ -233,7 +237,9 @@ function GalleryPageContent() {
             <GalleryGrid auctions={paginatedItems} openModal={openModal} />
 
             {paginatedItems.length === 0 && (
-              <p className="mt-12 text-center text-gray-500">No items found.</p>
+              <p className="mt-12 text-center text-gray-500">
+                {t("noItemsFound")}
+              </p>
             )}
           </SortAndPagination>
         </main>

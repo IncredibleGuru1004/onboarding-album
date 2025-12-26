@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Auction } from "@/types/auction";
 
@@ -12,6 +15,7 @@ export default function GalleryCard({
   onClick,
   categoryName,
 }: GalleryCardProps) {
+  const t = useTranslations("galleryCard");
   const {
     title,
     timeLeft,
@@ -52,10 +56,10 @@ export default function GalleryCard({
 
         <div className="flex justify-between items-center mt-[40px]">
           <p className="text-[12px] font-semibold font-poppins text-gray-700">
-            {bidsCount} bids so far
+            {bidsCount} {t("bidsSoFar")}
           </p>
           <p className="text-[12px] font-normal font-poppins text-[#2d3134]/60">
-            Closes in {timeLeft}
+            {t("closesIn")} {timeLeft}
           </p>
         </div>
       </div>

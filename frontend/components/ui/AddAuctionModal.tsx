@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useRef } from "react";
 import { Auction } from "@/types/auction";
 import { useSelector } from "react-redux";
@@ -18,6 +19,7 @@ const AddAuctionModal = ({
   onClose,
   onAddAuction,
 }: AddAuctionModalProps) => {
+  const t = useTranslations("addAuction");
   const categories = useSelector(
     (state: RootState) => state.categories.categories,
   );
@@ -122,7 +124,7 @@ const AddAuctionModal = ({
     e?.preventDefault();
 
     if (!title || !categoryID || !currentBid || !timeLeft) {
-      setError("Please fill in all required fields.");
+      setError(t("fillRequiredFields"));
       return;
     }
 
@@ -165,7 +167,7 @@ const AddAuctionModal = ({
       <button
         onClick={onClose}
         className="absolute top-6 right-6 z-30 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
-        aria-label="Close modal"
+        aria-label={t("closeModal")}
       >
         <svg
           className="w-6 h-6 text-gray-900"
@@ -188,30 +190,28 @@ const AddAuctionModal = ({
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-semibold text-gray-900 mb-2">
-              Add New Auction
+              {t("addNewAuction")}
             </h2>
-            <p className="text-gray-600 text-sm">
-              Fill in the details below to create a new auction listing
-            </p>
+            <p className="text-gray-600 text-sm">{t("fillDetails")}</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Title"
-              placeholder="Enter auction title"
+              label={t("title")}
+              placeholder={t("enterTitle")}
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
                 if (error) setError("");
               }}
               required
-              error={error && !title ? "Title is required" : undefined}
+              error={error && !title ? t("titleRequired") : undefined}
             />
 
             <div className="w-full space-y-1">
               <label className="block text-sm font-medium text-gray-700">
-                Category <span className="text-red-600 ml-1">*</span>
+                {t("category")} <span className="text-red-600 ml-1">*</span>
               </label>
               <select
                 value={categoryID}
@@ -225,7 +225,7 @@ const AddAuctionModal = ({
                     : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
                 }`}
               >
-                <option value="">Select a category</option>
+                <option value="">{t("selectCategory")}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.title}
@@ -245,15 +245,15 @@ const AddAuctionModal = ({
                       clipRule="evenodd"
                     />
                   </svg>
-                  Category is required
+                  {t("categoryRequired")}
                 </p>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input
-                label="Year"
-                placeholder="e.g. 2023"
+                label={t("year")}
+                placeholder={t("yearPlaceholder")}
                 value={year}
                 onChange={(e) => {
                   setYear(e.target.value);
@@ -262,35 +262,33 @@ const AddAuctionModal = ({
               />
 
               <Input
-                label="Time Left"
-                placeholder="e.g. 2d 5h"
+                label={t("timeLeft")}
+                placeholder={t("timeLeftPlaceholder")}
                 value={timeLeft}
                 onChange={(e) => {
                   setTimeLeft(e.target.value);
                   if (error) setError("");
                 }}
                 required
-                error={error && !timeLeft ? "Time left is required" : undefined}
+                error={error && !timeLeft ? t("timeLeftRequired") : undefined}
               />
             </div>
 
             <Input
-              label="Current Bid"
-              placeholder="e.g. $500"
+              label={t("currentBid")}
+              placeholder={t("currentBidPlaceholder")}
               value={currentBid}
               onChange={(e) => {
                 setCurrentBid(e.target.value);
                 if (error) setError("");
               }}
               required
-              error={
-                error && !currentBid ? "Current bid is required" : undefined
-              }
+              error={error && !currentBid ? t("currentBidRequired") : undefined}
             />
 
             <Input
-              label="Image URL"
-              placeholder="https://example.com/image.png (optional)"
+              label={t("imageUrl")}
+              placeholder={t("imageUrlPlaceholder")}
               value={image}
               onChange={(e) => {
                 setImage(e.target.value);
@@ -311,14 +309,14 @@ const AddAuctionModal = ({
                 onClick={onClose}
                 className="border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 type="submit"
                 onClick={handleSubmit}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Add Auction
+                {t("addAuction")}
               </Button>
             </div>
           </form>

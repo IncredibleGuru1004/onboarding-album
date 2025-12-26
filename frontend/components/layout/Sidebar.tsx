@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   PencilIcon,
   TrashIcon,
@@ -26,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedCategories,
   onCategoryChange,
 }) => {
+  const t = useTranslations("sidebar");
   const dispatch = useDispatch<AppDispatch>();
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
@@ -52,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 
     if (exists) {
-      setCreateErrorMessage("Category name already exists.");
+      setCreateErrorMessage(t("categoryExists"));
       return;
     }
 
@@ -88,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 
     if (exists) {
-      setEditErrorMessage("Category name already exists.");
+      setEditErrorMessage(t("categoryExists"));
       return;
     }
 
@@ -113,7 +115,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Header */}
       <div className="mb-6 pb-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-900">Categories</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            {t("categories")}
+          </h2>
           <button
             onClick={toggleEditMode}
             className={`p-2 rounded-lg transition-all ${
@@ -121,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 ? "bg-red-50 text-red-600 hover:bg-red-100"
                 : "bg-blue-50 text-blue-600 hover:bg-blue-100"
             }`}
-            title={isEditMode ? "Close edit mode" : "Edit categories"}
+            title={isEditMode ? t("closeEditMode") : t("editCategories")}
           >
             {isEditMode ? (
               <XMarkIcon className="w-5 h-5" />
@@ -138,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <Input
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Enter category name"
+            placeholder={t("enterCategoryName")}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddCategory();
@@ -150,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             onClick={handleAddCategory}
             className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white"
           >
-            Add Category
+            {t("addCategory")}
           </Button>
         </div>
       )}
@@ -159,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-2">
         {allCategories.length === 0 ? (
           <div className="text-center py-8 text-gray-500 text-sm">
-            No categories yet. Add one to get started!
+            {t("noCategories")}
           </div>
         ) : (
           allCategories.map((category) => (
@@ -191,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={handleSaveEdit}
-                        title="Save"
+                        title={t("save")}
                         className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
                       >
                         <CheckIcon className="w-4 h-4" />
@@ -201,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                           setEditingcategoryID(null);
                           setEditErrorMessage("");
                         }}
-                        title="Cancel"
+                        title={t("cancel")}
                         className="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                       >
                         <XMarkIcon className="w-4 h-4" />
@@ -238,14 +242,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleEditCategory(category)}
-                        title="Edit"
+                        title={t("edit")}
                         className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                       >
                         <PencilIcon className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteCategory(category.id)}
-                        title="Delete"
+                        title={t("delete")}
                         className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                       >
                         <TrashIcon className="w-4 h-4" />

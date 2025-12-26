@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import {
@@ -11,6 +13,8 @@ import {
 } from "@heroicons/react/24/solid";
 
 export const SignupForm = () => {
+  const t = useTranslations("register");
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,34 +45,34 @@ export const SignupForm = () => {
     setConfirmPasswordError("");
 
     if (!username.trim()) {
-      setUsernameError("Username is required");
+      setUsernameError(t("usernameRequired"));
       isValid = false;
     } else if (username.trim().length < 3) {
-      setUsernameError("Username must be at least 3 characters");
+      setUsernameError(t("usernameMinLength"));
       isValid = false;
     }
 
     if (!email.trim()) {
-      setEmailError("Email is required");
+      setEmailError(t("emailRequired"));
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError(t("emailInvalid"));
       isValid = false;
     }
 
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError(t("passwordRequired"));
       isValid = false;
     } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+      setPasswordError(t("passwordMinLength"));
       isValid = false;
     }
 
     if (!confirmPassword) {
-      setConfirmPasswordError("Please confirm your password");
+      setConfirmPasswordError(t("confirmPasswordRequired"));
       isValid = false;
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match");
+      setConfirmPasswordError(t("passwordsDoNotMatch"));
       isValid = false;
     }
 
@@ -97,20 +101,16 @@ export const SignupForm = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(
-          data.message ?? "Registration failed. Please try again.",
-        );
+        throw new Error(data.message ?? t("registrationFailed"));
       }
 
-      setSuccess("Account created successfully! Redirecting to login...");
+      setSuccess(t("accountCreated"));
       setTimeout(() => {
-        window.location.href = "/login";
+        router.push("/login");
       }, 2000);
     } catch (err) {
       setServerError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again.",
+        err instanceof Error ? err.message : t("somethingWentWrong"),
       );
     } finally {
       setIsLoading(false);
@@ -122,7 +122,7 @@ export const SignupForm = () => {
       {/* Username */}
       <Input
         id="username"
-        label="Username"
+        label={t("username")}
         type="text"
         value={username}
         onChange={(e) => {
@@ -130,7 +130,7 @@ export const SignupForm = () => {
           setUsernameError("");
           setServerError("");
         }}
-        placeholder="Choose a username"
+        placeholder={t("chooseUsername")}
         required
         error={usernameError}
         autoComplete="username"
@@ -139,7 +139,7 @@ export const SignupForm = () => {
       {/* Email */}
       <Input
         id="email"
-        label="Email address"
+        label={t("emailAddress")}
         type="email"
         value={email}
         onChange={(e) => {
@@ -156,7 +156,7 @@ export const SignupForm = () => {
       {/* Password */}
       <Input
         id="password"
-        label="Password"
+        label={t("password")}
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(e) => {
@@ -165,7 +165,7 @@ export const SignupForm = () => {
           setServerError("");
           // Re-validate confirm if already filled
           if (confirmPassword && e.target.value !== confirmPassword) {
-            setConfirmPasswordError("Passwords do not match");
+            setConfirmPasswordError(t("passwordsDoNotMatch"));
           } else {
             setConfirmPasswordError("");
           }
@@ -179,7 +179,7 @@ export const SignupForm = () => {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? t("hidePassword") : t("showPassword")}
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" aria-hidden="true" />
@@ -193,7 +193,7 @@ export const SignupForm = () => {
       {/* Confirm Password */}
       <Input
         id="confirmPassword"
-        label="Confirm Password"
+        label={t("confirmPassword")}
         type={showConfirmPassword ? "text" : "password"}
         value={confirmPassword}
         onChange={(e) => {
@@ -210,7 +210,9 @@ export const SignupForm = () => {
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            aria-label={
+              showConfirmPassword ? t("hidePassword") : t("showPassword")
+            }
           >
             {showConfirmPassword ? (
               <EyeSlashIcon className="h-5 w-5" aria-hidden="true" />
@@ -255,7 +257,7 @@ export const SignupForm = () => {
         disabled={isLoading}
         className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        {isLoading ? "Creating account..." : "Sign Up"}
+        {isLoading ? t("creatingAccount") : t("signUp")}
       </Button>
     </form>
   );

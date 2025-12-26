@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { useSelector } from "react-redux";
 import CategoryCard from "@/components/gallery/CategoryCard";
 import { SectionTitle } from "../layout";
@@ -46,6 +47,7 @@ function GridItem({ children, className = "" }: GridItemProps) {
 }
 
 export default function CategorySection() {
+  const t = useTranslations("home");
   const router = useRouter();
   const reduxCategories = useSelector(
     (state: RootState) => state.categories.categories,
@@ -73,15 +75,15 @@ export default function CategorySection() {
   return (
     <div className="py-12 px-0">
       <SectionTitle
-        title="Categories"
-        subtitle="Party we years to order allow asked of. We so opinion friends me message as delight."
+        title={t("categories")}
+        subtitle={t("categoriesSubtitle")}
         rightContent={
           <Button
             variant="outlined"
             className="border-[#30BBD7] text-[#30BBD7]"
             onClick={handleViewDetails}
           >
-            View Details
+            {t("viewDetails")}
           </Button>
         }
       />

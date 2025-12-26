@@ -1,13 +1,19 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/routing";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // ← Added Heroicon
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
-export const metadata = {
-  title: "Log In",
-  description: "Log in to your account",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("login");
+  return {
+    title: t("logIn"),
+    description: t("loginToContinue"),
+  };
+}
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getTranslations("login");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
@@ -19,14 +25,16 @@ export default function LoginPage() {
               className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ArrowLeftIcon className="w-4 h-4 mr-2" aria-hidden="true" />
-              Back to Home
+              {t("backToHome")}
             </Link>
 
             {/* Header */}
             <div className="mt-8 text-center">
-              <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
+              <h2 className="text-3xl font-bold text-gray-900">
+                {t("welcomeBack")}
+              </h2>
               <p className="mt-2 text-sm text-gray-600">
-                Log in to your account to continue
+                {t("loginToContinue")}
               </p>
             </div>
 
@@ -38,20 +46,18 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="bg-gray-50 px-8 py-5 text-center text-sm text-gray-600 border-t border-gray-100">
-            Don't have an account?{" "}
+            {t("dontHaveAccount")}{" "}
             <Link
               href="/register"
               className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
-              Sign up here
+              {t("signUpHere")}
             </Link>
           </div>
         </div>
 
         {/* Optional subtle branding */}
-        <p className="mt-8 text-center text-xs text-gray-500">
-          Secured by industry-standard encryption
-        </p>
+        <p className="mt-8 text-center text-xs text-gray-500">{t("secured")}</p>
       </div>
     </div>
   );

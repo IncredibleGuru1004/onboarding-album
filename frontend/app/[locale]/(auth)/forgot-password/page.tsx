@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import {
   ArrowLeftIcon,
   EnvelopeIcon,
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("forgotPassword");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,11 +24,11 @@ export default function ForgotPasswordPage() {
 
     // Simple validation
     if (!email.trim()) {
-      setEmailError("Email is required");
+      setEmailError(t("emailRequired"));
       return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError(t("emailInvalid"));
       return;
     }
 
@@ -52,7 +54,7 @@ export default function ForgotPasswordPage() {
               className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ArrowLeftIcon className="w-4 h-4 mr-2" aria-hidden="true" />
-              Back to Log in
+              {t("backToLogin")}
             </Link>
 
             {/* Header */}
@@ -64,12 +66,9 @@ export default function ForgotPasswordPage() {
                 />
               </div>
               <h2 className="text-3xl font-bold text-gray-900">
-                Forgot your password?
+                {t("forgotPassword")}
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                No worries! Enter your email and we'll send you reset
-                instructions.
-              </p>
+              <p className="mt-2 text-sm text-gray-600">{t("noWorries")}</p>
             </div>
 
             {/* Form */}
@@ -78,7 +77,7 @@ export default function ForgotPasswordPage() {
                 <form onSubmit={handleSubmit} noValidate className="space-y-6">
                   <Input
                     id="email"
-                    label="Email address"
+                    label={t("emailAddress")}
                     type="email"
                     value={email}
                     onChange={(e) => {
@@ -97,7 +96,7 @@ export default function ForgotPasswordPage() {
                     disabled={loading}
                     className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {loading ? "Sending..." : "Send reset instructions"}
+                    {loading ? t("sending") : t("sendResetInstructions")}
                   </Button>
                 </form>
               ) : (
@@ -110,16 +109,9 @@ export default function ForgotPasswordPage() {
                     aria-hidden="true"
                   />
                   <div>
-                    <p className="font-medium">Password reset email sent!</p>
-                    <p className="mt-1">
-                      If an account exists for{" "}
-                      <span className="font-semibold">{email}</span>, you will
-                      receive an email with instructions shortly.
-                    </p>
-                    <p className="mt-2 text-green-700">
-                      Check your inbox (and spam/junk folder). The link expires
-                      in 1 hour.
-                    </p>
+                    <p className="font-medium">{t("passwordResetSent")}</p>
+                    <p className="mt-1">{t("resetEmailMessage", { email })}</p>
+                    <p className="mt-2 text-green-700">{t("checkInbox")}</p>
                   </div>
                 </div>
               )}
@@ -128,20 +120,18 @@ export default function ForgotPasswordPage() {
 
           {/* Footer */}
           <div className="bg-gray-50 px-8 py-5 text-center text-sm text-gray-600 border-t border-gray-100">
-            Remember your password?{" "}
+            {t("rememberPassword")}{" "}
             <Link
               href="/login"
               className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
-              Log in
+              {t("logIn")}
             </Link>
           </div>
         </div>
 
         {/* Subtle security note */}
-        <p className="mt-8 text-center text-xs text-gray-500">
-          Secured by industry-standard encryption
-        </p>
+        <p className="mt-8 text-center text-xs text-gray-500">{t("secured")}</p>
       </div>
     </div>
   );

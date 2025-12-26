@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export const Footer = () => {
+  const t = useTranslations("footer");
   const currentYear = new Date().getFullYear();
 
   return (
@@ -17,24 +19,24 @@ export const Footer = () => {
                 <span className="text-white font-bold text-sm">IG</span>
               </div>
               <span className="font-semibold text-zinc-900 ">
-                Image Gallery
+                {t("imageGallery")}
               </span>
             </Link>
-            <p className="text-sm text-zinc-600 ">
-              Your visual story, beautifully organized.
-            </p>
+            <p className="text-sm text-zinc-600 ">{t("tagline")}</p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="font-semibold text-zinc-900  mb-4">Product</h3>
+            <h3 className="font-semibold text-zinc-900  mb-4">
+              {t("product")}
+            </h3>
             <ul className="space-y-2 text-sm text-zinc-600 ">
               <li>
                 <Link
                   href="/gallery"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Gallery
+                  {t("gallery")}
                 </Link>
               </li>
               <li>
@@ -42,7 +44,7 @@ export const Footer = () => {
                   href="/upload"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Upload
+                  {t("upload")}
                 </Link>
               </li>
               <li>
@@ -50,7 +52,7 @@ export const Footer = () => {
                   href="/features"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Features
+                  {t("features")}
                 </Link>
               </li>
             </ul>
@@ -59,7 +61,7 @@ export const Footer = () => {
           {/* Legal */}
           <div>
             <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
-              Legal
+              {t("legal")}
             </h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
               <li>
@@ -67,7 +69,7 @@ export const Footer = () => {
                   href="/privacy"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Privacy Policy
+                  {t("privacyPolicy")}
                 </Link>
               </li>
               <li>
@@ -75,7 +77,7 @@ export const Footer = () => {
                   href="/terms"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Terms of Service
+                  {t("termsOfService")}
                 </Link>
               </li>
               <li>
@@ -83,7 +85,7 @@ export const Footer = () => {
                   href="/cookies"
                   className="hover:text-zinc-900  transition-colors"
                 >
-                  Cookie Policy
+                  {t("cookiePolicy")}
                 </Link>
               </li>
             </ul>
@@ -92,7 +94,7 @@ export const Footer = () => {
           {/* Contact */}
           <div>
             <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
-              Connect
+              {t("connect")}
             </h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
               <li>
@@ -129,20 +131,20 @@ export const Footer = () => {
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              © {currentYear} Image Gallery. All rights reserved.
+              © {currentYear} {t("imageGallery")}. {t("allRightsReserved")}
             </p>
             <div className="flex gap-6 text-sm text-zinc-600 dark:text-zinc-400">
               <Link
                 href="/accessibility"
                 className="hover:text-zinc-900  transition-colors"
               >
-                Accessibility
+                {t("accessibility")}
               </Link>
               <Link
                 href="/sitemap"
                 className="hover:text-zinc-900  transition-colors"
               >
-                Sitemap
+                {t("sitemap")}
               </Link>
             </div>
           </div>
