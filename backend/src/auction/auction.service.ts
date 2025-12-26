@@ -8,13 +8,21 @@ export class AuctionService {
   constructor(private prisma: PrismaService) {}
 
   async create(createAuctionDto: CreateAuctionDto) {
+    const data: Record<string, unknown> = {
+      title: createAuctionDto.title,
+      image: createAuctionDto.image,
+    };
+
+    if (createAuctionDto.categoryID !== undefined) {
+      data.categoryID = createAuctionDto.categoryID;
+    }
+
+    if (createAuctionDto.userId !== undefined) {
+      data.userId = createAuctionDto.userId;
+    }
+
     return this.prisma.auction.create({
-      data: {
-        title: createAuctionDto.title,
-        image: createAuctionDto.image,
-        categoryID: createAuctionDto.categoryID,
-        userId: createAuctionDto.userId,
-      },
+      data: data as any,
       include: {
         category: true,
         user: {
@@ -41,6 +49,25 @@ export class AuctionService {
 
     return this.prisma.auction.findMany({
       where,
+      include: {
+        category: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async findRecent() {
+    return this.prisma.auction.findMany({
+      take: 20,
       include: {
         category: true,
         user: {

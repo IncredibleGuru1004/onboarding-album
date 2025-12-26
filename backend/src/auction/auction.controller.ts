@@ -65,6 +65,16 @@ export class AuctionController {
     return this.auctionService.findAll(categoryID, userId);
   }
 
+  @Get('recent')
+  @ApiOperation({ summary: 'Get recently added auctions (up to 20 items)' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of recently added auctions',
+  })
+  findRecent() {
+    return this.auctionService.findRecent();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get an auction by ID' })
   @ApiResponse({
