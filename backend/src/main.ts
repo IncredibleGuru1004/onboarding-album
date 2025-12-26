@@ -27,6 +27,8 @@ async function bootstrap() {
     .addTag('app', 'Application endpoints')
     .addTag('test', 'Test and health check endpoints')
     .addTag('auth', 'Authentication endpoints')
+    .addTag('categories', 'Category management endpoints')
+    .addTag('auctions', 'Auction management endpoints')
     .addBearerAuth(
       {
         type: 'http',
