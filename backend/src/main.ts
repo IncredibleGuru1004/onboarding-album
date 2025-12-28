@@ -10,6 +10,15 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+  app.enableCors({
+    origin: frontendUrl,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   // Enable validation pipes globally
   app.useGlobalPipes(
     new ValidationPipe({

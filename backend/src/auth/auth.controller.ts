@@ -6,6 +6,8 @@ import {
   HttpStatus,
   UseGuards,
   Get,
+  Req,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -13,6 +15,8 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -61,5 +65,34 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getProfile(@GetUser() user: any) {
     return user;
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to Google OAuth',
+  })
+  async googleAuth() {
+    // Guard redirects to Google
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  @ApiResponse({
+    status: 200,
+    description: 'OAuth callback successful',
+  })
+  async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
+    const googleUser = req.user as any;
+    const authResult = await this.authService.validateGoogleUser(googleUser);
+
+    // Redirect to frontend with token
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${authResult.accessToken}`;
+
+    res.redirect(redirectUrl);
   }
 }

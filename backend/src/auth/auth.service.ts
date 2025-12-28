@@ -111,4 +111,86 @@ export class AuthService {
 
     return user;
   }
+
+  async validateGoogleUser(googleUser: {
+    googleId: string;
+    email: string;
+    name: string;
+    picture?: string;
+  }): Promise<AuthResponseDto> {
+    const { googleId, email, name } = googleUser;
+
+    // Check if user exists by googleId
+    let user = await this.prisma.user.findUnique({
+      where: { googleId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        emailVerified: true,
+      },
+    });
+
+    // If not found by googleId, check by email
+    if (!user) {
+      const userByEmail = await this.prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          emailVerified: true,
+          googleId: true,
+        },
+      });
+
+      // If user exists but doesn't have googleId, update it
+      if (userByEmail && !userByEmail.googleId) {
+        user = await this.prisma.user.update({
+          where: { email },
+          data: { googleId },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            emailVerified: true,
+          },
+        });
+      } else if (userByEmail) {
+        user = {
+          id: userByEmail.id,
+          email: userByEmail.email,
+          name: userByEmail.name,
+          emailVerified: userByEmail.emailVerified,
+        };
+      }
+    }
+
+    // If user still doesn't exist, create a new one
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          googleId,
+          name: name || null,
+          emailVerified: true, // Google emails are verified
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          emailVerified: true,
+        },
+      });
+    }
+
+    // Generate JWT token
+    const payload = { sub: user.id, email: user.email };
+    const accessToken = this.jwtService.sign(payload);
+
+    return {
+      accessToken,
+      user,
+    };
+  }
 }
