@@ -34,6 +34,9 @@
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "logIn": "Iniciar sesión",
     "secured": "Protegido con cifrado de nivel industrial",
+    "name": "Nombre Completo",
+    "enterName": "Introduce tu nombre (opcional)",
+    "nameMinLength": "El nombre debe tener al menos 2 caracteres",
     "username": "Nombre de usuario",
     "usernameRequired": "El nombre de usuario es obligatorio",
     "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
@@ -183,6 +186,7 @@
     "delete": "Eliminar"
   },
   "auth": {
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "loggingOut": "Cerrando sesión..."
   }
 }

@@ -15,7 +15,7 @@ import {
 export const SignupForm = () => {
   const t = useTranslations("register");
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,7 +26,7 @@ export const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Field-level errors
-  const [usernameError, setUsernameError] = useState("");
+  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -39,16 +39,14 @@ export const SignupForm = () => {
     let isValid = true;
 
     // Reset errors
-    setUsernameError("");
+    setNameError("");
     setEmailError("");
     setPasswordError("");
     setConfirmPasswordError("");
 
-    if (!username.trim()) {
-      setUsernameError(t("usernameRequired"));
-      isValid = false;
-    } else if (username.trim().length < 3) {
-      setUsernameError(t("usernameMinLength"));
+    // Name is optional, but if provided, validate it
+    if (name.trim() && name.trim().length < 2) {
+      setNameError(t("nameMinLength") || "Name must be at least 2 characters");
       isValid = false;
     }
 
@@ -88,12 +86,17 @@ export const SignupForm = () => {
 
     setIsLoading(true);
 
+    console.log("name", name);
+    console.log("email", email);
+    console.log("password", password);
+    console.log("confirmPassword", confirmPassword);
+
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: username.trim(),
+          name: name.trim() || undefined,
           email: email.trim(),
           password,
         }),
@@ -104,10 +107,13 @@ export const SignupForm = () => {
         throw new Error(data.message ?? t("registrationFailed"));
       }
 
+      await response.json();
       setSuccess(t("accountCreated"));
+
+      // Redirect to dashboard after successful registration
       setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+        router.push("/dashboard");
+      }, 1500);
     } catch (err) {
       setServerError(
         err instanceof Error ? err.message : t("somethingWentWrong"),
@@ -119,21 +125,20 @@ export const SignupForm = () => {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
-      {/* Username */}
+      {/* Name */}
       <Input
-        id="username"
-        label={t("username")}
+        id="name"
+        label={t("name") || "Full Name"}
         type="text"
-        value={username}
+        value={name}
         onChange={(e) => {
-          setUsername(e.target.value);
-          setUsernameError("");
+          setName(e.target.value);
+          setNameError("");
           setServerError("");
         }}
-        placeholder={t("chooseUsername")}
-        required
-        error={usernameError}
-        autoComplete="username"
+        placeholder={t("enterName") || "Enter your name (optional)"}
+        error={nameError}
+        autoComplete="name"
       />
 
       {/* Email */}

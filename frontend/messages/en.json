@@ -34,6 +34,9 @@
     "alreadyHaveAccount": "Already have an account?",
     "logIn": "Log in",
     "secured": "Secured by industry-standard encryption",
+    "name": "Full Name",
+    "enterName": "Enter your name (optional)",
+    "nameMinLength": "Name must be at least 2 characters",
     "username": "Username",
     "usernameRequired": "Username is required",
     "usernameMinLength": "Username must be at least 3 characters",
@@ -183,6 +186,7 @@
     "delete": "Delete"
   },
   "auth": {
-    "logout": "Logout"
+    "logout": "Logout",
+    "loggingOut": "Logging out..."
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/routing";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Link } from "@/i18n/routing";
@@ -15,6 +15,7 @@ import {
 export const LoginForm = () => {
   const t = useTranslations("login");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +69,9 @@ export const LoginForm = () => {
         throw new Error(data.message ?? t("invalidCredentials"));
       }
 
-      router.push("/dashboard");
+      // Get redirect URL from query params or default to dashboard
+      const redirectUrl = searchParams.get("redirect") || "/dashboard";
+      router.push(redirectUrl);
     } catch (err) {
       setServerError(err instanceof Error ? err.message : t("loginFailed"));
     } finally {

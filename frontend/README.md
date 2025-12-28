@@ -53,10 +53,13 @@ npm install
 cp .env.example .env.local
 ```
 
-Configure the following environment variables:
+Configure the following environment variables in `.env.local`:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
+# Backend API URL
+NEXT_PUBLIC_BACKEND_URL=https://misti-clergylike-brain.ngrok-free.dev
+
+# Optional: Google OAuth Client ID (if using Google authentication)
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
@@ -202,8 +205,8 @@ The application will automatically deploy on every push to the main branch.
 
 Make sure to set these in your Vercel project settings:
 
-- `NEXT_PUBLIC_API_URL` - Backend API URL
-- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` - Google OAuth Client ID
+- `NEXT_PUBLIC_BACKEND_URL` - Backend API URL (e.g., `https://misti-clergylike-brain.ngrok-free.dev`)
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` - Google OAuth Client ID (optional)
 
 ## Features Implementation
 

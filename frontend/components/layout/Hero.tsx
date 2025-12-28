@@ -29,6 +29,7 @@ export const Hero = () => {
               src="/images/image_hero.png"
               alt={t("antiqueCollection")}
               fill
+              sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 500px"
               className="object-contain"
               priority
             />

@@ -34,6 +34,9 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "logIn": "Se connecter",
     "secured": "Sécurisé par un chiffrement de niveau industriel",
+    "name": "Nom Complet",
+    "enterName": "Entrez votre nom (optionnel)",
+    "nameMinLength": "Le nom doit contenir au moins 2 caractères",
     "username": "Nom d'utilisateur",
     "usernameRequired": "Le nom d'utilisateur est requis",
     "usernameMinLength": "Le nom d'utilisateur doit contenir au moins 3 caractères",
@@ -183,6 +186,7 @@
     "delete": "Supprimer"
   },
   "auth": {
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "loggingOut": "Déconnexion en cours..."
   }
 }
