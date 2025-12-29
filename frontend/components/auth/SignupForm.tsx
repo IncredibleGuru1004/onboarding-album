@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationCircleIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 export const SignupForm = () => {
   const t = useTranslations("register");
@@ -30,10 +27,6 @@ export const SignupForm = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-
-  // Global messages
-  const [serverError, setServerError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const validateForm = () => {
     let isValid = true;
@@ -79,17 +72,10 @@ export const SignupForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setServerError("");
-    setSuccess("");
 
     if (!validateForm()) return;
 
     setIsLoading(true);
-
-    console.log("name", name);
-    console.log("email", email);
-    console.log("password", password);
-    console.log("confirmPassword", confirmPassword);
 
     try {
       const response = await fetch("/api/auth/register", {
@@ -104,20 +90,20 @@ export const SignupForm = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.message ?? t("registrationFailed"));
+        const errorMessage = data.message ?? t("registrationFailed");
+        toast.error(errorMessage);
+        return;
       }
 
       await response.json();
-      setSuccess(t("accountCreated"));
+      toast.success(t("accountCreated") || "Account created successfully!");
 
       // Redirect to dashboard after successful registration
       setTimeout(() => {
         router.push("/dashboard");
       }, 1500);
     } catch (err) {
-      setServerError(
-        err instanceof Error ? err.message : t("somethingWentWrong"),
-      );
+      toast.error(err instanceof Error ? err.message : t("somethingWentWrong"));
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +120,6 @@ export const SignupForm = () => {
         onChange={(e) => {
           setName(e.target.value);
           setNameError("");
-          setServerError("");
         }}
         placeholder={t("enterName") || "Enter your name (optional)"}
         error={nameError}
@@ -150,7 +135,6 @@ export const SignupForm = () => {
         onChange={(e) => {
           setEmail(e.target.value);
           setEmailError("");
-          setServerError("");
         }}
         placeholder="you@example.com"
         required
@@ -167,7 +151,6 @@ export const SignupForm = () => {
         onChange={(e) => {
           setPassword(e.target.value);
           setPasswordError("");
-          setServerError("");
           // Re-validate confirm if already filled
           if (confirmPassword && e.target.value !== confirmPassword) {
             setConfirmPasswordError(t("passwordsDoNotMatch"));
@@ -204,7 +187,6 @@ export const SignupForm = () => {
         onChange={(e) => {
           setConfirmPassword(e.target.value);
           setConfirmPasswordError("");
-          setServerError("");
         }}
         placeholder="••••••••"
         required
@@ -228,34 +210,6 @@ export const SignupForm = () => {
         }
       />
 
-      {/* Server Error – already using Heroicon */}
-      {serverError && (
-        <div
-          role="alert"
-          className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-        >
-          <ExclamationCircleIcon
-            className="h-5 w-5 flex-shrink-0"
-            aria-hidden="true"
-          />
-          <span>{serverError}</span>
-        </div>
-      )}
-
-      {/* Success Message – NOW USING HEROICON */}
-      {success && (
-        <div
-          role="status"
-          className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700"
-        >
-          <CheckCircleIcon
-            className="h-5 w-5 flex-shrink-0"
-            aria-hidden="true"
-          />
-          <span>{success}</span>
-        </div>
-      )}
-
       {/* Submit Button and Login Link – unchanged */}
       <Button
         type="submit"
@@ -264,6 +218,24 @@ export const SignupForm = () => {
       >
         {isLoading ? t("creatingAccount") : t("signUp")}
       </Button>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-white px-2 text-gray-500">
+            {t("orContinueWith") || "Or continue with"}
+          </span>
+        </div>
+      </div>
+
+      {/* Google Sign In Button */}
+      <GoogleSignInButton
+        text={t("signUpWithGoogle") || "Sign up with Google"}
+        disabled={isLoading}
+      />
     </form>
   );
 };

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { logout } from "@/lib/auth";
 
@@ -23,10 +24,12 @@ export const LogoutButton = ({
     setIsLoading(true);
     try {
       await logout();
+      toast.success(t("logoutSuccess") || "Logged out successfully!");
       router.push("/login");
       router.refresh();
     } catch (error) {
       console.error("Logout error:", error);
+      toast.error(t("logoutFailed") || "Failed to log out. Please try again.");
     } finally {
       setIsLoading(false);
     }

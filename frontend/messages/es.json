@@ -22,10 +22,13 @@
     "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
     "invalidCredentials": "Correo electrónico o contraseña inválidos",
     "loginFailed": "Error al iniciar sesión. Por favor, inténtalo de nuevo.",
+    "loginSuccess": "¡Inicio de sesión exitoso!",
     "loggingIn": "Iniciando sesión...",
     "logIn": "Iniciar sesión",
     "showPassword": "Mostrar contraseña",
-    "hidePassword": "Ocultar contraseña"
+    "hidePassword": "Ocultar contraseña",
+    "orContinueWith": "O continúa con",
+    "signInWithGoogle": "Iniciar sesión con Google"
   },
   "register": {
     "backToHome": "Volver al inicio",
@@ -56,7 +59,9 @@
     "signUp": "Registrarse",
     "chooseUsername": "Elige un nombre de usuario",
     "showPassword": "Mostrar contraseña",
-    "hidePassword": "Ocultar contraseña"
+    "hidePassword": "Ocultar contraseña",
+    "orContinueWith": "O continúa con",
+    "signUpWithGoogle": "Registrarse con Google"
   },
   "forgotPassword": {
     "backToLogin": "Volver al inicio de sesión",
@@ -118,7 +123,10 @@
     "titleZA": "Título Z-A"
   },
   "common": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "completingAuthentication": "Completando autenticación...",
+    "redirectingToLogin": "Redirigiendo a la página de inicio de sesión...",
+    "authenticationFailed": "Error en la autenticación. Por favor, inténtalo de nuevo."
   },
   "modal": {
     "editAuction": "Editar Subasta",
@@ -187,6 +195,13 @@
   },
   "auth": {
     "logout": "Cerrar Sesión",
-    "loggingOut": "Cerrando sesión..."
+    "loggingOut": "Cerrando sesión...",
+    "logoutSuccess": "¡Sesión cerrada exitosamente!",
+    "logoutFailed": "Error al cerrar sesión. Por favor, inténtalo de nuevo."
+  },
+  "googleAuth": {
+    "signInSuccess": "¡Inicio de sesión con Google exitoso!",
+    "signUpSuccess": "¡Registro con Google exitoso!",
+    "redirecting": "Redirigiendo a Google..."
   }
 }

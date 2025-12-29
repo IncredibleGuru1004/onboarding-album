@@ -51,7 +51,13 @@ export function middleware(request: NextRequest) {
   }
 
   // List of public paths that don't require authentication
-  const publicPaths = ["/", "/login", "/register", "/forgot-password"];
+  const publicPaths = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/auth/callback",
+  ];
 
   // Allow access to public paths
   if (publicPaths.includes(pathnameWithoutLocale)) {

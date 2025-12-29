@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import ReduxProvider from "@/providers/ReduxProvider";
+import { ToastProvider } from "@/providers/ToastProvider";
 
 export default async function LocaleLayout({
   children,
@@ -24,7 +25,10 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <ReduxProvider>{children}</ReduxProvider>
+      <ReduxProvider>
+        {children}
+        <ToastProvider />
+      </ReduxProvider>
     </NextIntlClientProvider>
   );
 }

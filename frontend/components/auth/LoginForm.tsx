@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Link } from "@/i18n/routing";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/solid";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 export const LoginForm = () => {
   const t = useTranslations("login");
@@ -23,7 +21,6 @@ export const LoginForm = () => {
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [serverError, setServerError] = useState("");
 
   const validateForm = () => {
     let isValid = true;
@@ -51,7 +48,6 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setServerError("");
 
     if (!validateForm()) return;
 
@@ -66,14 +62,18 @@ export const LoginForm = () => {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.message ?? t("invalidCredentials"));
+        const errorMessage = data.message ?? t("invalidCredentials");
+        toast.error(errorMessage);
+        return;
       }
+
+      toast.success(t("loginSuccess") || "Login successful!");
 
       // Get redirect URL from query params or default to dashboard
       const redirectUrl = searchParams.get("redirect") || "/dashboard";
       router.push(redirectUrl);
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : t("loginFailed"));
+      toast.error(err instanceof Error ? err.message : t("loginFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +94,6 @@ export const LoginForm = () => {
         onChange={(e) => {
           setEmail(e.target.value);
           setEmailError("");
-          setServerError("");
         }}
         placeholder="you@example.com"
         required
@@ -127,7 +126,6 @@ export const LoginForm = () => {
           onChange={(e) => {
             setPassword(e.target.value);
             setPasswordError("");
-            setServerError("");
           }}
           placeholder="••••••••"
           required
@@ -149,20 +147,6 @@ export const LoginForm = () => {
           }
         />
       </div>
-
-      {/* Server Error */}
-      {serverError && (
-        <div
-          role="alert"
-          className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-        >
-          <ExclamationCircleIcon
-            className="h-5 w-5 flex-shrink-0"
-            aria-hidden="true"
-          />
-          <span>{serverError}</span>
-        </div>
-      )}
 
       {/* Submit Button */}
       <Button
@@ -197,6 +181,24 @@ export const LoginForm = () => {
           t("logIn")
         )}
       </Button>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-white px-2 text-gray-500">
+            {t("orContinueWith") || "Or continue with"}
+          </span>
+        </div>
+      </div>
+
+      {/* Google Sign In Button */}
+      <GoogleSignInButton
+        text={t("signInWithGoogle") || "Sign in with Google"}
+        disabled={isLoading}
+      />
     </form>
   );
 };

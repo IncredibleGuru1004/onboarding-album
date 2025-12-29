@@ -22,10 +22,13 @@
     "passwordMinLength": "Password must be at least 8 characters long",
     "invalidCredentials": "Invalid email or password",
     "loginFailed": "Login failed. Please try again.",
+    "loginSuccess": "Login successful!",
     "loggingIn": "Logging in...",
     "logIn": "Log In",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "orContinueWith": "Or continue with",
+    "signInWithGoogle": "Sign in with Google"
   },
   "register": {
     "backToHome": "Back to Home",
@@ -56,7 +59,9 @@
     "signUp": "Sign Up",
     "chooseUsername": "Choose a username",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "orContinueWith": "Or continue with",
+    "signUpWithGoogle": "Sign up with Google"
   },
   "forgotPassword": {
     "backToLogin": "Back to Log in",
@@ -118,7 +123,10 @@
     "titleZA": "Title Z-A"
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "completingAuthentication": "Completing authentication...",
+    "redirectingToLogin": "Redirecting to login page...",
+    "authenticationFailed": "Authentication failed. Please try again."
   },
   "modal": {
     "editAuction": "Edit Auction",
@@ -187,6 +195,13 @@
   },
   "auth": {
     "logout": "Logout",
-    "loggingOut": "Logging out..."
+    "loggingOut": "Logging out...",
+    "logoutSuccess": "Logged out successfully!",
+    "logoutFailed": "Failed to log out. Please try again."
+  },
+  "googleAuth": {
+    "signInSuccess": "Successfully signed in with Google!",
+    "signUpSuccess": "Successfully signed up with Google!",
+    "redirecting": "Redirecting to Google..."
   }
 }
