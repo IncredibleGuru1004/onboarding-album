@@ -90,8 +90,10 @@ export class AuthController {
     const authResult = await this.authService.validateGoogleUser(googleUser);
 
     // Redirect to frontend with token
+    // Use default locale 'en' - the frontend middleware will handle locale routing
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-    const redirectUrl = `${frontendUrl}/auth/callback?token=${authResult.accessToken}`;
+    const defaultLocale = 'en';
+    const redirectUrl = `${frontendUrl}/${defaultLocale}/auth/callback?token=${authResult.accessToken}`;
 
     res.redirect(redirectUrl);
   }
