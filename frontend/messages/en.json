@@ -56,6 +56,7 @@
     "registrationFailed": "Registration failed. Please try again.",
     "somethingWentWrong": "Something went wrong. Please try again.",
     "accountCreated": "Account created successfully! Redirecting to login...",
+    "verificationEmailResent": "A new verification email has been sent. Please check your email to verify your account.",
     "creatingAccount": "Creating account...",
     "signUp": "Sign Up",
     "chooseUsername": "Choose a username",

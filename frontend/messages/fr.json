@@ -56,6 +56,7 @@
     "registrationFailed": "L'inscription a échoué. Veuillez réessayer.",
     "somethingWentWrong": "Quelque chose s'est mal passé. Veuillez réessayer.",
     "accountCreated": "Compte créé avec succès ! Redirection vers la connexion...",
+    "verificationEmailResent": "Un nouvel e-mail de vérification a été envoyé. Veuillez vérifier votre boîte de réception pour vérifier votre compte.",
     "creatingAccount": "Création du compte...",
     "signUp": "S'inscrire",
     "chooseUsername": "Choisissez un nom d'utilisateur",
