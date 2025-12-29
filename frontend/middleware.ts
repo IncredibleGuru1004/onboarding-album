@@ -66,9 +66,11 @@ export function middleware(request: NextRequest) {
   }
 
   // Check if user is authenticated
+  // All non-public paths require authentication (including /dashboard, /profile, etc.)
   const authenticated = isAuthenticated(request);
 
-  // If not authenticated, redirect to login
+  // If not authenticated and trying to access a non-public path, redirect to login
+  // This ensures paths like /dashboard, /profile, etc. require authentication
   if (!authenticated) {
     const loginUrl = new URL(`/${locale}/login`, request.url);
     // Preserve the original path for redirect-back after login
