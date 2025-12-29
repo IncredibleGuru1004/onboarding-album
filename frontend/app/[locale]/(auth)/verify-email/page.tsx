@@ -150,15 +150,6 @@ export default function VerifyEmailPage() {
                     >
                       {t("goToLogin") || "Go to Login"}
                     </Link>
-                    <p className="text-xs text-gray-500">
-                      {t("didntReceiveEmail") || "Didn't receive the email?"}{" "}
-                      <Link
-                        href="/register"
-                        className="text-blue-600 hover:text-blue-700 underline"
-                      >
-                        {t("tryAgain") || "Try again"}
-                      </Link>
-                    </p>
                   </div>
                 </>
               )}
