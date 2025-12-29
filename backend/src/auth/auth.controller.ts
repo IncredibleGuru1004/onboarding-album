@@ -23,6 +23,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GetUser } from './decorators/get-user.decorator';
@@ -36,11 +37,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({
     status: 201,
-    description: 'User successfully registered',
-    type: AuthResponseDto,
+    description: 'User successfully registered. Email verification required.',
+    type: RegisterResponseDto,
   })
   @ApiResponse({ status: 409, description: 'User already exists' })
-  async register(@Body() registerDto: RegisterDto): Promise<AuthResponseDto> {
+  async register(
+    @Body() registerDto: RegisterDto,
+  ): Promise<RegisterResponseDto> {
     return this.authService.register(registerDto);
   }
 
@@ -106,16 +109,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify email address with token' })
   @ApiResponse({
     status: 200,
-    description: 'Email verified successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email verified successfully' },
-      },
-    },
+    description: 'Email verified successfully. Returns access token.',
+    type: AuthResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid or expired token' })
-  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+  async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+  ): Promise<AuthResponseDto> {
     return this.authService.verifyEmail(verifyEmailDto.token);
   }
 
@@ -129,16 +129,13 @@ export class AuthController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Email verified successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email verified successfully' },
-      },
-    },
+    description: 'Email verified successfully. Returns access token.',
+    type: AuthResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid or expired token' })
-  async verifyEmailGet(@Query('token') token: string) {
+  async verifyEmailGet(
+    @Query('token') token: string,
+  ): Promise<AuthResponseDto> {
     return this.authService.verifyEmail(token);
   }
 

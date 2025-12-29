@@ -70,7 +70,7 @@ async function main() {
     },
   });
 
-  console.log(`✅ Created ${4} users`);
+  console.log(`✅ Created ${3} users`);
 
   // Create Categories
   console.log('📁 Creating categories...');
@@ -241,7 +241,7 @@ async function main() {
 
   console.log('✨ Seed completed successfully!');
   console.log('\n📊 Summary:');
-  console.log(`   - Users: ${4} (3 regular, 1 OAuth)`);
+  console.log(`   - Users: ${3}`);
   console.log(`   - Categories: ${5}`);
   console.log(`   - Auctions: ${auctions.length}`);
 }

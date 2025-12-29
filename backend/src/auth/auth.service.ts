@@ -13,6 +13,7 @@ import * as crypto from 'crypto';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
+  async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
     const { email, password, name } = registerDto;
 
     // Check if user already exists
@@ -43,7 +44,7 @@ export class AuthService {
     verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24); // 24 hours from now
 
     // Create user
-    const user = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -51,12 +52,6 @@ export class AuthService {
         emailVerificationToken: verificationToken,
         emailVerificationTokenExpires: verificationTokenExpires,
         emailVerified: false,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        emailVerified: true,
       },
     });
 
@@ -72,13 +67,11 @@ export class AuthService {
       console.error('Failed to send verification email:', error);
     }
 
-    // Generate JWT token
-    const payload = { sub: user.id, email: user.email };
-    const accessToken = this.jwtService.sign(payload);
-
+    // Return message without token - user must verify email first
     return {
-      accessToken,
-      user,
+      message:
+        'Registration successful. Please check your email to verify your account.',
+      email,
     };
   }
 
@@ -219,7 +212,7 @@ export class AuthService {
     };
   }
 
-  async verifyEmail(token: string): Promise<{ message: string }> {
+  async verifyEmail(token: string): Promise<AuthResponseDto> {
     // Find user by verification token
     const user = await this.prisma.user.findFirst({
       where: {
@@ -235,16 +228,29 @@ export class AuthService {
     }
 
     // Update user to mark email as verified and clear token
-    await this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id: user.id },
       data: {
         emailVerified: true,
         emailVerificationToken: null,
         emailVerificationTokenExpires: null,
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        emailVerified: true,
+      },
     });
 
-    return { message: 'Email verified successfully' };
+    // Generate JWT token after successful verification
+    const payload = { sub: updatedUser.id, email: updatedUser.email };
+    const accessToken = this.jwtService.sign(payload);
+
+    return {
+      accessToken,
+      user: updatedUser,
+    };
   }
 
   async resendVerificationEmail(userId: string): Promise<{ message: string }> {
