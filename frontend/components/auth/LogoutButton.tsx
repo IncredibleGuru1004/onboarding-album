@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { logout } from "@/lib/auth";
+import { clearUser } from "@/store/authSlice";
 
 interface LogoutButtonProps {
   className?: string;
@@ -18,12 +20,15 @@ export const LogoutButton = ({
 }: LogoutButtonProps) => {
   const t = useTranslations("auth");
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
     setIsLoading(true);
     try {
       await logout();
+      // Clear user from Redux store
+      dispatch(clearUser());
       toast.success(t("logoutSuccess") || "Logged out successfully!");
       router.push("/login");
       router.refresh();

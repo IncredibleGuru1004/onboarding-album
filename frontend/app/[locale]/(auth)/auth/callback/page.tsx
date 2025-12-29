@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useRouter } from "@/i18n/routing";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useTranslations } from "next-intl";
+import { setUser } from "@/store/authSlice";
+import { getCurrentUser } from "@/lib/auth";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const t = useTranslations("common");
@@ -59,6 +63,12 @@ export default function AuthCallbackPage() {
           const errorData = await response.json().catch(() => ({}));
           const errorMessage = errorData.message || "Failed to store token";
           throw new Error(errorMessage);
+        }
+
+        // Fetch and set user data in Redux store
+        const user = await getCurrentUser();
+        if (user) {
+          dispatch(setUser(user));
         }
 
         // Show success toast

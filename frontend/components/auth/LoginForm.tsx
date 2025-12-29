@@ -3,16 +3,19 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Link } from "@/i18n/routing";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { setUser } from "@/store/authSlice";
 
 export const LoginForm = () => {
   const t = useTranslations("login");
   const router = useRouter();
+  const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,6 +68,13 @@ export const LoginForm = () => {
         const errorMessage = data.message ?? t("invalidCredentials");
         toast.error(errorMessage);
         return;
+      }
+
+      const data = await response.json();
+
+      // Set user in Redux store
+      if (data.user) {
+        dispatch(setUser(data.user));
       }
 
       toast.success(t("loginSuccess") || "Login successful!");

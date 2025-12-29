@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Link } from "@/i18n/routing";
-import { useAuth } from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
+import { selectUser, selectIsAuthenticated } from "@/store/authSlice";
 
 export interface HeaderProps {
   isAuthenticated?: boolean; // Optional: can be overridden, but will use useAuth if not provided
@@ -26,17 +27,13 @@ export const Header = ({
   const [mounted, setMounted] = useState(false);
   const t = useTranslations("header");
 
-  // Use auth hook to get current auth state (only after mount to prevent hydration mismatch)
-  const {
-    user,
-    loading: authLoading,
-    isAuthenticated: hookIsAuthenticated,
-    checkAuth,
-  } = useAuth();
+  // Get user info from Redux store
+  const user = useSelector(selectUser);
+  const reduxIsAuthenticated = useSelector(selectIsAuthenticated);
 
-  // Use props if provided, otherwise use hook values
+  // Use props if provided, otherwise use Redux values
   const isAuthenticated =
-    propIsAuthenticated ?? (mounted ? hookIsAuthenticated : false);
+    propIsAuthenticated ?? (mounted ? reduxIsAuthenticated : false);
   const userName =
     propUserName ?? (mounted ? user?.name || user?.email || "" : "");
 
@@ -44,30 +41,6 @@ export const Header = ({
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Refresh auth state when component mounts or becomes visible
-  useEffect(() => {
-    if (!mounted) return;
-
-    // Small delay to ensure cookies are set after login/register
-    const timer = setTimeout(() => {
-      checkAuth();
-    }, 100);
-
-    // Refresh auth when page becomes visible (e.g., user switches back to tab)
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        checkAuth();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [checkAuth, mounted]);
 
   const [hasScrolled, setHasScrolled] = useState(false);
   const [currentSection, setCurrentSection] = useState<string>("home");
@@ -202,11 +175,6 @@ export const Header = ({
                   {t("loginSignUp")}
                 </Button>
               </Link>
-            ) : authLoading ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#ff7b29] border-t-transparent"></div>
-                <span className="text-sm text-gray-500">Loading...</span>
-              </div>
             ) : isAuthenticated ? (
               <div className="flex items-center gap-4">
                 {userName && (
