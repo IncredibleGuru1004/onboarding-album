@@ -57,6 +57,7 @@ export function middleware(request: NextRequest) {
     "/register",
     "/forgot-password",
     "/auth/callback",
+    "/verify-email",
   ];
 
   // Allow access to public paths

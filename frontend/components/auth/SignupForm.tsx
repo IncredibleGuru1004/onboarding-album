@@ -95,12 +95,18 @@ export const SignupForm = () => {
         return;
       }
 
-      await response.json();
-      toast.success(t("accountCreated") || "Account created successfully!");
+      const data = await response.json();
+      toast.success(
+        data.message ||
+          t("accountCreated") ||
+          "Account created successfully! Please check your email to verify your account.",
+      );
 
-      // Redirect to dashboard after successful registration
+      // Redirect to verify-email page with email parameter
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push(
+          `/verify-email?email=${encodeURIComponent(data.email || email)}`,
+        );
       }, 1500);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("somethingWentWrong"));

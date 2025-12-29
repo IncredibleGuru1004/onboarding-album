@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_URL}/auth/register`, {
+    const response = await fetch(`${BACKEND_URL}/auth/verify-email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,12 +19,12 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: data.message || "Registration failed" },
+        { message: data.message || "Email verification failed" },
         { status: response.status },
       );
     }
 
-    // Registration successful - no token returned, user must verify email first
+    // Return the auth response with token (will be stored by the frontend)
     return NextResponse.json(data);
   } catch {
     return NextResponse.json(

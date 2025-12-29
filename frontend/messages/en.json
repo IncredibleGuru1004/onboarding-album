@@ -197,7 +197,21 @@
     "logout": "Logout",
     "loggingOut": "Logging out...",
     "logoutSuccess": "Logged out successfully!",
-    "logoutFailed": "Failed to log out. Please try again."
+    "logoutFailed": "Failed to log out. Please try again.",
+    "backToHome": "Back to Home",
+    "noVerificationToken": "No verification token provided",
+    "verificationFailed": "Verification failed",
+    "emailVerified": "Email verified successfully! Redirecting to dashboard...",
+    "checkYourEmail": "Check Your Email",
+    "verificationEmailSentMessage": "We've sent a verification link to",
+    "clickLinkToVerify": "Please click the link in the email to verify your account and access the dashboard.",
+    "goToLogin": "Go to Login",
+    "didntReceiveEmail": "Didn't receive the email?",
+    "tryAgain": "Try again",
+    "verifyingEmail": "Verifying your email...",
+    "pleaseWait": "Please wait while we verify your email address.",
+    "redirectingToDashboard": "Redirecting to dashboard...",
+    "createNewAccount": "Create New Account"
   },
   "googleAuth": {
     "signInSuccess": "Successfully signed in with Google!",
