@@ -30,12 +30,17 @@ async function main() {
   console.log('👤 Creating users...');
   const hashedPassword = await bcrypt.hash('password123', 10);
 
+  // Note: Verified users have null verification tokens
+  // Unverified users have a token and expiration date
+
   const user1 = await prisma.user.create({
     data: {
       email: 'john.doe@example.com',
       password: hashedPassword,
       name: 'John Doe',
       emailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationTokenExpires: null,
     },
   });
 
@@ -45,8 +50,14 @@ async function main() {
       password: hashedPassword,
       name: 'Jane Smith',
       emailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationTokenExpires: null,
     },
   });
+
+  // Create a user with unverified email (with a verification token for demonstration)
+  const verificationTokenExpires = new Date();
+  verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24); // 24 hours from now
 
   const user3 = await prisma.user.create({
     data: {
@@ -54,10 +65,12 @@ async function main() {
       password: hashedPassword,
       name: 'Bob Wilson',
       emailVerified: false,
+      emailVerificationToken: 'sample-verification-token-12345', // Sample token for testing
+      emailVerificationTokenExpires: verificationTokenExpires,
     },
   });
 
-  console.log(`✅ Created ${3} users`);
+  console.log(`✅ Created ${4} users`);
 
   // Create Categories
   console.log('📁 Creating categories...');
@@ -228,7 +241,7 @@ async function main() {
 
   console.log('✨ Seed completed successfully!');
   console.log('\n📊 Summary:');
-  console.log(`   - Users: ${3}`);
+  console.log(`   - Users: ${4} (3 regular, 1 OAuth)`);
   console.log(`   - Categories: ${5}`);
   console.log(`   - Auctions: ${auctions.length}`);
 }

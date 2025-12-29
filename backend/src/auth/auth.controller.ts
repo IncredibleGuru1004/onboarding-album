@@ -8,12 +8,14 @@ import {
   Get,
   Req,
   Res,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
@@ -21,6 +23,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GetUser } from './decorators/get-user.decorator';
 
@@ -96,5 +99,70 @@ export class AuthController {
     const redirectUrl = `${frontendUrl}/${defaultLocale}/auth/callback?token=${authResult.accessToken}`;
 
     res.redirect(redirectUrl);
+  }
+
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify email address with token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verified successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Email verified successfully' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    return this.authService.verifyEmail(verifyEmailDto.token);
+  }
+
+  @Get('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify email address with token (GET method)' })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: 'Email verification token',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verified successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Email verified successfully' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async verifyEmailGet(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
+  }
+
+  @Post('resend-verification')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend verification email' })
+  @ApiResponse({
+    status: 200,
+    description: 'Verification email sent successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Verification email sent successfully',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Email already verified' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async resendVerificationEmail(@GetUser() user: any) {
+    return this.authService.resendVerificationEmail(user.id);
   }
 }

@@ -12,22 +12,25 @@ This is the backend service for the Image Gallery Site, built as part of a 15-da
 - **Containerization**: Docker
 - **CI/CD**: GitHub Actions
 - **Authentication**: JWT & Google OAuth
-- **Email Verification**: Node-Gmail
+- **Email Verification**: Nodemailer (SMTP)
 - **Cloud Storage**: Wasabi (signed URL method)
 
 ## Features
 
 ### Authentication
+
 - JWT-based authentication
 - Google OAuth integration
-- Email verification using Node-Gmail
+- Email verification using Nodemailer (SMTP)
 
 ### Image Management
+
 - Image CRUD operations
 - Cloud storage integration with Wasabi
 - Signed URL generation for secure uploads
 
 ### API Features
+
 - RESTful API design
 - Swagger/OpenAPI documentation
 - Infinite scroll support for image listings
@@ -42,23 +45,27 @@ This is the backend service for the Image Gallery Site, built as part of a 15-da
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Set up environment variables:
+
 ```bash
 cp .env.example .env
 ```
 
 Configure the following environment variables:
+
 - Database connection (MySQL)
 - JWT secret keys
 - Google OAuth credentials
 - Wasabi storage credentials
-- Gmail API credentials
+- SMTP email credentials (for email verification)
 
 3. Set up the database:
+
 ```bash
 # Run Prisma migrations
 npx prisma migrate dev
@@ -68,6 +75,7 @@ npx prisma generate
 ```
 
 4. Start the development server:
+
 ```bash
 npm run start:dev
 ```
@@ -75,6 +83,7 @@ npm run start:dev
 ## Docker Setup
 
 Build and run with Docker:
+
 ```bash
 # Build the image
 docker build -t image-gallery-backend .
@@ -84,6 +93,7 @@ docker run -p 3000:3000 image-gallery-backend
 ```
 
 Or use Docker Compose:
+
 ```bash
 docker-compose up
 ```
@@ -91,6 +101,7 @@ docker-compose up
 ## API Documentation
 
 Once the server is running, access the Swagger documentation at:
+
 ```
 http://localhost:3000/api
 ```
@@ -156,6 +167,7 @@ npm run test:cov
 ## CI/CD
 
 The project uses GitHub Actions for continuous integration and deployment. The CI/CD pipeline includes:
+
 - Automated testing
 - Code quality checks
 - Docker image building
@@ -185,15 +197,22 @@ WASABI_BUCKET="your-bucket-name"
 WASABI_REGION="your-region"
 WASABI_ENDPOINT="https://s3.wasabisys.com"
 
-# Gmail API
-GMAIL_CLIENT_ID="your-gmail-client-id"
-GMAIL_CLIENT_SECRET="your-gmail-client-secret"
-GMAIL_REFRESH_TOKEN="your-refresh-token"
+# SMTP Email Configuration (for email verification)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"  # Gmail App Password (not regular password)
+SMTP_FROM_NAME="Onboarding Album"  # Optional: Display name for emails
+
+# Frontend URL (for email verification links)
+FRONTEND_URL="http://localhost:3001"
 ```
 
 ## Additional Learning Resources
 
 ### Infrastructure (Extra Catch-up)
+
 - AWS ECS & VM instances & IAM
 - Serverless:
   - AWS Lambda & API Gateway & AppSync
@@ -204,6 +223,7 @@ GMAIL_REFRESH_TOKEN="your-refresh-token"
   - AWS CDK
 
 ### Backend Architecture Patterns
+
 - MVC (Model-View-Controller)
 - DDD (Domain-Driven Design)
 - Clean Architecture (Golang reference)
@@ -211,4 +231,3 @@ GMAIL_REFRESH_TOKEN="your-refresh-token"
 ## License
 
 This project is part of an onboarding course.
-

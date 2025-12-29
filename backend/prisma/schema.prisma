@@ -10,15 +10,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String?
-  name          String?
-  emailVerified Boolean   @default(false)
-  googleId      String?   @unique
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  auctions      Auction[]
+  id                           String    @id @default(uuid())
+  email                        String    @unique
+  password                     String?
+  name                         String?
+  emailVerified                Boolean   @default(false)
+  emailVerificationToken       String?
+  emailVerificationTokenExpires DateTime?
+  googleId                     String?   @unique
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+  auctions                     Auction[]
 
   @@map("users")
 }
