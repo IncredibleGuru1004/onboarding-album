@@ -32,6 +32,50 @@ export class AuthService {
     });
 
     if (existingUser) {
+      // If user exists but email is not verified, allow re-registration
+      if (!existingUser.emailVerified) {
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Generate new verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const verificationTokenExpires = new Date();
+        verificationTokenExpires.setHours(
+          verificationTokenExpires.getHours() + 24,
+        ); // 24 hours from now
+
+        // Update user with new password and verification token
+        await this.prisma.user.update({
+          where: { email },
+          data: {
+            password: hashedPassword,
+            name: name || existingUser.name,
+            emailVerificationToken: verificationToken,
+            emailVerificationTokenExpires: verificationTokenExpires,
+          },
+        });
+
+        // Send verification email
+        try {
+          await this.emailService.sendVerificationEmail(
+            email,
+            name || existingUser.name,
+            verificationToken,
+          );
+        } catch (error) {
+          // Log error but don't fail registration
+          console.error('Failed to send verification email:', error);
+        }
+
+        // Return message
+        return {
+          message:
+            'A new verification email has been sent. Please check your email to verify your account.',
+          email,
+        };
+      }
+
+      // If email is already verified, throw error
       throw new ConflictException('User with this email already exists');
     }
 
