@@ -28,7 +28,8 @@
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
     "orContinueWith": "O continúa con",
-    "signInWithGoogle": "Iniciar sesión con Google"
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "emailNotVerified": "Por favor, verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada para el enlace de verificación."
   },
   "register": {
     "backToHome": "Volver al inicio",

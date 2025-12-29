@@ -28,7 +28,8 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "orContinueWith": "Or continue with",
-    "signInWithGoogle": "Sign in with Google"
+    "signInWithGoogle": "Sign in with Google",
+    "emailNotVerified": "Please verify your email before logging in. Check your inbox for the verification link."
   },
   "register": {
     "backToHome": "Back to Home",
