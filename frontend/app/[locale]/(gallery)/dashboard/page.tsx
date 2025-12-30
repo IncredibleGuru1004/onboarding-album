@@ -150,14 +150,6 @@ function GalleryPageContent() {
     setIsAddAuctionModalOpen(false);
   };
 
-  const handleUpdateAuction = (updatedAuction: Auction) => {
-    // Auction is already updated in Redux by the modal
-    // Update selectedItem if it's the one being edited
-    if (selectedItem && selectedItem.id === updatedAuction.id) {
-      setSelectedItem(updatedAuction);
-    }
-  };
-
   /* ---------- RESET PAGE ---------- */
 
   useEffect(() => {
@@ -242,7 +234,6 @@ function GalleryPageContent() {
         onClose={closeModal}
         auction={selectedItem}
         categories={allCategories}
-        onUpdate={handleUpdateAuction}
       />
       <AddAuctionModal
         isOpen={isAddAuctionModalOpen}

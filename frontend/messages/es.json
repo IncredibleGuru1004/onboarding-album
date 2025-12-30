@@ -212,5 +212,34 @@
     "signInSuccess": "¡Inicio de sesión con Google exitoso!",
     "signUpSuccess": "¡Registro con Google exitoso!",
     "redirecting": "Redirigiendo a Google..."
+  },
+  "userMenu": {
+    "signedIn": "Sesión iniciada",
+    "myAuctions": "Mis Subastas",
+    "logout": "Cerrar Sesión"
+  },
+  "myAuctions": {
+    "title": "Mis Subastas",
+    "subtitle": "Gestiona tus anuncios de subastas",
+    "backToDashboard": "Volver al Panel",
+    "search": "Buscar subastas...",
+    "sortBy": "Ordenar por",
+    "newestFirst": "Más reciente primero",
+    "oldestFirst": "Más antiguo primero",
+    "titleAZ": "Título A-Z",
+    "titleZA": "Título Z-A",
+    "showing": "Mostrando",
+    "auctions": "subastas",
+    "loading": "Cargando tus subastas...",
+    "noAuctions": "Aún no hay subastas",
+    "noAuctionsDesc": "Aún no has creado ninguna subasta. ¡Ve al panel de control para crear tu primera subasta!",
+    "delete": "Eliminar subasta",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta subasta? Esta acción no se puede deshacer.",
+    "confirmDeleteTitle": "Eliminar Subasta",
+    "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar esta subasta? Esta acción no se puede deshacer.",
+    "confirmDeleteButton": "Eliminar",
+    "cancel": "Cancelar",
+    "auctionDeleted": "¡Subasta eliminada con éxito!",
+    "deleteFailed": "Error al eliminar la subasta. Por favor, inténtalo de nuevo."
   }
 }

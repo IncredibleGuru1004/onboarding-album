@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
-import { LogoutButton } from "@/components/auth/LogoutButton";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { Link } from "@/i18n/routing";
 import { useSelector } from "react-redux";
 import { selectUser, selectIsAuthenticated } from "@/store/authSlice";
@@ -176,14 +176,7 @@ export const Header = ({
                 </Button>
               </Link>
             ) : isAuthenticated ? (
-              <div className="flex items-center gap-4">
-                {userName && (
-                  <span className="text-base text-zinc-600 font-medium">
-                    {userName}
-                  </span>
-                )}
-                <LogoutButton />
-              </div>
+              <UserMenu userName={userName} />
             ) : (
               <Link href="/login">
                 <Button className="bg-[#ff7b29] text-white">

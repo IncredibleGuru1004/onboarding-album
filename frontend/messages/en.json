@@ -227,5 +227,34 @@
     "signInSuccess": "Successfully signed in with Google!",
     "signUpSuccess": "Successfully signed up with Google!",
     "redirecting": "Redirecting to Google..."
+  },
+  "userMenu": {
+    "signedIn": "Signed in",
+    "myAuctions": "My Auctions",
+    "logout": "Logout"
+  },
+  "myAuctions": {
+    "title": "My Auctions",
+    "subtitle": "Manage your auction listings",
+    "backToDashboard": "Back to Dashboard",
+    "search": "Search auctions...",
+    "sortBy": "Sort by",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "titleAZ": "Title A-Z",
+    "titleZA": "Title Z-A",
+    "showing": "Showing",
+    "auctions": "auctions",
+    "loading": "Loading your auctions...",
+    "noAuctions": "No auctions yet",
+    "noAuctionsDesc": "You haven't created any auctions yet. Go to the dashboard to create your first auction!",
+    "delete": "Delete auction",
+    "confirmDelete": "Are you sure you want to delete this auction? This action cannot be undone.",
+    "confirmDeleteTitle": "Delete Auction",
+    "confirmDeleteMessage": "Are you sure you want to delete this auction? This action cannot be undone.",
+    "confirmDeleteButton": "Delete",
+    "cancel": "Cancel",
+    "auctionDeleted": "Auction deleted successfully!",
+    "deleteFailed": "Failed to delete auction. Please try again."
   }
 }

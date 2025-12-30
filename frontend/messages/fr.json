@@ -212,5 +212,34 @@
     "signInSuccess": "Connexion avec Google réussie !",
     "signUpSuccess": "Inscription avec Google réussie !",
     "redirecting": "Redirection vers Google..."
+  },
+  "userMenu": {
+    "signedIn": "Connecté",
+    "myAuctions": "Mes Enchères",
+    "logout": "Déconnexion"
+  },
+  "myAuctions": {
+    "title": "Mes Enchères",
+    "subtitle": "Gérez vos annonces d'enchères",
+    "backToDashboard": "Retour au Tableau de Bord",
+    "search": "Rechercher des enchères...",
+    "sortBy": "Trier par",
+    "newestFirst": "Plus récent d'abord",
+    "oldestFirst": "Plus ancien d'abord",
+    "titleAZ": "Titre A-Z",
+    "titleZA": "Titre Z-A",
+    "showing": "Affichage de",
+    "auctions": "enchères",
+    "loading": "Chargement de vos enchères...",
+    "noAuctions": "Aucune enchère pour le moment",
+    "noAuctionsDesc": "Vous n'avez pas encore créé d'enchères. Allez au tableau de bord pour créer votre première enchère !",
+    "delete": "Supprimer l'enchère",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette enchère ? Cette action ne peut pas être annulée.",
+    "confirmDeleteTitle": "Supprimer l'Enchère",
+    "confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer cette enchère ? Cette action ne peut pas être annulée.",
+    "confirmDeleteButton": "Supprimer",
+    "cancel": "Annuler",
+    "auctionDeleted": "Enchère supprimée avec succès !",
+    "deleteFailed": "Échec de la suppression de l'enchère. Veuillez réessayer."
   }
 }
