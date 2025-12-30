@@ -21,6 +21,8 @@ const mockAuctions: Auction[] = [
     categoryID: "abstract",
     bidsCount: 32,
     year: "2023",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 2,
@@ -31,6 +33,8 @@ const mockAuctions: Auction[] = [
     categoryID: "watches",
     bidsCount: 45,
     year: "1968",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 3,
@@ -41,6 +45,8 @@ const mockAuctions: Auction[] = [
     categoryID: "sculpture",
     bidsCount: 28,
     year: "2022",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 4,
@@ -51,6 +57,8 @@ const mockAuctions: Auction[] = [
     categoryID: "abstract",
     bidsCount: 32,
     year: "2023",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 5,
@@ -61,6 +69,8 @@ const mockAuctions: Auction[] = [
     categoryID: "watches",
     bidsCount: 45,
     year: "1968",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 6,
@@ -71,6 +81,8 @@ const mockAuctions: Auction[] = [
     categoryID: "sculpture",
     bidsCount: 28,
     year: "2022",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 7,
@@ -81,6 +93,8 @@ const mockAuctions: Auction[] = [
     categoryID: "abstract",
     bidsCount: 32,
     year: "2023",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 8,
@@ -91,6 +105,8 @@ const mockAuctions: Auction[] = [
     categoryID: "watches",
     bidsCount: 45,
     year: "1968",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 9,
@@ -101,6 +117,8 @@ const mockAuctions: Auction[] = [
     categoryID: "sculpture",
     bidsCount: 28,
     year: "2022",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
