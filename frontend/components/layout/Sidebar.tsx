@@ -11,12 +11,13 @@ import { Category } from "@/types/category";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import {
-  addCategory,
-  updateCategory,
-  deleteCategory,
+  createCategory,
+  updateCategoryThunk,
+  deleteCategoryThunk,
 } from "@/store/categorySlice";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { toast } from "react-toastify";
 
 interface SidebarProps {
   selectedCategories: string[]; // category IDs
@@ -32,6 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
+  const isLoading = useSelector(
+    (state: RootState) => state.categories.isLoading,
+  );
   const [newCategory, setNewCategory] = useState("");
   const [editingcategoryID, setEditingcategoryID] = useState<string | null>(
     null,
@@ -42,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isEditMode, setIsEditMode] = useState(false);
 
   /* ---------------- ADD CATEGORY ---------------- */
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     setCreateErrorMessage("");
     setEditErrorMessage("");
 
@@ -58,15 +62,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       return;
     }
 
-    dispatch(
-      addCategory({
-        id: crypto.randomUUID(),
-        title: value,
-      }),
-    );
-
-    setNewCategory("");
-    setEditingcategoryID(null);
+    try {
+      await dispatch(createCategory({ title: value })).unwrap();
+      setNewCategory("");
+      setEditingcategoryID(null);
+      toast.success(t("categoryCreated") || "Category created successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create category";
+      setCreateErrorMessage(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   /* ---------------- EDIT CATEGORY ---------------- */
@@ -77,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     setEditedCategoryName(category.title);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingcategoryID) return;
 
     const value = editedCategoryName.trim();
@@ -94,13 +100,31 @@ const Sidebar: React.FC<SidebarProps> = ({
       return;
     }
 
-    dispatch(updateCategory({ id: editingcategoryID, title: value }));
-    setEditingcategoryID(null);
+    try {
+      await dispatch(
+        updateCategoryThunk({ id: editingcategoryID, data: { title: value } }),
+      ).unwrap();
+      setEditingcategoryID(null);
+      setEditErrorMessage("");
+      toast.success(t("categoryUpdated") || "Category updated successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update category";
+      setEditErrorMessage(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   /* ---------------- DELETE CATEGORY ---------------- */
-  const handleDeleteCategory = (categoryID: string) => {
-    dispatch(deleteCategory(categoryID));
+  const handleDeleteCategory = async (categoryID: string) => {
+    try {
+      await dispatch(deleteCategoryThunk(categoryID)).unwrap();
+      toast.success(t("categoryDeleted") || "Category deleted successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete category";
+      toast.error(errorMessage);
+    }
   };
 
   /* ---------------- TOGGLE EDIT MODE ---------------- */
@@ -153,8 +177,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           <Button
             onClick={handleAddCategory}
             className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white"
+            disabled={isLoading}
           >
-            {t("addCategory")}
+            {isLoading ? t("adding") || "Adding..." : t("addCategory")}
           </Button>
         </div>
       )}

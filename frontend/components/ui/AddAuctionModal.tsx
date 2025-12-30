@@ -5,8 +5,11 @@ import { useEffect, useState, useRef } from "react";
 import { Auction } from "@/types/auction";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useAuctions } from "@/hooks/useAuctions";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "./Input";
 import { Button } from "./Button";
+import { toast } from "react-toastify";
 
 interface AddAuctionModalProps {
   isOpen: boolean;
@@ -20,6 +23,8 @@ const AddAuctionModal = ({
   onAddAuction,
 }: AddAuctionModalProps) => {
   const t = useTranslations("addAuction");
+  const { addAuction, isLoading } = useAuctions();
+  const { user } = useAuth();
   const categories = useSelector(
     (state: RootState) => state.categories.categories,
   );
@@ -120,37 +125,50 @@ const AddAuctionModal = ({
     setError("");
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
 
-    if (!title || !categoryID || !currentBid || !timeLeft) {
+    // Validate required fields (title and image are required by backend)
+    if (!title || !image) {
       setError(t("fillRequiredFields"));
       return;
     }
 
-    const newAuction: Auction = {
-      id: Date.now(),
-      title,
-      categoryID,
-      year,
-      currentBid,
-      timeLeft,
-      image: image || "/images/auctions/rolex.png",
-      bidsCount: 0,
-    };
+    try {
+      // Create auction data for API
+      const auctionData = {
+        title,
+        image,
+        categoryID: categoryID || undefined,
+        userId: user?.id || undefined,
+      };
 
-    onAddAuction(newAuction);
-    // Reset form and saved state when successfully submitted
-    resetForm();
-    savedStateRef.current = {
-      title: "",
-      categoryID: "",
-      year: "",
-      currentBid: "",
-      timeLeft: "",
-      image: "",
-    };
-    onClose();
+      // Call backend API through Redux
+      const newAuction = await addAuction(auctionData);
+
+      // Success! Show toast
+      toast.success(t("auctionCreated") || "Auction created successfully!");
+
+      // Call parent callback (for compatibility)
+      onAddAuction(newAuction);
+
+      // Reset form and saved state when successfully submitted
+      resetForm();
+      savedStateRef.current = {
+        title: "",
+        categoryID: "",
+        year: "",
+        currentBid: "",
+        timeLeft: "",
+        image: "",
+      };
+      onClose();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create auction";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   if (!isOpen) return null;
@@ -269,22 +287,8 @@ const AddAuctionModal = ({
                   setTimeLeft(e.target.value);
                   if (error) setError("");
                 }}
-                required
-                error={error && !timeLeft ? t("timeLeftRequired") : undefined}
               />
             </div>
-
-            <Input
-              label={t("currentBid")}
-              placeholder={t("currentBidPlaceholder")}
-              value={currentBid}
-              onChange={(e) => {
-                setCurrentBid(e.target.value);
-                if (error) setError("");
-              }}
-              required
-              error={error && !currentBid ? t("currentBidRequired") : undefined}
-            />
 
             <Input
               label={t("imageUrl")}
@@ -292,6 +296,18 @@ const AddAuctionModal = ({
               value={image}
               onChange={(e) => {
                 setImage(e.target.value);
+                if (error) setError("");
+              }}
+              required
+              error={error && !image ? t("imageUrlRequired") : undefined}
+            />
+
+            <Input
+              label={t("currentBid")}
+              placeholder={t("currentBidPlaceholder")}
+              value={currentBid}
+              onChange={(e) => {
+                setCurrentBid(e.target.value);
                 if (error) setError("");
               }}
             />
@@ -315,8 +331,9 @@ const AddAuctionModal = ({
                 type="submit"
                 onClick={handleSubmit}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isLoading}
               >
-                {t("addAuction")}
+                {isLoading ? t("adding") || "Adding..." : t("addAuction")}
               </Button>
             </div>
           </form>

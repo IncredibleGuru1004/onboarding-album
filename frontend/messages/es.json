@@ -152,6 +152,9 @@
     "closeModal": "Cerrar ventana"
   },
   "addAuction": {
+    "adding": "Añadiendo...",
+    "auctionCreated": "¡Subasta creada con éxito!",
+    "imageUrlRequired": "La URL de la imagen es obligatoria",
     "addNewAuction": "Añadir Nueva Subasta",
     "fillDetails": "Completa los detalles a continuación para crear una nueva lista de subasta",
     "title": "Título",
@@ -188,8 +191,12 @@
     "editCategories": "Editar categorías",
     "enterCategoryName": "Introduce el nombre de la categoría",
     "addCategory": "Añadir Categoría",
+    "adding": "Añadiendo...",
     "noCategories": "Aún no hay categorías. ¡Añade una para empezar!",
     "categoryExists": "El nombre de la categoría ya existe.",
+    "categoryCreated": "¡Categoría creada con éxito!",
+    "categoryUpdated": "¡Categoría actualizada con éxito!",
+    "categoryDeleted": "¡Categoría eliminada con éxito!",
     "save": "Guardar",
     "cancel": "Cancelar",
     "edit": "Editar",

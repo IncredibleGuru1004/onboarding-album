@@ -1,6 +1,8 @@
 "use client";
 
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
+import CategoryLoader from "@/components/categories/CategoryLoader";
+import AuctionLoader from "@/components/auctions/AuctionLoader";
 
 export default function GalleryLayout({
   children,
@@ -10,7 +12,9 @@ export default function GalleryLayout({
   return (
     <>
       <AuthInitializer />
-      {children}
+      <CategoryLoader>
+        <AuctionLoader>{children}</AuctionLoader>
+      </CategoryLoader>
     </>
   );
 }

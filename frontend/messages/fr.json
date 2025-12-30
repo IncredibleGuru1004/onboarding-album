@@ -152,6 +152,9 @@
     "closeModal": "Fermer la fenêtre"
   },
   "addAuction": {
+    "adding": "Ajout en cours...",
+    "auctionCreated": "Enchère créée avec succès !",
+    "imageUrlRequired": "L'URL de l'image est requise",
     "addNewAuction": "Ajouter une Nouvelle Enchère",
     "fillDetails": "Remplissez les détails ci-dessous pour créer une nouvelle annonce d'enchère",
     "title": "Titre",
@@ -188,8 +191,12 @@
     "editCategories": "Modifier les catégories",
     "enterCategoryName": "Entrez le nom de la catégorie",
     "addCategory": "Ajouter une Catégorie",
+    "adding": "Ajout en cours...",
     "noCategories": "Aucune catégorie pour le moment. Ajoutez-en une pour commencer !",
     "categoryExists": "Le nom de la catégorie existe déjà.",
+    "categoryCreated": "Catégorie créée avec succès !",
+    "categoryUpdated": "Catégorie mise à jour avec succès !",
+    "categoryDeleted": "Catégorie supprimée avec succès !",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "edit": "Modifier",

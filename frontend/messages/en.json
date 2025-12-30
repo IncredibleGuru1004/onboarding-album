@@ -149,7 +149,8 @@
     "editAuctionLabel": "Edit auction",
     "saveChanges": "Save changes",
     "cancelEditing": "Cancel editing",
-    "closeModal": "Close modal"
+    "closeModal": "Close modal",
+    "auctionUpdated": "Auction updated successfully!"
   },
   "addAuction": {
     "addNewAuction": "Add New Auction",
@@ -169,10 +170,13 @@
     "currentBidPlaceholder": "e.g. $500",
     "currentBidRequired": "Current bid is required",
     "imageUrl": "Image URL",
-    "imageUrlPlaceholder": "https://example.com/image.png (optional)",
+    "imageUrlPlaceholder": "https://example.com/image.png",
+    "imageUrlRequired": "Image URL is required",
     "fillRequiredFields": "Please fill in all required fields.",
     "cancel": "Cancel",
     "addAuction": "Add Auction",
+    "adding": "Adding...",
+    "auctionCreated": "Auction created successfully!",
     "closeModal": "Close modal"
   },
   "galleryCard": {
@@ -188,8 +192,12 @@
     "editCategories": "Edit categories",
     "enterCategoryName": "Enter category name",
     "addCategory": "Add Category",
+    "adding": "Adding...",
     "noCategories": "No categories yet. Add one to get started!",
     "categoryExists": "Category name already exists.",
+    "categoryCreated": "Category created successfully!",
+    "categoryUpdated": "Category updated successfully!",
+    "categoryDeleted": "Category deleted successfully!",
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",

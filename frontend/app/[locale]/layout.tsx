@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import ReduxProvider from "@/providers/ReduxProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
+import CategoryInitializer from "@/components/categories/CategoryInitializer";
 
 export default async function LocaleLayout({
   children,
@@ -26,6 +27,7 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <ReduxProvider>
+        <CategoryInitializer />
         {children}
         <ToastProvider />
       </ReduxProvider>

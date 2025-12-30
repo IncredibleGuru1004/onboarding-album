@@ -14,25 +14,6 @@ import AddAuctionModal from "@/components/ui/AddAuctionModal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
-/* ---------------------------------- */
-/* Mock Data */
-/* ---------------------------------- */
-
-const getInitialAuctions = (categories: { id: string }[]): Auction[] => {
-  return Array.from({ length: 140 }, (_, i) => ({
-    id: i + 1,
-    title: `Gallery Item ${i + 1}`,
-    categoryID: categories[i % categories.length]?.id,
-    image: "/images/auctions/rolex.png",
-    currentBid: `$${(i + 1) * 100}`,
-    timeLeft: "2d 5h",
-    bidsCount: 32 + i,
-    year: "2023",
-  }));
-};
-
-// sortOptions will be created in the component using translations
-
 const itemsPerPageOptions = [6, 12, 18, 24, 30];
 
 /* ---------------------------------- */
@@ -45,9 +26,12 @@ function GalleryPageContent() {
   const searchParams = useSearchParams();
   const hasMounted = useRef(false);
 
-  // Get categories from Redux
+  // Get categories and auctions from Redux
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
+  );
+  const allAuctions = useSelector(
+    (state: RootState) => state.auctions.auctions,
   );
 
   const sortOptions = [
@@ -68,9 +52,6 @@ function GalleryPageContent() {
 
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(initialCategories);
-  const [auctions, setAuctions] = useState<Auction[]>(() =>
-    getInitialAuctions(allCategories),
-  );
 
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
 
@@ -89,7 +70,7 @@ function GalleryPageContent() {
   /* ---------- FILTER + SORT ---------- */
 
   const filteredAndSortedItems = useMemo(() => {
-    let items = [...auctions];
+    let items = [...allAuctions];
 
     if (selectedCategories.length) {
       items = items.filter(
@@ -105,15 +86,23 @@ function GalleryPageContent() {
     }
 
     items.sort((a, b) => {
-      if (sortBy === "newest") return b.id - a.id;
-      if (sortBy === "oldest") return a.id - b.id;
+      if (sortBy === "newest") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      if (sortBy === "oldest") {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      }
       if (sortBy === "title-asc") return a.title.localeCompare(b.title);
       if (sortBy === "title-desc") return b.title.localeCompare(a.title);
       return 0;
     });
 
     return items;
-  }, [selectedCategories, sortBy, searchQuery, auctions]);
+  }, [selectedCategories, sortBy, searchQuery, allAuctions]);
 
   /* ---------- PAGINATION ---------- */
 
@@ -137,17 +126,24 @@ function GalleryPageContent() {
 
   /* ---------- SYNC SELECTED CATEGORIES WITH REDUX ---------- */
   useEffect(() => {
-    // Remove selected categories that no longer exist in Redux
-    setSelectedCategories((prev) =>
-      prev.filter((id) => allCategories.some((c) => c.id === id)),
-    );
+    // Only filter if categories are actually loaded (not empty)
+    // This prevents clearing selections before categories are fetched
+    if (allCategories.length > 0) {
+      // Remove selected categories that no longer exist in Redux
+      setSelectedCategories((prev) =>
+        prev.filter((id) => allCategories.some((c) => c.id === id)),
+      );
+    }
   }, [allCategories]);
 
   const openAddAuctionModal = () => {
     setIsAddAuctionModalOpen(true);
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddAuction = (auction: Auction) => {
-    setAuctions((prev) => [auction, ...prev]);
+    // Auction is already added to Redux by the modal
+    // Just close the modal
   };
 
   const closeAddAuctionModal = () => {
@@ -155,11 +151,7 @@ function GalleryPageContent() {
   };
 
   const handleUpdateAuction = (updatedAuction: Auction) => {
-    setAuctions((prev) =>
-      prev.map((auction) =>
-        auction.id === updatedAuction.id ? updatedAuction : auction,
-      ),
-    );
+    // Auction is already updated in Redux by the modal
     // Update selectedItem if it's the one being edited
     if (selectedItem && selectedItem.id === updatedAuction.id) {
       setSelectedItem(updatedAuction);

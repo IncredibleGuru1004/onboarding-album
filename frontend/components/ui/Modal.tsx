@@ -5,7 +5,9 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Auction } from "@/types/auction";
+import { useAuctions } from "@/hooks/useAuctions";
 import { Input } from "./Input";
+import { toast } from "react-toastify";
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,6 +25,7 @@ const Modal = ({
   onUpdate,
 }: ModalProps) => {
   const t = useTranslations("modal");
+  const { updateAuction, isLoading } = useAuctions();
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedAuction, setEditedAuction] = useState<Auction | null>(null);
   const [error, setError] = useState("");
@@ -80,28 +83,42 @@ const Modal = ({
     setError("");
   };
 
-  const handleSave = () => {
-    if (!editedAuction || !onUpdate || !auction) return;
+  const handleSave = async () => {
+    if (!editedAuction || !auction) return;
 
-    if (
-      !editedAuction.title ||
-      !editedAuction.currentBid ||
-      !editedAuction.timeLeft
-    ) {
+    // Validate required fields (title and image are required by backend)
+    if (!editedAuction.title || !editedAuction.image) {
       setError(t("fillRequiredFields"));
       return;
     }
 
-    // Ensure we preserve the original ID and all fields
-    const updatedAuction: Auction = {
-      ...editedAuction,
-      id: auction.id, // Preserve the original ID
-      bidsCount: auction.bidsCount ?? 0, // Preserve bidsCount
-    };
+    try {
+      // Prepare update data
+      const updateData = {
+        title: editedAuction.title,
+        image: editedAuction.image,
+        categoryID: editedAuction.categoryID || undefined,
+      };
 
-    onUpdate(updatedAuction);
-    setIsEditMode(false);
-    setError("");
+      // Call backend API through Redux
+      const updatedAuction = await updateAuction(auction.id, updateData);
+
+      // Success! Show toast
+      toast.success(t("auctionUpdated") || "Auction updated successfully!");
+
+      // Call parent callback if provided
+      if (onUpdate) {
+        onUpdate(updatedAuction);
+      }
+
+      setIsEditMode(false);
+      setError("");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update auction";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   if (!isOpen || !auction) return null;
@@ -133,10 +150,15 @@ const Modal = ({
           <>
             <button
               onClick={handleSave}
-              className="bg-green-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110"
+              className="bg-green-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={t("saveChanges")}
+              disabled={isLoading}
             >
-              <CheckIcon className="w-5 h-5" />
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <CheckIcon className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={handleCancel}
