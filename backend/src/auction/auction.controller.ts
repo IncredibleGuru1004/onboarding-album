@@ -43,7 +43,7 @@ export class AuctionController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all auctions' })
+  @ApiOperation({ summary: 'Get all auctions with cursor-based pagination' })
   @ApiQuery({
     name: 'categoryID',
     required: false,
@@ -54,15 +54,34 @@ export class AuctionController {
     required: false,
     description: 'Filter by user ID',
   })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items to fetch (default: 12)',
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description: 'Cursor for pagination (auction ID)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'List of all auctions',
+    description: 'List of auctions with pagination metadata',
   })
   findAll(
     @Query('categoryID') categoryID?: string,
     @Query('userId') userId?: string,
+    @Query('limit') limit?: string,
+    @Query('cursor') cursor?: string,
   ) {
-    return this.auctionService.findAll(categoryID, userId);
+    const parsedLimit = limit ? parseInt(limit, 10) : undefined;
+    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined;
+    return this.auctionService.findAll(
+      categoryID,
+      userId,
+      parsedLimit,
+      parsedCursor,
+    );
   }
 
   @Get('recent')

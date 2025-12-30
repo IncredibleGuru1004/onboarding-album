@@ -36,7 +36,12 @@ export class AuctionService {
     });
   }
 
-  async findAll(categoryID?: string, userId?: string) {
+  async findAll(
+    categoryID?: string,
+    userId?: string,
+    limit?: number,
+    cursor?: number,
+  ) {
     const where: any = {};
 
     if (categoryID) {
@@ -47,7 +52,8 @@ export class AuctionService {
       where.userId = userId;
     }
 
-    return this.prisma.auction.findMany({
+    const take = limit || 12; // Default limit
+    const queryOptions: any = {
       where,
       include: {
         category: true,
@@ -62,7 +68,28 @@ export class AuctionService {
       orderBy: {
         createdAt: 'desc',
       },
-    });
+      take: take + 1, // Fetch one extra to check if there are more
+    };
+
+    if (cursor) {
+      queryOptions.cursor = {
+        id: cursor,
+      };
+      queryOptions.skip = 1; // Skip the cursor item itself
+    }
+
+    const auctions = await this.prisma.auction.findMany(queryOptions);
+
+    // Check if there are more items
+    const hasMore = auctions.length > take;
+    const items = hasMore ? auctions.slice(0, take) : auctions;
+    const nextCursor = hasMore ? items[items.length - 1].id : null;
+
+    return {
+      items,
+      nextCursor,
+      hasMore,
+    };
   }
 
   async findRecent() {
