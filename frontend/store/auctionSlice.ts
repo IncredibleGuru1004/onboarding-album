@@ -7,7 +7,10 @@ interface AuctionState {
   recentAuctions: Auction[];
   currentAuction: Auction | null;
   isLoading: boolean;
+  isLoadingMore: boolean;
   error: string | null;
+  nextCursor: number | null;
+  hasMore: boolean;
 }
 
 const initialState: AuctionState = {
@@ -15,16 +18,21 @@ const initialState: AuctionState = {
   recentAuctions: [],
   currentAuction: null,
   isLoading: false,
+  isLoadingMore: false,
   error: null,
+  nextCursor: null,
+  hasMore: true,
 };
 
 // Async thunks for API calls
 
-// Fetch all auctions with optional filters
+// Fetch all auctions with optional filters and pagination
 export const fetchAuctions = createAsyncThunk(
   "auctions/fetchAll",
   async (
-    filters: { categoryID?: string; userId?: string } | undefined,
+    filters:
+      | { categoryID?: string; userId?: string; limit?: number }
+      | undefined,
     { rejectWithValue },
   ) => {
     try {
@@ -33,6 +41,7 @@ export const fetchAuctions = createAsyncThunk(
 
       if (filters?.categoryID) params.append("categoryID", filters.categoryID);
       if (filters?.userId) params.append("userId", filters.userId);
+      if (filters?.limit) params.append("limit", filters.limit.toString());
 
       if (params.toString()) {
         url += `?${params.toString()}`;
@@ -49,7 +58,62 @@ export const fetchAuctions = createAsyncThunk(
       }
 
       const data = await response.json();
-      return data as Auction[];
+      return data as {
+        items: Auction[];
+        nextCursor: number | null;
+        hasMore: boolean;
+      };
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "An error occurred",
+      );
+    }
+  },
+);
+
+// Load more auctions for infinite scrolling
+export const loadMoreAuctions = createAsyncThunk(
+  "auctions/loadMore",
+  async (
+    filters: {
+      categoryID?: string;
+      userId?: string;
+      limit?: number;
+      cursor: number;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      let url = "/api/auctions";
+      const params = new URLSearchParams();
+
+      if (filters?.categoryID) params.append("categoryID", filters.categoryID);
+      if (filters?.userId) params.append("userId", filters.userId);
+      if (filters?.limit) params.append("limit", filters.limit.toString());
+      params.append("cursor", filters.cursor.toString());
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return rejectWithValue(
+          error.message || "Failed to fetch more auctions",
+        );
+      }
+
+      const data = await response.json();
+      return data as {
+        items: Auction[];
+        nextCursor: number | null;
+        hasMore: boolean;
+      };
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : "An error occurred",
@@ -219,10 +283,29 @@ const auctionSlice = createSlice({
       })
       .addCase(fetchAuctions.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.auctions = action.payload;
+        state.auctions = action.payload.items;
+        state.nextCursor = action.payload.nextCursor;
+        state.hasMore = action.payload.hasMore;
       })
       .addCase(fetchAuctions.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Load more auctions
+    builder
+      .addCase(loadMoreAuctions.pending, (state) => {
+        state.isLoadingMore = true;
+        state.error = null;
+      })
+      .addCase(loadMoreAuctions.fulfilled, (state, action) => {
+        state.isLoadingMore = false;
+        state.auctions = [...state.auctions, ...action.payload.items];
+        state.nextCursor = action.payload.nextCursor;
+        state.hasMore = action.payload.hasMore;
+      })
+      .addCase(loadMoreAuctions.rejected, (state, action) => {
+        state.isLoadingMore = false;
         state.error = action.payload as string;
       });
 
@@ -335,6 +418,12 @@ export const selectCurrentAuction = (state: RootState) =>
   state.auctions.currentAuction;
 export const selectAuctionsLoading = (state: RootState) =>
   state.auctions.isLoading;
+export const selectAuctionsLoadingMore = (state: RootState) =>
+  state.auctions.isLoadingMore;
 export const selectAuctionsError = (state: RootState) => state.auctions.error;
+export const selectAuctionsNextCursor = (state: RootState) =>
+  state.auctions.nextCursor;
+export const selectAuctionsHasMore = (state: RootState) =>
+  state.auctions.hasMore;
 
 export default auctionSlice.reducer;

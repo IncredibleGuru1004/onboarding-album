@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import {
   fetchAuctions,
+  loadMoreAuctions,
   fetchRecentAuctions,
   fetchAuctionById,
   createAuction,
@@ -11,7 +12,10 @@ import {
   selectRecentAuctions,
   selectCurrentAuction,
   selectAuctionsLoading,
+  selectAuctionsLoadingMore,
   selectAuctionsError,
+  selectAuctionsNextCursor,
+  selectAuctionsHasMore,
   clearError,
   clearCurrentAuction,
 } from "@/store/auctionSlice";
@@ -27,20 +31,47 @@ export function useAuctions() {
   const recentAuctions = useSelector(selectRecentAuctions);
   const currentAuction = useSelector(selectCurrentAuction);
   const isLoading = useSelector(selectAuctionsLoading);
+  const isLoadingMore = useSelector(selectAuctionsLoadingMore);
   const error = useSelector(selectAuctionsError);
+  const nextCursor = useSelector(selectAuctionsNextCursor);
+  const hasMore = useSelector(selectAuctionsHasMore);
 
   /**
-   * Fetch all auctions with optional filters
+   * Fetch all auctions with optional filters and pagination
    */
   const loadAuctions = async (filters?: {
     categoryID?: string;
     userId?: string;
+    limit?: number;
   }) => {
     try {
       await dispatch(fetchAuctions(filters)).unwrap();
       return true;
     } catch (error) {
       console.error("Failed to load auctions:", error);
+      return false;
+    }
+  };
+
+  /**
+   * Load more auctions for infinite scrolling
+   */
+  const loadMore = async (filters?: {
+    categoryID?: string;
+    userId?: string;
+    limit?: number;
+  }) => {
+    if (!nextCursor || !hasMore || isLoadingMore) {
+      return false;
+    }
+
+    try {
+      await dispatch(
+        loadMoreAuctions({ ...filters, cursor: nextCursor }),
+      ).unwrap();
+      return true;
+    } catch (error) {
+      console.error("Failed to load more auctions:", error);
       return false;
     }
   };
@@ -137,10 +168,14 @@ export function useAuctions() {
     recentAuctions,
     currentAuction,
     isLoading,
+    isLoadingMore,
     error,
+    nextCursor,
+    hasMore,
 
     // Actions
     loadAuctions,
+    loadMore,
     loadRecentAuctions,
     loadAuctionById,
     addAuction,

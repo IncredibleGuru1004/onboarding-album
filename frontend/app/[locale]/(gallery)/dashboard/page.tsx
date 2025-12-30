@@ -2,19 +2,24 @@
 
 import { Header } from "@/components/layout";
 import Sidebar from "@/components/layout/Sidebar";
-import SortAndPagination from "@/components/layout/SortAndPagination";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import Modal from "@/components/ui/Modal";
 import { Auction } from "@/types/auction";
 
-import { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  Suspense,
+  useCallback,
+} from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import AddAuctionModal from "@/components/ui/AddAuctionModal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-
-const itemsPerPageOptions = [6, 12, 18, 24, 30];
+import { useAuctions } from "@/hooks/useAuctions";
 
 /* ---------------------------------- */
 /* Page */
@@ -25,14 +30,21 @@ function GalleryPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasMounted = useRef(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // Get categories and auctions from Redux
+  // Get categories from Redux
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-  const allAuctions = useSelector(
-    (state: RootState) => state.auctions.auctions,
-  );
+
+  // Use auctions hook for infinite loading
+  const {
+    auctions: allAuctions,
+    isLoading,
+    isLoadingMore,
+    hasMore,
+    loadMore,
+  } = useAuctions();
 
   const sortOptions = [
     { value: "newest", label: t("newestFirst") },
@@ -44,8 +56,6 @@ function GalleryPageContent() {
   /* ---------- URL → STATE ---------- */
 
   const initialCategories = searchParams.get("categories")?.split(",") ?? [];
-
-  const initialPage = Number(searchParams.get("page")) || 1;
   const initialSortBy = searchParams.get("sortBy") ?? "newest";
 
   /* ---------- STATE ---------- */
@@ -53,11 +63,7 @@ function GalleryPageContent() {
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(initialCategories);
 
-  const [currentPage, setCurrentPage] = useState<number>(initialPage);
-
   const [sortBy, setSortBy] = useState<string>(initialSortBy);
-
-  const [itemsPerPage, setItemsPerPage] = useState<number>(12);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -104,16 +110,6 @@ function GalleryPageContent() {
     return items;
   }, [selectedCategories, sortBy, searchQuery, allAuctions]);
 
-  /* ---------- PAGINATION ---------- */
-
-  const totalItems = filteredAndSortedItems.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const paginatedItems = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredAndSortedItems.slice(start, start + itemsPerPage);
-  }, [filteredAndSortedItems, currentPage, itemsPerPage]);
-
   /* ---------- HANDLERS ---------- */
 
   const handleCategoryChange = (categoryID: string) => {
@@ -136,6 +132,38 @@ function GalleryPageContent() {
     }
   }, [allCategories]);
 
+  /* ---------- LOAD MORE HANDLER ---------- */
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoadingMore && hasMore) {
+      loadMore({ limit: 12 });
+    }
+  }, [isLoadingMore, hasMore, loadMore]);
+
+  /* ---------- INFINITE SCROLL ---------- */
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          handleLoadMore();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasMore, isLoadingMore, handleLoadMore]);
+
   const openAddAuctionModal = () => {
     setIsAddAuctionModalOpen(true);
   };
@@ -150,20 +178,13 @@ function GalleryPageContent() {
     setIsAddAuctionModalOpen(false);
   };
 
-  /* ---------- RESET PAGE ---------- */
+  /* ---------- SYNC STATE → URL ---------- */
 
   useEffect(() => {
     if (!hasMounted.current) {
       hasMounted.current = true;
       return;
     }
-    setCurrentPage(1);
-  }, [selectedCategories, sortBy]);
-
-  /* ---------- SYNC STATE → URL ---------- */
-
-  useEffect(() => {
-    if (!hasMounted.current) return;
 
     const params = new URLSearchParams();
 
@@ -171,13 +192,12 @@ function GalleryPageContent() {
       params.set("categories", selectedCategories.join(","));
     }
 
-    params.set("page", currentPage.toString());
     params.set("sortBy", sortBy);
 
     router.replace(`?${params.toString()}`, {
       scroll: false,
     });
-  }, [selectedCategories, currentPage, sortBy, router]);
+  }, [selectedCategories, sortBy, router]);
 
   /* ---------- MODAL ---------- */
 
@@ -204,28 +224,71 @@ function GalleryPageContent() {
         />
 
         <main className="ml-64 flex-1 p-8">
-          <SortAndPagination
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            itemsPerPage={itemsPerPage}
-            setItemsPerPage={setItemsPerPage}
-            currentPage={currentPage}
-            totalItems={totalItems}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-            sortOptions={sortOptions}
-            itemsPerPageOptions={itemsPerPageOptions}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          >
-            <GalleryGrid auctions={paginatedItems} openModal={openModal} />
+          {/* Sort and Search Controls */}
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder={t("searchPlaceholder") || "Search..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-            {paginatedItems.length === 0 && (
-              <p className="mt-12 text-center text-gray-500">
-                {t("noItemsFound")}
-              </p>
-            )}
-          </SortAndPagination>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">
+                {t("sortBy") || "Sort by"}:
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Gallery Grid */}
+          <GalleryGrid
+            auctions={filteredAndSortedItems}
+            openModal={openModal}
+          />
+
+          {filteredAndSortedItems.length === 0 && !isLoading && (
+            <p className="mt-12 text-center text-gray-500">
+              {t("noItemsFound")}
+            </p>
+          )}
+
+          {/* Infinite Scroll Sentinel */}
+          {hasMore && (
+            <div ref={loadMoreRef} className="mt-8 flex justify-center">
+              {isLoadingMore && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>{t("loading") || "Loading more..."}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Load More Button (fallback) */}
+          {hasMore && !isLoadingMore && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={handleLoadMore}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                {t("loadMore") || "Load More"}
+              </button>
+            </div>
+          )}
         </main>
       </div>
 

@@ -115,6 +115,7 @@
   "dashboard": {
     "showingItems": "Mostrando {count} elementos",
     "search": "Buscar...",
+    "searchPlaceholder": "Buscar subastas...",
     "itemsPerPage": "Elementos por página:",
     "previous": "Anterior",
     "next": "Siguiente",
@@ -122,7 +123,10 @@
     "newestFirst": "Más Reciente Primero",
     "oldestFirst": "Más Antiguo Primero",
     "titleAZ": "Título A-Z",
-    "titleZA": "Título Z-A"
+    "titleZA": "Título Z-A",
+    "sortBy": "Ordenar por",
+    "loading": "Cargando más subastas...",
+    "loadMore": "Cargar Más"
   },
   "common": {
     "loading": "Cargando...",

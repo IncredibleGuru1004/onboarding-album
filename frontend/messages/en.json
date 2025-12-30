@@ -115,6 +115,7 @@
   "dashboard": {
     "showingItems": "Showing {count} items",
     "search": "Search...",
+    "searchPlaceholder": "Search auctions...",
     "itemsPerPage": "Items per page:",
     "previous": "Previous",
     "next": "Next",
@@ -122,7 +123,10 @@
     "newestFirst": "Newest First",
     "oldestFirst": "Oldest First",
     "titleAZ": "Title A-Z",
-    "titleZA": "Title Z-A"
+    "titleZA": "Title Z-A",
+    "sortBy": "Sort by",
+    "loading": "Loading more auctions...",
+    "loadMore": "Load More"
   },
   "common": {
     "loading": "Loading...",

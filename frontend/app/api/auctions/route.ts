@@ -3,18 +3,22 @@ import { NextRequest, NextResponse } from "next/server";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
-// GET all auctions
+// GET all auctions with cursor-based pagination
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const categoryID = searchParams.get("categoryID");
     const userId = searchParams.get("userId");
+    const limit = searchParams.get("limit");
+    const cursor = searchParams.get("cursor");
 
     let url = `${BACKEND_URL}/auctions`;
     const params = new URLSearchParams();
 
     if (categoryID) params.append("categoryID", categoryID);
     if (userId) params.append("userId", userId);
+    if (limit) params.append("limit", limit);
+    if (cursor) params.append("cursor", cursor);
 
     if (params.toString()) {
       url += `?${params.toString()}`;

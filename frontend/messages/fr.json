@@ -115,6 +115,7 @@
   "dashboard": {
     "showingItems": "Affichage de {count} éléments",
     "search": "Rechercher...",
+    "searchPlaceholder": "Rechercher des enchères...",
     "itemsPerPage": "Éléments par page :",
     "previous": "Précédent",
     "next": "Suivant",
@@ -122,7 +123,10 @@
     "newestFirst": "Plus Récent en Premier",
     "oldestFirst": "Plus Ancien en Premier",
     "titleAZ": "Titre A-Z",
-    "titleZA": "Titre Z-A"
+    "titleZA": "Titre Z-A",
+    "sortBy": "Trier par",
+    "loading": "Chargement de plus d'enchères...",
+    "loadMore": "Charger Plus"
   },
   "common": {
     "loading": "Chargement...",
