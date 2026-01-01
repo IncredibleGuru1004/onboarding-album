@@ -160,7 +160,6 @@
   "addAuction": {
     "adding": "Añadiendo...",
     "auctionCreated": "¡Subasta creada con éxito!",
-    "imageUrlRequired": "La URL de la imagen es obligatoria",
     "addNewAuction": "Añadir Nueva Subasta",
     "fillDetails": "Completa los detalles a continuación para crear una nueva lista de subasta",
     "title": "Título",
