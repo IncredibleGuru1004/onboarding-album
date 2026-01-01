@@ -7,6 +7,7 @@ import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Auction } from "@/types/auction";
 import { useAuctions } from "@/hooks/useAuctions";
 import { Input } from "./Input";
+import ImageUpload from "./ImageUpload";
 import { toast } from "react-toastify";
 
 interface ModalProps {
@@ -28,6 +29,8 @@ const Modal = ({
   const { updateAuction, isLoading } = useAuctions();
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedAuction, setEditedAuction] = useState<Auction | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [imageFile, setImageFile] = useState<File | null>(null); // For future backend upload integration
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -35,6 +38,7 @@ const Modal = ({
       setEditedAuction({ ...auction });
       setIsEditMode(false);
       setError("");
+      setImageFile(null);
     }
   }, [isOpen, auction]);
 
@@ -81,6 +85,7 @@ const Modal = ({
     }
     setIsEditMode(false);
     setError("");
+    setImageFile(null);
   };
 
   const handleSave = async () => {
@@ -295,14 +300,23 @@ const Modal = ({
                     }
                   />
 
-                  <Input
-                    label={t("imageUrl")}
+                  <ImageUpload
+                    label={t("image") || "Image"}
                     value={editedAuction.image || ""}
-                    onChange={(e) =>
+                    onChange={(imageUrl) =>
                       setEditedAuction({
                         ...editedAuction,
-                        image: e.target.value,
+                        image: imageUrl,
                       })
+                    }
+                    onFileChange={(file) => {
+                      setImageFile(file);
+                    }}
+                    required
+                    error={
+                      error && !editedAuction.image
+                        ? t("imageUrlRequired") || "Image is required"
+                        : undefined
                     }
                   />
 

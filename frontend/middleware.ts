@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing, type Locale } from "./i18n/routing";
 
 // Check if user is authenticated by looking for auth token in cookies
+// Note: This only checks for token existence, not validity.
+// Client-side components will validate the token and redirect if invalid.
 function isAuthenticated(request: NextRequest): boolean {
   // Check for common authentication cookie names
   const token =
@@ -67,6 +69,7 @@ export function middleware(request: NextRequest) {
 
   // Check if user is authenticated
   // All non-public paths require authentication (including /dashboard, /profile, etc.)
+  // Note: This is a basic check for token existence. Client-side components will validate the token.
   const authenticated = isAuthenticated(request);
 
   // If not authenticated and trying to access a non-public path, redirect to login

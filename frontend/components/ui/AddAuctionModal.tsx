@@ -9,6 +9,7 @@ import { useAuctions } from "@/hooks/useAuctions";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "./Input";
 import { Button } from "./Button";
+import ImageUpload from "./ImageUpload";
 import { toast } from "react-toastify";
 
 interface AddAuctionModalProps {
@@ -34,6 +35,7 @@ const AddAuctionModal = ({
   const [currentBid, setCurrentBid] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
   const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState("");
 
   // Store previous form state
@@ -44,6 +46,7 @@ const AddAuctionModal = ({
     currentBid: "",
     timeLeft: "",
     image: "",
+    imageFile: null as File | null,
   });
 
   // Save state continuously while modal is open (for future use if needed)
@@ -57,9 +60,10 @@ const AddAuctionModal = ({
         currentBid,
         timeLeft,
         image,
+        imageFile,
       };
     }
-  }, [isOpen, title, categoryID, year, currentBid, timeLeft, image]);
+  }, [isOpen, title, categoryID, year, currentBid, timeLeft, image, imageFile]);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -75,6 +79,7 @@ const AddAuctionModal = ({
         currentBid,
         timeLeft,
         image,
+        imageFile,
       };
       // Clear error when modal closes
       setError("");
@@ -122,6 +127,7 @@ const AddAuctionModal = ({
     setCurrentBid("");
     setTimeLeft("");
     setImage("");
+    setImageFile(null);
     setError("");
   };
 
@@ -161,6 +167,7 @@ const AddAuctionModal = ({
         currentBid: "",
         timeLeft: "",
         image: "",
+        imageFile: null,
       };
       onClose();
     } catch (error) {
@@ -290,16 +297,22 @@ const AddAuctionModal = ({
               />
             </div>
 
-            <Input
-              label={t("imageUrl")}
-              placeholder={t("imageUrlPlaceholder")}
+            <ImageUpload
+              label={t("image") || "Image"}
               value={image}
-              onChange={(e) => {
-                setImage(e.target.value);
+              onChange={(imageUrl) => {
+                setImage(imageUrl);
                 if (error) setError("");
               }}
+              onFileChange={(file) => {
+                setImageFile(file);
+              }}
               required
-              error={error && !image ? t("imageUrlRequired") : undefined}
+              error={
+                error && !image
+                  ? t("imageUrlRequired") || "Image is required"
+                  : undefined
+              }
             />
 
             <Input

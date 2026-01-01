@@ -20,6 +20,7 @@ import AddAuctionModal from "@/components/ui/AddAuctionModal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useAuctions } from "@/hooks/useAuctions";
+import { useAuth } from "@/hooks/useAuth";
 
 /* ---------------------------------- */
 /* Page */
@@ -31,6 +32,7 @@ function GalleryPageContent() {
   const searchParams = useSearchParams();
   const hasMounted = useRef(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
 
   // Get categories from Redux
   const allCategories = useSelector(
@@ -211,7 +213,35 @@ function GalleryPageContent() {
     setSelectedItem(null);
   };
 
+  /* ---------- AUTHENTICATION CHECK ---------- */
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated || !user) {
+        // Redirect to login with current path as redirect parameter
+        const currentPath = window.location.pathname + window.location.search;
+        router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+      }
+    }
+  }, [authLoading, isAuthenticated, user, router]);
+
   /* ---------- RENDER ---------- */
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render content if not authenticated (redirect will happen)
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   return (
     <>
