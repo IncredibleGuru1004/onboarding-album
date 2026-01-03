@@ -9,7 +9,8 @@ export interface User {
 export interface Auction {
   id: number;
   title: string;
-  image: string;
+  image: string; // Wasabi key or legacy URL
+  imageUrl?: string; // Presigned URL for viewing (from backend)
   categoryID?: string | null;
   userId?: string | null;
   createdAt: string;

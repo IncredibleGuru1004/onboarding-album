@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import {
   PhotoIcon,
   XMarkIcon,
@@ -8,9 +8,9 @@ import {
 } from "@heroicons/react/24/outline";
 
 interface ImageUploadProps {
-  value?: string; // Image URL or data URL
-  onChange: (imageUrl: string) => void;
-  onFileChange?: (file: File | null) => void; // For future backend upload
+  value?: string; // Wasabi key or image URL (for preview)
+  onChange: (wasabiKey: string) => void; // Returns Wasabi key after upload
+  onFileChange?: (file: File | null) => void; // For future use
   label?: string;
   required?: boolean;
   error?: string;
@@ -33,6 +33,31 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const [previewError, setPreviewError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>(""); // For displaying preview
+
+  // Fetch presigned URL when value is a Wasabi key
+  useEffect(() => {
+    if (value && value.startsWith("images/")) {
+      // Fetch presigned URL for Wasabi key
+      fetch(`/api/storage/view-url?key=${encodeURIComponent(value)}`)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          throw new Error("Failed to get view URL");
+        })
+        .then((data) => {
+          setPreviewUrl(data.viewUrl);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch presigned URL:", error);
+          setPreviewUrl(""); // Clear on error
+        });
+    } else {
+      // If value is not a Wasabi key (e.g., empty or legacy URL), clear previewUrl
+      setPreviewUrl("");
+    }
+  }, [value]);
 
   const validateFile = (file: File): string | null => {
     // Check file type
@@ -62,22 +87,48 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       setSelectedFile(file);
 
       try {
-        // Convert file to data URL for preview and temporary storage
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const dataUrl = reader.result as string;
-          onChange(dataUrl);
-          onFileChange?.(file);
-          setIsLoading(false);
-        };
-        reader.onerror = () => {
-          setPreviewError("Failed to read file. Please try again.");
-          setIsLoading(false);
-        };
-        reader.readAsDataURL(file);
-      } catch {
-        setPreviewError("An error occurred while processing the image.");
+        // Upload file through backend proxy (avoids CORS issues)
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadResponse = await fetch("/api/storage/upload", {
+          method: "POST",
+          body: formData,
+          // Don't set Content-Type header, let browser set it with boundary
+        });
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json().catch(() => ({}));
+          throw new Error(errorData.message || "Failed to upload image");
+        }
+
+        const { key, viewUrl } = await uploadResponse.json();
+
+        // Step 4: Update parent with Wasabi key and show preview
+        onChange(key);
+        onFileChange?.(file);
+
+        // Store preview URL for display
+        if (viewUrl) {
+          setPreviewUrl(viewUrl);
+        } else {
+          // Fallback: use data URL for preview if presigned URL fails
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setPreviewUrl(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
+
         setIsLoading(false);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "An error occurred while uploading the image.";
+        setPreviewError(errorMessage);
+        setIsLoading(false);
+        setSelectedFile(null);
       }
     },
     [onChange, onFileChange, maxSizeMB, acceptedFormats],
@@ -119,6 +170,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleRemove = () => {
     setSelectedFile(null);
+    setPreviewUrl("");
     onChange("");
     onFileChange?.(null);
     setPreviewError("");
@@ -126,6 +178,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       fileInputRef.current.value = "";
     }
   };
+
+  // Determine what to display:
+  // - If value is a Wasabi key (starts with "images/"), use previewUrl
+  // - Otherwise, use value directly (for legacy URLs or data URLs)
+  // - Only display if we have a valid URL
+  const displayUrl =
+    value && value.startsWith("images/")
+      ? previewUrl || ""
+      : value && value.trim() !== ""
+        ? value
+        : "";
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -149,16 +212,36 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         aria-label="Upload image"
       />
 
-      {value ? (
+      {displayUrl ? (
         // Image Preview Mode
         <div className="relative group">
           <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-50">
             <img
-              src={value}
+              src={displayUrl}
               alt="Preview"
               className="w-full h-full object-cover"
-              onError={() => {
-                setPreviewError("Failed to load image. Please try again.");
+              loading="eager"
+              onError={async () => {
+                // If image fails to load and value is a Wasabi key, try to get presigned URL
+                if (value && value.startsWith("images/")) {
+                  try {
+                    const viewUrlResponse = await fetch(
+                      `/api/storage/view-url?key=${encodeURIComponent(value)}`,
+                    );
+                    if (viewUrlResponse.ok) {
+                      const { viewUrl } = await viewUrlResponse.json();
+                      setPreviewUrl(viewUrl);
+                    } else {
+                      setPreviewError(
+                        "Failed to load image. Please try again.",
+                      );
+                    }
+                  } catch {
+                    setPreviewError("Failed to load image. Please try again.");
+                  }
+                } else {
+                  setPreviewError("Failed to load image. Please try again.");
+                }
               }}
             />
             {isLoading && (
