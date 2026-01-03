@@ -62,15 +62,26 @@ export function middleware(request: NextRequest) {
     "/verify-email",
   ];
 
+  // Check if user is authenticated
+  const authenticated = isAuthenticated(request);
+
+  // If authenticated and trying to access login/register, redirect to dashboard
+  if (
+    authenticated &&
+    (pathnameWithoutLocale === "/login" ||
+      pathnameWithoutLocale === "/register")
+  ) {
+    const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+    return NextResponse.redirect(dashboardUrl);
+  }
+
   // Allow access to public paths
   if (publicPaths.includes(pathnameWithoutLocale)) {
     return response;
   }
 
-  // Check if user is authenticated
   // All non-public paths require authentication (including /dashboard, /profile, etc.)
   // Note: This is a basic check for token existence. Client-side components will validate the token.
-  const authenticated = isAuthenticated(request);
 
   // If not authenticated and trying to access a non-public path, redirect to login
   // This ensures paths like /dashboard, /profile, etc. require authentication

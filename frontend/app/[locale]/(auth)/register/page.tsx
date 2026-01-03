@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { cookies } from "next/headers";
 
 export async function generateMetadata() {
   const t = await getTranslations("register");
@@ -11,8 +12,26 @@ export async function generateMetadata() {
   };
 }
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("register");
+
+  // Check if user is already authenticated
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get("token")?.value ||
+    cookieStore.get("accessToken")?.value ||
+    cookieStore.get("authToken")?.value ||
+    cookieStore.get("jwt")?.value;
+
+  // If authenticated, redirect to dashboard
+  if (token) {
+    redirect(`/${locale}/dashboard`);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
