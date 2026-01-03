@@ -2,15 +2,19 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class AuctionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storageService: StorageService,
+  ) {}
 
   async create(createAuctionDto: CreateAuctionDto) {
     const data: Record<string, unknown> = {
       title: createAuctionDto.title,
-      image: createAuctionDto.image,
+      image: createAuctionDto.image, // This will be the Wasabi key
     };
 
     if (createAuctionDto.categoryID !== undefined) {
@@ -21,7 +25,7 @@ export class AuctionService {
       data.userId = createAuctionDto.userId;
     }
 
-    return this.prisma.auction.create({
+    const auction = await this.prisma.auction.create({
       data: data as any,
       include: {
         category: true,
@@ -34,6 +38,9 @@ export class AuctionService {
         },
       },
     });
+
+    // Enrich with presigned URL if it's a Wasabi key
+    return this.enrichWithPresignedUrl(auction);
   }
 
   async findAll(
@@ -85,15 +92,20 @@ export class AuctionService {
     const items = hasMore ? auctions.slice(0, take) : auctions;
     const nextCursor = hasMore ? items[items.length - 1].id : null;
 
+    // Enrich items with presigned URLs
+    const enrichedItems = await Promise.all(
+      items.map((auction) => this.enrichWithPresignedUrl(auction)),
+    );
+
     return {
-      items,
+      items: enrichedItems,
       nextCursor,
       hasMore,
     };
   }
 
   async findRecent() {
-    return this.prisma.auction.findMany({
+    const auctions = await this.prisma.auction.findMany({
       take: 20,
       include: {
         category: true,
@@ -109,6 +121,11 @@ export class AuctionService {
         createdAt: 'desc',
       },
     });
+
+    // Enrich with presigned URLs
+    return Promise.all(
+      auctions.map((auction) => this.enrichWithPresignedUrl(auction)),
+    );
   }
 
   async findOne(id: number) {
@@ -130,13 +147,14 @@ export class AuctionService {
       throw new NotFoundException(`Auction with ID ${id} not found`);
     }
 
-    return auction;
+    // Enrich with presigned URL
+    return this.enrichWithPresignedUrl(auction);
   }
 
   async update(id: number, updateAuctionDto: UpdateAuctionDto) {
     await this.findOne(id); // Check if auction exists
 
-    return this.prisma.auction.update({
+    const auction = await this.prisma.auction.update({
       where: { id },
       data: updateAuctionDto,
       include: {
@@ -150,6 +168,9 @@ export class AuctionService {
         },
       },
     });
+
+    // Enrich with presigned URL
+    return this.enrichWithPresignedUrl(auction);
   }
 
   async remove(id: number) {
@@ -158,5 +179,39 @@ export class AuctionService {
     return this.prisma.auction.delete({
       where: { id },
     });
+  }
+
+  /**
+   * Enrich auction with presigned URL if image is a Wasabi key
+   * @param auction - Auction object from database
+   * @returns Auction with imageUrl field (presigned URL or original URL)
+   */
+  private async enrichWithPresignedUrl(auction: any): Promise<any> {
+    // Check if image is a Wasabi key (starts with "images/")
+    if (auction.image && auction.image.startsWith('images/')) {
+      try {
+        const presignedUrl = await this.storageService.generateViewPresignedUrl(
+          auction.image,
+        );
+        return {
+          ...auction,
+          imageUrl: presignedUrl, // Add presigned URL
+          image: auction.image, // Keep the key for reference
+        };
+      } catch (error) {
+        // If presigned URL generation fails, return original
+        console.error('Failed to generate presigned URL:', error);
+        return {
+          ...auction,
+          imageUrl: auction.image,
+        };
+      }
+    }
+
+    // For backward compatibility with old URLs
+    return {
+      ...auction,
+      imageUrl: auction.image,
+    };
   }
 }
