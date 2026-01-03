@@ -230,6 +230,7 @@
   "myAuctions": {
     "title": "Mes Enchères",
     "subtitle": "Gérez vos annonces d'enchères",
+    "addNewAuction": "Ajouter une Nouvelle Enchère",
     "backToDashboard": "Retour au Tableau de Bord",
     "search": "Rechercher des enchères...",
     "sortBy": "Trier par",
@@ -241,7 +242,7 @@
     "auctions": "enchères",
     "loading": "Chargement de vos enchères...",
     "noAuctions": "Aucune enchère pour le moment",
-    "noAuctionsDesc": "Vous n'avez pas encore créé d'enchères. Allez au tableau de bord pour créer votre première enchère !",
+    "noAuctionsDesc": "Vous n'avez pas encore créé d'enchères. Cliquez sur 'Ajouter une Nouvelle Enchère' pour créer votre première enchère !",
     "delete": "Supprimer l'enchère",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette enchère ? Cette action ne peut pas être annulée.",
     "confirmDeleteTitle": "Supprimer l'Enchère",

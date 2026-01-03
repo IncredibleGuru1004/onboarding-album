@@ -3,6 +3,7 @@
 import { Header } from "@/components/layout";
 import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "@/components/ui/Modal";
+import AddAuctionModal from "@/components/ui/AddAuctionModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Auction } from "@/types/auction";
 import { useState, useMemo } from "react";
@@ -13,18 +14,23 @@ import { RootState } from "@/store/store";
 import { useAuctions } from "@/hooks/useAuctions";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
-import { TrashIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import {
+  TrashIcon,
+  ArrowLeftIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 
 export default function MyAuctionsPage() {
   const t = useTranslations("myAuctions");
   const router = useRouter();
   const { user } = useAuth();
-  const { auctions, deleteAuction, isLoading } = useAuctions();
+  const { auctions, deleteAuction, isLoading, loadAuctions } = useAuctions();
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Auction | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("newest");
@@ -113,6 +119,26 @@ export default function MyAuctionsPage() {
     setAuctionToDelete(null);
   };
 
+  const handleAddAuction = async (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _newAuction: Auction,
+  ) => {
+    // Refresh auctions list to include the new auction
+    // The auction is already added to Redux by AddAuctionModal, but we refresh to ensure consistency
+    if (user?.id) {
+      await loadAuctions({ userId: user.id });
+    }
+    setIsAddModalOpen(false);
+  };
+
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
   const sortOptions = [
     { value: "newest", label: t("newestFirst") },
     { value: "oldest", label: t("oldestFirst") },
@@ -136,11 +162,21 @@ export default function MyAuctionsPage() {
           </button>
 
           {/* Header Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t("title")}
-            </h1>
-            <p className="text-gray-600">{t("subtitle")}</p>
+          <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {t("title")}
+              </h1>
+              <p className="text-gray-600">{t("subtitle")}</p>
+            </div>
+            {/* Add New Auction Button */}
+            <button
+              onClick={openAddModal}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
+            >
+              <PlusIcon className="w-5 h-5" />
+              <span>{t("addNewAuction") || "Add New Auction"}</span>
+            </button>
           </div>
 
           {/* Controls Section */}
@@ -250,6 +286,12 @@ export default function MyAuctionsPage() {
         auction={selectedItem}
         categories={allCategories}
         onUpdate={handleUpdateAuction}
+      />
+
+      <AddAuctionModal
+        isOpen={isAddModalOpen}
+        onClose={closeAddModal}
+        onAddAuction={handleAddAuction}
       />
 
       <ConfirmDialog

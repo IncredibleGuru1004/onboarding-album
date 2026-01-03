@@ -244,6 +244,7 @@
   "myAuctions": {
     "title": "My Auctions",
     "subtitle": "Manage your auction listings",
+    "addNewAuction": "Add New Auction",
     "backToDashboard": "Back to Dashboard",
     "search": "Search auctions...",
     "sortBy": "Sort by",
@@ -255,7 +256,7 @@
     "auctions": "auctions",
     "loading": "Loading your auctions...",
     "noAuctions": "No auctions yet",
-    "noAuctionsDesc": "You haven't created any auctions yet. Go to the dashboard to create your first auction!",
+    "noAuctionsDesc": "You haven't created any auctions yet. Click 'Add New Auction' to create your first auction!",
     "delete": "Delete auction",
     "confirmDelete": "Are you sure you want to delete this auction? This action cannot be undone.",
     "confirmDeleteTitle": "Delete Auction",

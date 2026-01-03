@@ -31,6 +31,13 @@ const typescriptConfig = defineConfig([
     rules: {
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/triple-slash-reference": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   {

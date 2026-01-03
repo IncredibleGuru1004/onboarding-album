@@ -229,6 +229,7 @@
   "myAuctions": {
     "title": "Mis Subastas",
     "subtitle": "Gestiona tus anuncios de subastas",
+    "addNewAuction": "Agregar Nueva Subasta",
     "backToDashboard": "Volver al Panel",
     "search": "Buscar subastas...",
     "sortBy": "Ordenar por",
@@ -240,7 +241,7 @@
     "auctions": "subastas",
     "loading": "Cargando tus subastas...",
     "noAuctions": "Aún no hay subastas",
-    "noAuctionsDesc": "Aún no has creado ninguna subasta. ¡Ve al panel de control para crear tu primera subasta!",
+    "noAuctionsDesc": "Aún no has creado ninguna subasta. ¡Haz clic en 'Agregar Nueva Subasta' para crear tu primera subasta!",
     "delete": "Eliminar subasta",
     "confirmDelete": "¿Estás seguro de que quieres eliminar esta subasta? Esta acción no se puede deshacer.",
     "confirmDeleteTitle": "Eliminar Subasta",
