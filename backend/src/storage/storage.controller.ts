@@ -7,6 +7,8 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,7 +16,10 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from './storage.service';
 import { GenerateUploadUrlDto } from './dto/generate-upload-url.dto';
 // import { GenerateViewUrlDto } from './dto/generate-view-url.dto';
@@ -102,6 +107,65 @@ export class StorageController {
     );
 
     return {
+      viewUrl,
+    };
+  }
+
+  @Post('upload')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: 'Upload an image directly through the backend (avoids CORS)',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Image uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        key: {
+          type: 'string',
+          example: 'images/123e4567-e89b-12d3-a456-426614174000.jpg',
+        },
+        viewUrl: {
+          type: 'string',
+          example:
+            'https://s3.wasabisys.com/bucket/images/...?X-Amz-Algorithm=...',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @HttpCode(HttpStatus.CREATED)
+  async uploadImage(@UploadedFile() file: any) {
+    if (!file) {
+      throw new Error('No file provided');
+    }
+
+    const key = await this.storageService.uploadImage(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+    );
+
+    // Generate presigned URL for viewing
+    const viewUrl = await this.storageService.generateViewPresignedUrl(key);
+
+    return {
+      key,
       viewUrl,
     };
   }

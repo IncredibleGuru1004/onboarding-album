@@ -83,6 +83,34 @@ export class StorageService {
   }
 
   /**
+   * Upload an image directly to Wasabi (for backend proxy uploads)
+   * @param fileBuffer - File buffer
+   * @param fileName - Original file name
+   * @param contentType - MIME type of the file
+   * @returns The key of the uploaded file
+   */
+  async uploadImage(
+    fileBuffer: Buffer,
+    fileName: string,
+    contentType: string,
+  ): Promise<string> {
+    // Generate a unique key for the file
+    const fileExtension = fileName.split('.').pop() || 'jpg';
+    const key = `images/${randomUUID()}.${fileExtension}`;
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: fileBuffer,
+      ContentType: contentType,
+    });
+
+    await this.s3Client.send(command);
+
+    return key;
+  }
+
+  /**
    * Delete an image from Wasabi storage
    * @param key - The S3 key to delete
    */
