@@ -9,118 +9,7 @@ import { SectionTitle } from "../layout";
 import { Auction } from "@/types/auction";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-
-// Mock auction data
-const mockAuctions: Auction[] = [
-  {
-    id: 1,
-    title: "Modern Abstract Painting #42",
-    currentBid: "$3,200",
-    timeLeft: "2d 14h",
-    image: "/images/auctions/abstract1.png",
-    categoryID: "abstract",
-    bidsCount: 32,
-    year: "2023",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    title: "Vintage Rolex Submariner 1968",
-    currentBid: "$12,500",
-    timeLeft: "5h 32m",
-    image: "/images/auctions/rolex.png",
-    categoryID: "watches",
-    bidsCount: 45,
-    year: "1968",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    title: 'Bronze Sculpture "Eternal Flow"',
-    currentBid: "$18,900",
-    timeLeft: "1d 8h",
-    image: "/images/auctions/sculpture.png",
-    categoryID: "sculpture",
-    bidsCount: 28,
-    year: "2022",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    title: "Modern Abstract Painting #42",
-    currentBid: "$3,200",
-    timeLeft: "2d 14h",
-    image: "/images/auctions/abstract1.png",
-    categoryID: "abstract",
-    bidsCount: 32,
-    year: "2023",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 5,
-    title: "Vintage Rolex Submariner 1968",
-    currentBid: "$12,500",
-    timeLeft: "5h 32m",
-    image: "/images/auctions/rolex.png",
-    categoryID: "watches",
-    bidsCount: 45,
-    year: "1968",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 6,
-    title: 'Bronze Sculpture "Eternal Flow"',
-    currentBid: "$18,900",
-    timeLeft: "1d 8h",
-    image: "/images/auctions/sculpture.png",
-    categoryID: "sculpture",
-    bidsCount: 28,
-    year: "2022",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 7,
-    title: "Modern Abstract Painting #42",
-    currentBid: "$3,200",
-    timeLeft: "2d 14h",
-    image: "/images/auctions/abstract1.png",
-    categoryID: "abstract",
-    bidsCount: 32,
-    year: "2023",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 8,
-    title: "Vintage Rolex Submariner 1968",
-    currentBid: "$12,500",
-    timeLeft: "5h 32m",
-    image: "/images/auctions/rolex.png",
-    categoryID: "watches",
-    bidsCount: 45,
-    year: "1968",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 9,
-    title: 'Bronze Sculpture "Eternal Flow"',
-    currentBid: "$18,900",
-    timeLeft: "1d 8h",
-    image: "/images/auctions/sculpture.png",
-    categoryID: "sculpture",
-    bidsCount: 28,
-    year: "2022",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+import { useAuctions } from "@/hooks/useAuctions";
 
 export default function GallerySection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -129,6 +18,14 @@ export default function GallerySection() {
   const categories = useSelector(
     (state: RootState) => state.categories.categories,
   );
+  const { recentAuctions, isLoading, loadRecentAuctions } = useAuctions();
+
+  // Fetch recent auctions on component mount
+  useEffect(() => {
+    if (recentAuctions.length === 0 && !isLoading) {
+      loadRecentAuctions();
+    }
+  }, [recentAuctions.length, isLoading, loadRecentAuctions]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -220,23 +117,38 @@ export default function GallerySection() {
           className="overflow-x-auto py-4  hide-scrollbar cursor-grab select-none"
         >
           <div className="flex gap-6">
-            {mockAuctions.map((auction) => {
-              const category = auction.categoryID
-                ? categories.find((c) => c.id === auction.categoryID)
-                : undefined;
+            {isLoading && recentAuctions.length === 0 ? (
+              // Loading state
+              <div className="flex items-center justify-center w-full py-8">
+                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : recentAuctions.length === 0 ? (
+              // Empty state
+              <div className="flex items-center justify-center w-full py-8">
+                <p className="text-gray-500">
+                  {t("noRecentAuctions") || "No recent auctions available"}
+                </p>
+              </div>
+            ) : (
+              // Render auctions
+              recentAuctions.map((auction) => {
+                const category = auction.categoryID
+                  ? categories.find((c) => c.id === auction.categoryID)
+                  : undefined;
 
-              return (
-                <div key={auction.id} className="flex-shrink-0">
-                  <GalleryCard
-                    auction={auction}
-                    onClick={() => {
-                      openModal(auction);
-                    }}
-                    categoryName={category?.title}
-                  />
-                </div>
-              );
-            })}
+                return (
+                  <div key={auction.id} className="flex-shrink-0">
+                    <GalleryCard
+                      auction={auction}
+                      onClick={() => {
+                        openModal(auction);
+                      }}
+                      categoryName={category?.title}
+                    />
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </section>

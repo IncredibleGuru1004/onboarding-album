@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { Link, redirect } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
+import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { cookies } from "next/headers";
