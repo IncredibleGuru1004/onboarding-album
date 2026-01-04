@@ -416,6 +416,7 @@ const auctionSlice = createSlice({
       .addCase(createAuction.fulfilled, (state, action) => {
         state.isLoading = false;
         state.auctions.unshift(action.payload);
+        state.myAuctions.unshift(action.payload);
         state.recentAuctions.unshift(action.payload);
         // Close modal on success
         state.modal.isOpen = false;
