@@ -11,6 +11,11 @@ interface AuctionState {
   error: string | null;
   nextCursor: number | null;
   hasMore: boolean;
+  modal: {
+    isOpen: boolean;
+    mode: "add" | "edit" | null;
+    editingAuction: Auction | null;
+  };
 }
 
 const initialState: AuctionState = {
@@ -22,6 +27,11 @@ const initialState: AuctionState = {
   error: null,
   nextCursor: null,
   hasMore: true,
+  modal: {
+    isOpen: false,
+    mode: null,
+    editingAuction: null,
+  },
 };
 
 // Async thunks for API calls
@@ -273,6 +283,20 @@ const auctionSlice = createSlice({
     clearCurrentAuction: (state) => {
       state.currentAuction = null;
     },
+    // Modal actions
+    openAuctionModal: (
+      state,
+      action: PayloadAction<{ mode: "add" | "edit"; auction?: Auction }>,
+    ) => {
+      state.modal.isOpen = true;
+      state.modal.mode = action.payload.mode;
+      state.modal.editingAuction = action.payload.auction || null;
+    },
+    closeAuctionModal: (state) => {
+      state.modal.isOpen = false;
+      state.modal.mode = null;
+      state.modal.editingAuction = null;
+    },
   },
   extraReducers: (builder) => {
     // Fetch all auctions
@@ -349,6 +373,10 @@ const auctionSlice = createSlice({
         state.isLoading = false;
         state.auctions.unshift(action.payload);
         state.recentAuctions.unshift(action.payload);
+        // Close modal on success
+        state.modal.isOpen = false;
+        state.modal.mode = null;
+        state.modal.editingAuction = null;
       })
       .addCase(createAuction.rejected, (state, action) => {
         state.isLoading = false;
@@ -378,6 +406,10 @@ const auctionSlice = createSlice({
         if (state.currentAuction?.id === action.payload.id) {
           state.currentAuction = action.payload;
         }
+        // Close modal on success
+        state.modal.isOpen = false;
+        state.modal.mode = null;
+        state.modal.editingAuction = null;
       })
       .addCase(updateAuctionThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -407,8 +439,13 @@ const auctionSlice = createSlice({
   },
 });
 
-export const { setAuctions, clearError, clearCurrentAuction } =
-  auctionSlice.actions;
+export const {
+  setAuctions,
+  clearError,
+  clearCurrentAuction,
+  openAuctionModal,
+  closeAuctionModal,
+} = auctionSlice.actions;
 
 // Selectors
 export const selectAuctions = (state: RootState) => state.auctions.auctions;
@@ -425,5 +462,6 @@ export const selectAuctionsNextCursor = (state: RootState) =>
   state.auctions.nextCursor;
 export const selectAuctionsHasMore = (state: RootState) =>
   state.auctions.hasMore;
+export const selectAuctionModal = (state: RootState) => state.auctions.modal;
 
 export default auctionSlice.reducer;

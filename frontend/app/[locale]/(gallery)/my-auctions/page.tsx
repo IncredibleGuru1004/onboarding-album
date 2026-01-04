@@ -3,17 +3,16 @@
 import { Header } from "@/components/layout";
 import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "@/components/ui/Modal";
-import AddAuctionModal from "@/components/ui/AddAuctionModal";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { openConfirmDialog } from "@/store/uiSlice";
 import { Auction } from "@/types/auction";
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { useAuctions } from "@/hooks/useAuctions";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "react-toastify";
+import { openAuctionModal } from "@/store/auctionSlice";
 import {
   TrashIcon,
   ArrowLeftIcon,
@@ -23,20 +22,17 @@ import {
 export default function MyAuctionsPage() {
   const t = useTranslations("myAuctions");
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuth();
-  const { auctions, deleteAuction, isLoading, loadAuctions } = useAuctions();
+  const { auctions, isLoading } = useAuctions();
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Auction | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("newest");
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [auctionToDelete, setAuctionToDelete] = useState<number | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   // Filter auctions by current user
   const myAuctions = useMemo(() => {
@@ -91,52 +87,22 @@ export default function MyAuctionsPage() {
   };
 
   const handleDeleteAuction = (auctionId: number) => {
-    setAuctionToDelete(auctionId);
-    setIsConfirmOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (auctionToDelete === null) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteAuction(auctionToDelete);
-      toast.success(t("auctionDeleted"));
-      if (selectedItem?.id === auctionToDelete) {
-        closeModal();
-      }
-      setIsConfirmOpen(false);
-      setAuctionToDelete(null);
-    } catch {
-      toast.error(t("deleteFailed"));
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const cancelDelete = () => {
-    setIsConfirmOpen(false);
-    setAuctionToDelete(null);
-  };
-
-  const handleAddAuction = async (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _newAuction: Auction,
-  ) => {
-    // Refresh auctions list to include the new auction
-    // The auction is already added to Redux by AddAuctionModal, but we refresh to ensure consistency
-    if (user?.id) {
-      await loadAuctions({ userId: user.id });
-    }
-    setIsAddModalOpen(false);
+    dispatch(
+      openConfirmDialog({
+        title: t("confirmDeleteTitle") || "Delete Auction",
+        message:
+          t("confirmDeleteMessage") ||
+          "Are you sure you want to delete this auction? This action cannot be undone.",
+        confirmText: t("confirmDeleteButton") || "Delete",
+        cancelText: t("cancel") || "Cancel",
+        type: "auction",
+        id: auctionId,
+      }),
+    );
   };
 
   const openAddModal = () => {
-    setIsAddModalOpen(true);
-  };
-
-  const closeAddModal = () => {
-    setIsAddModalOpen(false);
+    dispatch(openAuctionModal({ mode: "add" }));
   };
 
   const sortOptions = [
@@ -286,23 +252,6 @@ export default function MyAuctionsPage() {
         auction={selectedItem}
         categories={allCategories}
         onUpdate={handleUpdateAuction}
-      />
-
-      <AddAuctionModal
-        isOpen={isAddModalOpen}
-        onClose={closeAddModal}
-        onAddAuction={handleAddAuction}
-      />
-
-      <ConfirmDialog
-        isOpen={isConfirmOpen}
-        onClose={cancelDelete}
-        onConfirm={confirmDelete}
-        title={t("confirmDeleteTitle")}
-        message={t("confirmDeleteMessage")}
-        confirmText={t("confirmDeleteButton")}
-        cancelText={t("cancel")}
-        isLoading={isDeleting}
       />
     </>
   );

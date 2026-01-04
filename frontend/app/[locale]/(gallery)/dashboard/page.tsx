@@ -16,11 +16,11 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import AddAuctionModal from "@/components/ui/AddAuctionModal";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { useAuctions } from "@/hooks/useAuctions";
 import { useAuth } from "@/hooks/useAuth";
+import { openAuctionModal } from "@/store/auctionSlice";
 
 /* ---------------------------------- */
 /* Page */
@@ -30,6 +30,7 @@ function GalleryPageContent() {
   const t = useTranslations("dashboard");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
   const hasMounted = useRef(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { user, loading: authLoading, isAuthenticated } = useAuth();
@@ -72,8 +73,6 @@ function GalleryPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedItem, setSelectedItem] = useState<Auction | null>(null);
-
-  const [isAddAuctionModalOpen, setIsAddAuctionModalOpen] = useState(false);
 
   /* ---------- FILTER + SORT ---------- */
 
@@ -167,17 +166,7 @@ function GalleryPageContent() {
   }, [hasMore, isLoadingMore, handleLoadMore]);
 
   const openAddAuctionModal = () => {
-    setIsAddAuctionModalOpen(true);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleAddAuction = (auction: Auction) => {
-    // Auction is already added to Redux by the modal
-    // Just close the modal
-  };
-
-  const closeAddAuctionModal = () => {
-    setIsAddAuctionModalOpen(false);
+    dispatch(openAuctionModal({ mode: "add" }));
   };
 
   /* ---------- SYNC STATE → URL ---------- */
@@ -327,11 +316,6 @@ function GalleryPageContent() {
         onClose={closeModal}
         auction={selectedItem}
         categories={allCategories}
-      />
-      <AddAuctionModal
-        isOpen={isAddAuctionModalOpen}
-        onClose={closeAddAuctionModal}
-        onAddAuction={handleAddAuction}
       />
 
       <button

@@ -184,7 +184,12 @@
     "fillRequiredFields": "Por favor, completa todos los campos obligatorios.",
     "cancel": "Cancelar",
     "addAuction": "Añadir Subasta",
-    "closeModal": "Cerrar ventana"
+    "closeModal": "Cerrar ventana",
+    "editAuction": "Editar Subasta",
+    "updateDetails": "Actualiza los detalles de la subasta a continuación",
+    "saving": "Guardando...",
+    "saveChanges": "Guardar cambios",
+    "auctionUpdated": "¡Subasta actualizada con éxito!"
   },
   "galleryCard": {
     "bidsSoFar": "ofertas hasta ahora",
@@ -206,9 +211,19 @@
     "categoryUpdated": "¡Categoría actualizada con éxito!",
     "categoryDeleted": "¡Categoría eliminada con éxito!",
     "save": "Guardar",
+    "saving": "Guardando...",
     "cancel": "Cancelar",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "editCategory": "Editar Categoría",
+    "delete": "Eliminar",
+    "categoryImage": "Imagen de Categoría",
+    "categoryName": "Nombre de Categoría",
+    "addCategoryDesc": "Completa los detalles a continuación para crear una nueva categoría",
+    "editCategoryDesc": "Actualiza los detalles de la categoría a continuación",
+    "closeModal": "Cerrar ventana",
+    "confirmDeleteTitle": "Eliminar Categoría",
+    "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar esta categoría? Esta acción no se puede deshacer.",
+    "confirmDeleteButton": "Eliminar"
   },
   "auth": {
     "logout": "Cerrar Sesión",

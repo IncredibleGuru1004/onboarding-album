@@ -3,6 +3,7 @@ import appReducer from "@/store/counterSlice";
 import categoryReducer from "@/store/categorySlice";
 import authReducer from "@/store/authSlice";
 import auctionReducer from "@/store/auctionSlice";
+import uiReducer from "@/store/uiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     categories: categoryReducer,
     auth: authReducer,
     auctions: auctionReducer,
+    ui: uiReducer,
   },
 });
 

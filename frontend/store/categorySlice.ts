@@ -11,6 +11,11 @@ interface CategoryState {
   currentCategory: Category | null;
   isLoading: boolean;
   error: string | null;
+  modal: {
+    isOpen: boolean;
+    mode: "add" | "edit" | null;
+    editingCategory: Category | null;
+  };
 }
 
 const initialState: CategoryState = {
@@ -18,6 +23,11 @@ const initialState: CategoryState = {
   currentCategory: null,
   isLoading: false,
   error: null,
+  modal: {
+    isOpen: false,
+    mode: null,
+    editingCategory: null,
+  },
 };
 
 // Async thunks for API calls
@@ -171,6 +181,20 @@ const categorySlice = createSlice({
     clearCurrentCategory: (state) => {
       state.currentCategory = null;
     },
+    // Modal actions
+    openCategoryModal: (
+      state,
+      action: PayloadAction<{ mode: "add" | "edit"; category?: Category }>,
+    ) => {
+      state.modal.isOpen = true;
+      state.modal.mode = action.payload.mode;
+      state.modal.editingCategory = action.payload.category || null;
+    },
+    closeCategoryModal: (state) => {
+      state.modal.isOpen = false;
+      state.modal.mode = null;
+      state.modal.editingCategory = null;
+    },
   },
   extraReducers: (builder) => {
     // Fetch all categories
@@ -212,6 +236,10 @@ const categorySlice = createSlice({
       .addCase(createCategory.fulfilled, (state, action) => {
         state.isLoading = false;
         state.categories.push(action.payload);
+        // Close modal on success
+        state.modal.isOpen = false;
+        state.modal.mode = null;
+        state.modal.editingCategory = null;
       })
       .addCase(createCategory.rejected, (state, action) => {
         state.isLoading = false;
@@ -235,6 +263,10 @@ const categorySlice = createSlice({
         if (state.currentCategory?.id === action.payload.id) {
           state.currentCategory = action.payload;
         }
+        // Close modal on success
+        state.modal.isOpen = false;
+        state.modal.mode = null;
+        state.modal.editingCategory = null;
       })
       .addCase(updateCategoryThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -263,8 +295,13 @@ const categorySlice = createSlice({
   },
 });
 
-export const { setCategories, clearError, clearCurrentCategory } =
-  categorySlice.actions;
+export const {
+  setCategories,
+  clearError,
+  clearCurrentCategory,
+  openCategoryModal,
+  closeCategoryModal,
+} = categorySlice.actions;
 
 // Selectors
 export const selectCategories = (state: RootState) =>
@@ -275,5 +312,6 @@ export const selectCategoriesLoading = (state: RootState) =>
   state.categories.isLoading;
 export const selectCategoriesError = (state: RootState) =>
   state.categories.error;
+export const selectCategoryModal = (state: RootState) => state.categories.modal;
 
 export default categorySlice.reducer;

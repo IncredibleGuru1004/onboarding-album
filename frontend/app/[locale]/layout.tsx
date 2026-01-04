@@ -6,6 +6,9 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import CategoryInitializer from "@/components/categories/CategoryInitializer";
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
+import CategoryModal from "@/components/categories/CategoryModal";
+import AuctionModal from "@/components/auctions/AuctionModal";
+import ConfirmDialogModal from "@/components/ui/ConfirmDialogModal";
 
 export default async function LocaleLayout({
   children,
@@ -31,6 +34,9 @@ export default async function LocaleLayout({
         <AuthInitializer />
         <CategoryInitializer />
         {children}
+        <CategoryModal />
+        <AuctionModal />
+        <ConfirmDialogModal />
         <ToastProvider />
       </ReduxProvider>
     </NextIntlClientProvider>

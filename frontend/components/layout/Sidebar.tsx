@@ -1,23 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import {
-  PencilIcon,
-  TrashIcon,
-  CheckIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Category } from "@/types/category";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
-import {
-  createCategory,
-  updateCategoryThunk,
-  deleteCategoryThunk,
-} from "@/store/categorySlice";
-import { Input } from "@/components/ui/Input";
+import { openCategoryModal } from "@/store/categorySlice";
 import { Button } from "@/components/ui/Button";
-import { toast } from "react-toastify";
+import { openConfirmDialog } from "@/store/uiSlice";
+import { getImageUrl } from "@/lib/imageUtils";
 
 interface SidebarProps {
   selectedCategories: string[]; // category IDs
@@ -33,105 +24,70 @@ const Sidebar: React.FC<SidebarProps> = ({
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-  const isLoading = useSelector(
-    (state: RootState) => state.categories.isLoading,
-  );
-  const [newCategory, setNewCategory] = useState("");
-  const [editingcategoryID, setEditingcategoryID] = useState<string | null>(
-    null,
-  );
-  const [editedCategoryName, setEditedCategoryName] = useState("");
-  const [createErrorMessage, setCreateErrorMessage] = useState("");
-  const [editErrorMessage, setEditErrorMessage] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
+  const [categoryImageUrls, setCategoryImageUrls] = useState<
+    Record<string, string>
+  >({});
+
+  // Fetch image URLs for categories
+  useEffect(() => {
+    const fetchImageUrls = async () => {
+      const urls: Record<string, string> = {};
+      await Promise.all(
+        allCategories.map(async (category) => {
+          if (category.image) {
+            try {
+              const url = await getImageUrl(
+                category.image,
+                category.imageUrl || undefined,
+              );
+              urls[category.id] = url;
+            } catch (error) {
+              console.error(
+                `Failed to get image URL for category ${category.id}:`,
+                error,
+              );
+            }
+          }
+        }),
+      );
+      setCategoryImageUrls(urls);
+    };
+
+    if (allCategories.length > 0) {
+      fetchImageUrls();
+    }
+  }, [allCategories]);
 
   /* ---------------- ADD CATEGORY ---------------- */
-  const handleAddCategory = async () => {
-    setCreateErrorMessage("");
-    setEditErrorMessage("");
-
-    const value = newCategory.trim();
-    if (!value) return;
-
-    const exists = allCategories.some(
-      (c) => c.title.toLowerCase() === value.toLowerCase(),
-    );
-
-    if (exists) {
-      setCreateErrorMessage(t("categoryExists"));
-      return;
-    }
-
-    try {
-      await dispatch(createCategory({ title: value })).unwrap();
-      setNewCategory("");
-      setEditingcategoryID(null);
-      toast.success(t("categoryCreated") || "Category created successfully");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to create category";
-      setCreateErrorMessage(errorMessage);
-      toast.error(errorMessage);
-    }
+  const handleAddCategory = () => {
+    dispatch(openCategoryModal({ mode: "add" }));
   };
 
   /* ---------------- EDIT CATEGORY ---------------- */
   const handleEditCategory = (category: Category) => {
-    setCreateErrorMessage("");
-    setEditErrorMessage("");
-    setEditingcategoryID(category.id);
-    setEditedCategoryName(category.title);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingcategoryID) return;
-
-    const value = editedCategoryName.trim();
-    if (!value) return;
-
-    const exists = allCategories.some(
-      (c) =>
-        c.title.toLowerCase() === value.toLowerCase() &&
-        c.id !== editingcategoryID,
-    );
-
-    if (exists) {
-      setEditErrorMessage(t("categoryExists"));
-      return;
-    }
-
-    try {
-      await dispatch(
-        updateCategoryThunk({ id: editingcategoryID, data: { title: value } }),
-      ).unwrap();
-      setEditingcategoryID(null);
-      setEditErrorMessage("");
-      toast.success(t("categoryUpdated") || "Category updated successfully");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update category";
-      setEditErrorMessage(errorMessage);
-      toast.error(errorMessage);
-    }
+    dispatch(openCategoryModal({ mode: "edit", category }));
   };
 
   /* ---------------- DELETE CATEGORY ---------------- */
-  const handleDeleteCategory = async (categoryID: string) => {
-    try {
-      await dispatch(deleteCategoryThunk(categoryID)).unwrap();
-      toast.success(t("categoryDeleted") || "Category deleted successfully");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete category";
-      toast.error(errorMessage);
-    }
+  const handleDeleteCategory = (categoryID: string) => {
+    dispatch(
+      openConfirmDialog({
+        title: t("confirmDeleteTitle") || "Delete Category",
+        message:
+          t("confirmDeleteMessage") ||
+          "Are you sure you want to delete this category? This action cannot be undone.",
+        confirmText: t("confirmDeleteButton") || "Delete",
+        cancelText: t("cancel") || "Cancel",
+        type: "category",
+        id: categoryID,
+      }),
+    );
   };
 
   /* ---------------- TOGGLE EDIT MODE ---------------- */
   const toggleEditMode = () => {
     setIsEditMode((prev) => !prev);
-    setEditingcategoryID(null);
-    setEditErrorMessage("");
   };
 
   return (
@@ -160,26 +116,14 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* -------- ADD CATEGORY -------- */}
+      {/* -------- ADD CATEGORY BUTTON -------- */}
       {isEditMode && (
-        <div className="mb-6  ">
-          <Input
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder={t("enterCategoryName")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleAddCategory();
-              }
-            }}
-            error={createErrorMessage}
-          />
+        <div className="mb-6">
           <Button
             onClick={handleAddCategory}
-            className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={isLoading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           >
-            {isLoading ? t("adding") || "Adding..." : t("addCategory")}
+            {t("addCategory") || "Add Category"}
           </Button>
         </div>
       )}
@@ -194,95 +138,70 @@ const Sidebar: React.FC<SidebarProps> = ({
           allCategories.map((category) => (
             <div
               key={category.id}
-              className={`group relative rounded-lg transition-all ${
-                editingcategoryID === category.id
-                  ? "bg-blue-50 border-2 border-blue-200 p-3"
-                  : "hover:bg-gray-50 p-2"
-              }`}
+              className="group relative rounded-lg transition-all hover:bg-gray-50 p-2"
             >
-              {editingcategoryID === category.id ? (
-                <div className="w-full space-y-3">
-                  <div className="flex items-center gap-2 w-full">
-                    <Input
-                      value={editedCategoryName}
-                      onChange={(e) => setEditedCategoryName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSaveEdit();
-                        } else if (e.key === "Escape") {
-                          setEditingcategoryID(null);
-                          setEditErrorMessage("");
-                        }
-                      }}
-                      className="flex-1"
-                      autoFocus
-                    />
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        onClick={handleSaveEdit}
-                        title={t("save")}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                      >
-                        <CheckIcon className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingcategoryID(null);
-                          setEditErrorMessage("");
+              <div className="flex items-center justify-between w-full gap-2">
+                <label className="flex items-center gap-3 flex-1 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => onCategoryChange(category.id)}
+                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all shrink-0"
+                  />
+                  {/* Category Image Thumbnail */}
+                  {categoryImageUrls[category.id] ? (
+                    <div className="w-8 h-8 rounded-md overflow-hidden shrink-0 bg-gray-100">
+                      <img
+                        src={categoryImageUrls[category.id]}
+                        alt={category.title}
+                        className="w-full h-full object-cover"
+                        onError={() => {
+                          // Remove failed image URL
+                          setCategoryImageUrls((prev) => {
+                            const newUrls = { ...prev };
+                            delete newUrls[category.id];
+                            return newUrls;
+                          });
                         }}
-                        title={t("cancel")}
-                        className="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                      >
-                        <XMarkIcon className="w-4 h-4" />
-                      </button>
+                      />
                     </div>
-                  </div>
-                  {editErrorMessage && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-2">
-                      <p className="text-red-600 text-xs">{editErrorMessage}</p>
+                  ) : (
+                    <div className="w-8 h-8 rounded-md bg-gray-200 shrink-0 flex items-center justify-center">
+                      <span className="text-xs text-gray-400">
+                        {category.title.charAt(0).toUpperCase()}
+                      </span>
                     </div>
                   )}
-                </div>
-              ) : (
-                <div className="flex items-center justify-between w-full">
-                  <label className="flex items-center gap-3 flex-1 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category.id)}
-                      onChange={() => onCategoryChange(category.id)}
-                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all"
-                    />
-                    <span
-                      className={`text-sm font-medium transition-colors ${
-                        selectedCategories.includes(category.id)
-                          ? "text-gray-900"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {category.title}
-                    </span>
-                  </label>
+                  <span
+                    className={`text-sm font-medium transition-colors ${
+                      selectedCategories.includes(category.id)
+                        ? "text-gray-900"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {category.title}
+                  </span>
+                </label>
 
-                  {isEditMode && (
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => handleEditCategory(category)}
-                        title={t("edit")}
-                        className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCategory(category.id)}
-                        title={t("delete")}
-                        className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                {isEditMode && (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => handleEditCategory(category)}
+                      title={t("edit")}
+                      className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCategory(category.id)}
+                      title={t("delete")}
+                      className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))
         )}

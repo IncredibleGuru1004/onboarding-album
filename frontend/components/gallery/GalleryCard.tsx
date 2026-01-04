@@ -72,7 +72,7 @@ export default function GalleryCard({
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-200">
               <PhotoIcon className="w-12 h-12 text-gray-400" />
             </div>
           )}

@@ -185,7 +185,12 @@
     "addAuction": "Add Auction",
     "adding": "Adding...",
     "auctionCreated": "Auction created successfully!",
-    "closeModal": "Close modal"
+    "closeModal": "Close modal",
+    "editAuction": "Edit Auction",
+    "updateDetails": "Update the auction details below",
+    "saving": "Saving...",
+    "saveChanges": "Save changes",
+    "auctionUpdated": "Auction updated successfully!"
   },
   "galleryCard": {
     "bidsSoFar": "bids so far",
@@ -207,9 +212,19 @@
     "categoryUpdated": "Category updated successfully!",
     "categoryDeleted": "Category deleted successfully!",
     "save": "Save",
+    "saving": "Saving...",
     "cancel": "Cancel",
     "edit": "Edit",
-    "delete": "Delete"
+    "editCategory": "Edit Category",
+    "delete": "Delete",
+    "categoryImage": "Category Image",
+    "categoryName": "Category Name",
+    "addCategoryDesc": "Fill in the details below to create a new category",
+    "editCategoryDesc": "Update the category details below",
+    "closeModal": "Close modal",
+    "confirmDeleteTitle": "Delete Category",
+    "confirmDeleteMessage": "Are you sure you want to delete this category? This action cannot be undone.",
+    "confirmDeleteButton": "Delete"
   },
   "auth": {
     "logout": "Logout",

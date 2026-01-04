@@ -185,7 +185,12 @@
     "fillRequiredFields": "Veuillez remplir tous les champs obligatoires.",
     "cancel": "Annuler",
     "addAuction": "Ajouter l'Enchère",
-    "closeModal": "Fermer la fenêtre"
+    "closeModal": "Fermer la fenêtre",
+    "editAuction": "Modifier l'Enchère",
+    "updateDetails": "Mettez à jour les détails de l'enchère ci-dessous",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les modifications",
+    "auctionUpdated": "Enchère mise à jour avec succès !"
   },
   "galleryCard": {
     "bidsSoFar": "offres jusqu'à présent",
@@ -207,9 +212,19 @@
     "categoryUpdated": "Catégorie mise à jour avec succès !",
     "categoryDeleted": "Catégorie supprimée avec succès !",
     "save": "Enregistrer",
+    "saving": "Enregistrement...",
     "cancel": "Annuler",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "editCategory": "Modifier la Catégorie",
+    "delete": "Supprimer",
+    "categoryImage": "Image de Catégorie",
+    "categoryName": "Nom de la Catégorie",
+    "addCategoryDesc": "Remplissez les détails ci-dessous pour créer une nouvelle catégorie",
+    "editCategoryDesc": "Mettez à jour les détails de la catégorie ci-dessous",
+    "closeModal": "Fermer la fenêtre",
+    "confirmDeleteTitle": "Supprimer la Catégorie",
+    "confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action ne peut pas être annulée.",
+    "confirmDeleteButton": "Supprimer"
   },
   "auth": {
     "logout": "Déconnexion",
