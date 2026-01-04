@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { Link } from "@/i18n/routing";
+// import { Link } from "@/i18n/routing";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { setUser } from "@/store/authSlice";
 
@@ -121,12 +121,12 @@ export const LoginForm = () => {
             {t("password")}
             <span className="text-red-600 ml-1">*</span>
           </label>
-          <Link
+          {/* <Link
             href="/forgot-password"
             className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
           >
             {t("forgotPassword")}
-          </Link>
+          </Link> */}
         </div>
 
         <Input

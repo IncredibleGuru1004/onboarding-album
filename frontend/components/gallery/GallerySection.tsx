@@ -78,7 +78,7 @@ export default function GallerySection() {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const scrollAmount = 300; // Scroll amount (adjust as needed)
+    const scrollAmount = 324; // Updated to card min-width (300) + gap (24)
     const newScrollPosition =
       direction === "left"
         ? container.scrollLeft - scrollAmount
@@ -137,7 +137,7 @@ export default function GallerySection() {
                   : undefined;
 
                 return (
-                  <div key={auction.id} className="flex-shrink-0">
+                  <div key={auction.id} className="flex-shrink-0 min-w-[300px]">
                     <GalleryCard
                       auction={auction}
                       onClick={() => {

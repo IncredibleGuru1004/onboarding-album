@@ -140,7 +140,7 @@ export const Header = ({
 
           {/* Navigation Links - Conditionally render based on showNavLinks */}
           {showNavLinks && (
-            <div className="flex items-center gap-8 font-poppins font-medium text-base">
+            <div className="hidden md:flex items-center gap-8 font-poppins font-medium text-base">
               <button
                 onClick={handleHomeClick}
                 className={`

@@ -55,7 +55,7 @@ export default function GalleryCard({
   return (
     <div
       onClick={onClick}
-      className="flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300 cursor-pointer"
+      className="min-w-[300px] flex-shrink-0 bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] duration-300 cursor-pointer"
     >
       <div className="p-4">
         <div className="relative w-full h-[190px] rounded-2xl overflow-hidden bg-gray-100">
