@@ -22,14 +22,27 @@ export class CategoryService {
 
   async findAll() {
     const categories = await this.prisma.category.findMany({
+      include: {
+        _count: {
+          select: {
+            auctions: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    // Enrich all categories with presigned URLs
+    // Enrich all categories with presigned URLs and add auction count
     return Promise.all(
-      categories.map((category) => this.enrichWithPresignedUrl(category)),
+      categories.map(async (category) => {
+        const enriched = await this.enrichWithPresignedUrl(category);
+        return {
+          ...enriched,
+          auctionCount: category._count.auctions,
+        };
+      }),
     );
   }
 
