@@ -128,6 +128,36 @@ export class AuctionService {
     );
   }
 
+  /**
+   * Find all auctions for a specific user (no pagination)
+   * Used for "My Auctions" page
+   */
+  async findAllByUser(userId: string) {
+    const auctions = await this.prisma.auction.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        category: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // Enrich with presigned URLs
+    return Promise.all(
+      auctions.map((auction) => this.enrichWithPresignedUrl(auction)),
+    );
+  }
+
   async findOne(id: number) {
     const auction = await this.prisma.auction.findUnique({
       where: { id },

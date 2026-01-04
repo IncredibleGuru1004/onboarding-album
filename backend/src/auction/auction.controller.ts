@@ -102,6 +102,19 @@ export class AuctionController {
     return this.auctionService.findRecent();
   }
 
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get all auctions for the authenticated user' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all auctions for the authenticated user',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  findMyAuctions(@GetUser() user: { id: string }) {
+    return this.auctionService.findAllByUser(user.id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get an auction by ID' })
   @ApiResponse({
