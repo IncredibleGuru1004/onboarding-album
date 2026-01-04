@@ -222,6 +222,8 @@ function GalleryPageContent() {
     }
   }, [authLoading, isAuthenticated, user, router]);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   /* ---------- RENDER ---------- */
 
   // Show loading state while checking authentication
@@ -243,15 +245,16 @@ function GalleryPageContent() {
 
   return (
     <>
-      <Header showNavLinks={false} />
+      <Header showNavLinks={false} onMobileMenuToggle={setMobileMenuOpen} />
 
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar
           selectedCategories={selectedCategories}
           onCategoryChange={handleCategoryChange}
+          isMobileMenuOpen={mobileMenuOpen}
         />
 
-        <main className="ml-64 flex-1 p-8">
+        <main className="md:ml-64 flex-1 p-8">
           {/* Sort and Search Controls */}
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex-1 max-w-md">

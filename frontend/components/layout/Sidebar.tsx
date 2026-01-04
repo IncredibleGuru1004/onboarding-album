@@ -14,11 +14,13 @@ import { getImageUrl } from "@/lib/imageUtils";
 interface SidebarProps {
   selectedCategories: string[]; // category IDs
   onCategoryChange: (categoryID: string) => void;
+  isMobileMenuOpen?: boolean; // Control visibility on mobile
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   selectedCategories,
   onCategoryChange,
+  isMobileMenuOpen = false,
 }) => {
   const t = useTranslations("sidebar");
   // const dispatch = useDispatch<AppDispatch>();
@@ -97,7 +99,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   // };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 shadow-sm p-6 fixed h-full overflow-y-auto">
+    <aside
+      className={`w-64 bg-white border-r border-gray-200 shadow-sm p-6 fixed h-full overflow-y-auto transition-transform duration-300 md:translate-x-0 ${
+        isMobileMenuOpen
+          ? "translate-x-0"
+          : "-translate-x-full md:translate-x-0"
+      } md:block z-30`}
+    >
       {/* Header */}
       <div className="mb-6 pb-4 border-b border-gray-200">
         <div className="flex items-center justify-between">

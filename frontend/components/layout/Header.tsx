@@ -15,6 +15,7 @@ export interface HeaderProps {
   onHomeClick?: () => void;
   onCollectionsClick?: () => void;
   showNavLinks?: boolean; // Add this prop to control navigation link visibility
+  onMobileMenuToggle?: (isOpen: boolean) => void; // Callback for mobile menu state
 }
 
 export const Header = ({
@@ -23,6 +24,7 @@ export const Header = ({
   onHomeClick,
   onCollectionsClick,
   showNavLinks = true, // Default to showing the nav links
+  onMobileMenuToggle,
 }: HeaderProps) => {
   const [mounted, setMounted] = useState(false);
   const t = useTranslations("header");
@@ -44,6 +46,7 @@ export const Header = ({
 
   const [hasScrolled, setHasScrolled] = useState(false);
   const [currentSection, setCurrentSection] = useState<string>("home");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const ignoreScrollRef = useRef(false);
   const ignoreTimerRef = useRef<number | null>(null);
 
@@ -128,15 +131,50 @@ export const Header = ({
     >
       <nav className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between text-[#2d3134]">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <span className="text-2xl font-bold font-inter">
-              Siboria<span className="text-[#ff7b29]">.</span>
-            </span>
-          </Link>
+          {/* Logo + Mobile Toggle */}
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <span className="text-2xl font-bold font-inter">
+                Siboria<span className="text-[#ff7b29]">.</span>
+              </span>
+            </Link>
+
+            {/* Mobile menu toggle button (right of logo on mobile) */}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                onMobileMenuToggle?.(!mobileMenuOpen);
+              }}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="w-6 h-6 text-[#2d3134]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {mobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
 
           {/* Navigation Links - Conditionally render based on showNavLinks */}
           {showNavLinks && (
