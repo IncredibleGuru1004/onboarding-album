@@ -75,9 +75,13 @@ export default function GalleryCard({
           {title}
         </h1>
         <p className="font-inter font-medium text-[12px] text-[#8a8a8a] mt-1">
-          {categoryName && (
+          {categoryName && <span>{categoryName}</span>}
+          {auction.user && (
             <>
-              <span className="mx-1 text-gray-400">|</span> {categoryName}
+              <span className="mx-1 text-gray-400">|</span>
+              <span>
+                {auction.user.name ?? auction.user.email ?? "Unknown"}
+              </span>
             </>
           )}
         </p>
