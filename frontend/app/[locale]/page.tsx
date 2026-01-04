@@ -39,6 +39,7 @@ export default function Home() {
         onCollectionsClick={() => {
           scrollToSection("collections");
         }}
+        showMobileToggle={false}
       />
 
       <section id="home">
