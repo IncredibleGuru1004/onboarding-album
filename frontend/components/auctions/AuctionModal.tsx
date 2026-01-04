@@ -113,7 +113,7 @@ export default function AuctionModal() {
     }
 
     return true;
-  }, [formData.title, formData.image, t]);
+  }, [formData.title, formData.image, formData.categoryID, isEditMode, t]);
 
   // Submit handler
   const handleSubmit = useCallback(
