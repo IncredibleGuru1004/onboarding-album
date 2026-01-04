@@ -96,7 +96,16 @@ export default function AuctionModal() {
     const titleValidation = validateRequired(formData.title, t("title"));
     const imageValidation = validateExists(formData.image, t("image"));
 
-    const combined = combineValidations(titleValidation, imageValidation);
+    // Category is required when creating a new auction, optional when editing
+    const categoryValidation = isEditMode
+      ? { isValid: true }
+      : validateExists(formData.categoryID, t("category"));
+
+    const combined = combineValidations(
+      titleValidation,
+      imageValidation,
+      categoryValidation,
+    );
 
     if (!combined.isValid) {
       setError(combined.error || t("fillRequiredFields"));
