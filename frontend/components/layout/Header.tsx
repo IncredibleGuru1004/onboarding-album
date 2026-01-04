@@ -129,11 +129,14 @@ export const Header = ({
       <nav className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between text-[#2d3134]">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          >
             <span className="text-2xl font-bold font-inter">
               Siboria<span className="text-[#ff7b29]">.</span>
             </span>
-          </div>
+          </Link>
 
           {/* Navigation Links - Conditionally render based on showNavLinks */}
           {showNavLinks && (
