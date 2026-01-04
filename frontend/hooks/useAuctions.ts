@@ -4,14 +4,17 @@ import {
   fetchAuctions,
   loadMoreAuctions,
   fetchRecentAuctions,
+  fetchMyAuctions,
   fetchAuctionById,
   createAuction,
   updateAuctionThunk,
   deleteAuctionThunk,
   selectAuctions,
+  selectMyAuctions,
   selectRecentAuctions,
   selectCurrentAuction,
   selectAuctionsLoading,
+  selectMyAuctionsLoading,
   selectAuctionsLoadingMore,
   selectAuctionsError,
   selectAuctionsNextCursor,
@@ -28,9 +31,11 @@ import { CreateAuctionDto, UpdateAuctionDto } from "@/types/auction";
 export function useAuctions() {
   const dispatch = useDispatch<AppDispatch>();
   const auctions = useSelector(selectAuctions);
+  const myAuctions = useSelector(selectMyAuctions);
   const recentAuctions = useSelector(selectRecentAuctions);
   const currentAuction = useSelector(selectCurrentAuction);
   const isLoading = useSelector(selectAuctionsLoading);
+  const isLoadingMyAuctions = useSelector(selectMyAuctionsLoading);
   const isLoadingMore = useSelector(selectAuctionsLoadingMore);
   const error = useSelector(selectAuctionsError);
   const nextCursor = useSelector(selectAuctionsNextCursor);
@@ -85,6 +90,19 @@ export function useAuctions() {
       return true;
     } catch (error) {
       console.error("Failed to load recent auctions:", error);
+      return false;
+    }
+  };
+
+  /**
+   * Fetch all auctions for the authenticated user (no pagination)
+   */
+  const loadMyAuctions = async () => {
+    try {
+      await dispatch(fetchMyAuctions()).unwrap();
+      return true;
+    } catch (error) {
+      console.error("Failed to load my auctions:", error);
       return false;
     }
   };
@@ -165,9 +183,11 @@ export function useAuctions() {
   return {
     // State
     auctions,
+    myAuctions,
     recentAuctions,
     currentAuction,
     isLoading,
+    isLoadingMyAuctions,
     isLoadingMore,
     error,
     nextCursor,
@@ -177,6 +197,7 @@ export function useAuctions() {
     loadAuctions,
     loadMore,
     loadRecentAuctions,
+    loadMyAuctions,
     loadAuctionById,
     addAuction,
     updateAuction,

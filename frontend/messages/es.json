@@ -244,6 +244,7 @@
   "myAuctions": {
     "title": "Mis Subastas",
     "subtitle": "Gestiona tus anuncios de subastas",
+    "totalItems": "{count} elementos",
     "addNewAuction": "Agregar Nueva Subasta",
     "backToDashboard": "Volver al Panel",
     "search": "Buscar subastas...",

@@ -259,6 +259,7 @@
   "myAuctions": {
     "title": "My Auctions",
     "subtitle": "Manage your auction listings",
+    "totalItems": "{count} items",
     "addNewAuction": "Add New Auction",
     "backToDashboard": "Back to Dashboard",
     "search": "Search auctions...",

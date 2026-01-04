@@ -4,9 +4,11 @@ import { Auction, CreateAuctionDto, UpdateAuctionDto } from "@/types/auction";
 
 interface AuctionState {
   auctions: Auction[];
+  myAuctions: Auction[];
   recentAuctions: Auction[];
   currentAuction: Auction | null;
   isLoading: boolean;
+  isLoadingMyAuctions: boolean;
   isLoadingMore: boolean;
   error: string | null;
   nextCursor: number | null;
@@ -20,9 +22,11 @@ interface AuctionState {
 
 const initialState: AuctionState = {
   auctions: [],
+  myAuctions: [],
   recentAuctions: [],
   currentAuction: null,
   isLoading: false,
+  isLoadingMyAuctions: false,
   isLoadingMore: false,
   error: null,
   nextCursor: null,
@@ -147,6 +151,31 @@ export const fetchRecentAuctions = createAsyncThunk(
         return rejectWithValue(
           error.message || "Failed to fetch recent auctions",
         );
+      }
+
+      const data = await response.json();
+      return data as Auction[];
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "An error occurred",
+      );
+    }
+  },
+);
+
+// Fetch all auctions for the authenticated user (no pagination)
+export const fetchMyAuctions = createAsyncThunk(
+  "auctions/fetchMyAuctions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/auctions/my", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Failed to fetch my auctions");
       }
 
       const data = await response.json();
@@ -348,6 +377,21 @@ const auctionSlice = createSlice({
         state.error = action.payload as string;
       });
 
+    // Fetch my auctions
+    builder
+      .addCase(fetchMyAuctions.pending, (state) => {
+        state.isLoadingMyAuctions = true;
+        state.error = null;
+      })
+      .addCase(fetchMyAuctions.fulfilled, (state, action) => {
+        state.isLoadingMyAuctions = false;
+        state.myAuctions = action.payload;
+      })
+      .addCase(fetchMyAuctions.rejected, (state, action) => {
+        state.isLoadingMyAuctions = false;
+        state.error = action.payload as string;
+      });
+
     // Fetch single auction
     builder
       .addCase(fetchAuctionById.pending, (state) => {
@@ -397,6 +441,12 @@ const auctionSlice = createSlice({
         if (index !== -1) {
           state.auctions[index] = action.payload;
         }
+        const myIndex = state.myAuctions.findIndex(
+          (a) => a.id === action.payload.id,
+        );
+        if (myIndex !== -1) {
+          state.myAuctions[myIndex] = action.payload;
+        }
         const recentIndex = state.recentAuctions.findIndex(
           (a) => a.id === action.payload.id,
         );
@@ -425,6 +475,9 @@ const auctionSlice = createSlice({
       .addCase(deleteAuctionThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.auctions = state.auctions.filter((a) => a.id !== action.payload);
+        state.myAuctions = state.myAuctions.filter(
+          (a) => a.id !== action.payload,
+        );
         state.recentAuctions = state.recentAuctions.filter(
           (a) => a.id !== action.payload,
         );
@@ -449,12 +502,15 @@ export const {
 
 // Selectors
 export const selectAuctions = (state: RootState) => state.auctions.auctions;
+export const selectMyAuctions = (state: RootState) => state.auctions.myAuctions;
 export const selectRecentAuctions = (state: RootState) =>
   state.auctions.recentAuctions;
 export const selectCurrentAuction = (state: RootState) =>
   state.auctions.currentAuction;
 export const selectAuctionsLoading = (state: RootState) =>
   state.auctions.isLoading;
+export const selectMyAuctionsLoading = (state: RootState) =>
+  state.auctions.isLoadingMyAuctions;
 export const selectAuctionsLoadingMore = (state: RootState) =>
   state.auctions.isLoadingMore;
 export const selectAuctionsError = (state: RootState) => state.auctions.error;

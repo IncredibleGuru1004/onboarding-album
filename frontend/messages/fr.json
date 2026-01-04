@@ -245,6 +245,7 @@
   "myAuctions": {
     "title": "Mes Enchères",
     "subtitle": "Gérez vos annonces d'enchères",
+    "totalItems": "{count} éléments",
     "addNewAuction": "Ajouter une Nouvelle Enchère",
     "backToDashboard": "Retour au Tableau de Bord",
     "search": "Rechercher des enchères...",

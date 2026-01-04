@@ -5,7 +5,7 @@ import GalleryCard from "@/components/gallery/GalleryCard";
 import Modal from "@/components/ui/Modal";
 import { openConfirmDialog } from "@/store/uiSlice";
 import { Auction } from "@/types/auction";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,7 +24,7 @@ export default function MyAuctionsPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuth();
-  const { auctions, isLoading } = useAuctions();
+  const { myAuctions, isLoadingMyAuctions, loadMyAuctions } = useAuctions();
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
@@ -34,10 +34,12 @@ export default function MyAuctionsPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("newest");
 
-  // Filter auctions by current user
-  const myAuctions = useMemo(() => {
-    return auctions.filter((auction) => auction.userId === user?.id);
-  }, [auctions, user?.id]);
+  // Load my auctions on mount
+  useEffect(() => {
+    if (user?.id && myAuctions.length === 0 && !isLoadingMyAuctions) {
+      loadMyAuctions();
+    }
+  }, [user?.id, myAuctions.length, isLoadingMyAuctions, loadMyAuctions]);
 
   // Filter and sort
   const filteredAndSortedItems = useMemo(() => {
@@ -133,7 +135,14 @@ export default function MyAuctionsPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {t("title")}
               </h1>
-              <p className="text-gray-600">{t("subtitle")}</p>
+              <p className="text-gray-600">
+                {t("subtitle")}
+                {myAuctions.length > 0 && (
+                  <span className="ml-2 text-gray-500">
+                    ({t("totalItems", { count: myAuctions.length })})
+                  </span>
+                )}
+              </p>
             </div>
             {/* Add New Auction Button */}
             <button
@@ -178,7 +187,7 @@ export default function MyAuctionsPage() {
           </div>
 
           {/* Loading State */}
-          {isLoading && filteredAndSortedItems.length === 0 && (
+          {isLoadingMyAuctions && filteredAndSortedItems.length === 0 && (
             <div className="flex justify-center items-center py-20">
               <div className="text-center">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
@@ -188,7 +197,7 @@ export default function MyAuctionsPage() {
           )}
 
           {/* Empty State */}
-          {!isLoading && filteredAndSortedItems.length === 0 && (
+          {!isLoadingMyAuctions && filteredAndSortedItems.length === 0 && (
             <div className="text-center py-20">
               <div className="inline-block p-6 bg-gray-100 rounded-full mb-4">
                 <svg

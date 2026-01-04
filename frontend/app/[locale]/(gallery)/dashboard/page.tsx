@@ -47,6 +47,7 @@ function GalleryPageContent() {
     isLoadingMore,
     hasMore,
     loadMore,
+    loadAuctions,
   } = useAuctions();
 
   const sortOptions = [
@@ -201,6 +202,14 @@ function GalleryPageContent() {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
+
+  /* ---------- LOAD AUCTIONS ON MOUNT ---------- */
+  // Load auctions with infinite loading for dashboard
+  useEffect(() => {
+    if (isAuthenticated && user && allAuctions.length === 0 && !isLoading) {
+      loadAuctions({ limit: 12 });
+    }
+  }, [isAuthenticated, user, allAuctions.length, isLoading, loadAuctions]);
 
   /* ---------- AUTHENTICATION CHECK ---------- */
   useEffect(() => {
