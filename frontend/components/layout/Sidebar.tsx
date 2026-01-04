@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Category } from "@/types/category";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@/store/store";
-import { openCategoryModal } from "@/store/categorySlice";
-import { Button } from "@/components/ui/Button";
-import { openConfirmDialog } from "@/store/uiSlice";
+// TODO: Re-enable category management features later - uncomment these imports when needed
+// import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
+// import { Category } from "@/types/category";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+// import { openCategoryModal } from "@/store/categorySlice";
+// import { Button } from "@/components/ui/Button";
+// import { openConfirmDialog } from "@/store/uiSlice";
 import { getImageUrl } from "@/lib/imageUtils";
 
 interface SidebarProps {
@@ -20,11 +21,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   onCategoryChange,
 }) => {
   const t = useTranslations("sidebar");
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const allCategories = useSelector(
     (state: RootState) => state.categories.categories,
   );
-  const [isEditMode, setIsEditMode] = useState(false);
+  // TODO: Re-enable category management features later
+  // const [isEditMode, setIsEditMode] = useState(false);
   const [categoryImageUrls, setCategoryImageUrls] = useState<
     Record<string, string>
   >({});
@@ -60,35 +62,39 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [allCategories]);
 
   /* ---------------- ADD CATEGORY ---------------- */
-  const handleAddCategory = () => {
-    dispatch(openCategoryModal({ mode: "add" }));
-  };
+  // TODO: Re-enable category management features later
+  // const handleAddCategory = () => {
+  //   dispatch(openCategoryModal({ mode: "add" }));
+  // };
 
   /* ---------------- EDIT CATEGORY ---------------- */
-  const handleEditCategory = (category: Category) => {
-    dispatch(openCategoryModal({ mode: "edit", category }));
-  };
+  // TODO: Re-enable category management features later
+  // const handleEditCategory = (category: Category) => {
+  //   dispatch(openCategoryModal({ mode: "edit", category }));
+  // };
 
   /* ---------------- DELETE CATEGORY ---------------- */
-  const handleDeleteCategory = (categoryID: string) => {
-    dispatch(
-      openConfirmDialog({
-        title: t("confirmDeleteTitle") || "Delete Category",
-        message:
-          t("confirmDeleteMessage") ||
-          "Are you sure you want to delete this category? This action cannot be undone.",
-        confirmText: t("confirmDeleteButton") || "Delete",
-        cancelText: t("cancel") || "Cancel",
-        type: "category",
-        id: categoryID,
-      }),
-    );
-  };
+  // TODO: Re-enable category management features later
+  // const handleDeleteCategory = (categoryID: string) => {
+  //   dispatch(
+  //     openConfirmDialog({
+  //       title: t("confirmDeleteTitle") || "Delete Category",
+  //       message:
+  //         t("confirmDeleteMessage") ||
+  //         "Are you sure you want to delete this category? This action cannot be undone.",
+  //       confirmText: t("confirmDeleteButton") || "Delete",
+  //       cancelText: t("cancel") || "Cancel",
+  //       type: "category",
+  //       id: categoryID,
+  //     }),
+  //   );
+  // };
 
   /* ---------------- TOGGLE EDIT MODE ---------------- */
-  const toggleEditMode = () => {
-    setIsEditMode((prev) => !prev);
-  };
+  // TODO: Re-enable category management features later
+  // const toggleEditMode = () => {
+  //   setIsEditMode((prev) => !prev);
+  // };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 shadow-sm p-6 fixed h-full overflow-y-auto">
@@ -98,7 +104,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           <h2 className="text-2xl font-semibold text-gray-900">
             {t("categories")}
           </h2>
-          <button
+          {/* Edit mode toggle button hidden - TODO: Re-enable category management features later */}
+          {/* <button
             onClick={toggleEditMode}
             className={`p-2 rounded-lg transition-all ${
               isEditMode
@@ -112,12 +119,13 @@ const Sidebar: React.FC<SidebarProps> = ({
             ) : (
               <PencilIcon className="w-5 h-5" />
             )}
-          </button>
+          </button> */}
         </div>
       </div>
 
       {/* -------- ADD CATEGORY BUTTON -------- */}
-      {isEditMode && (
+      {/* Add category button hidden - TODO: Re-enable category management features later */}
+      {/* {isEditMode && (
         <div className="mb-6">
           <Button
             onClick={handleAddCategory}
@@ -126,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             {t("addCategory") || "Add Category"}
           </Button>
         </div>
-      )}
+      )} */}
 
       {/* -------- CATEGORY LIST -------- */}
       <div className="space-y-2">
@@ -172,18 +180,27 @@ const Sidebar: React.FC<SidebarProps> = ({
                       </span>
                     </div>
                   )}
-                  <span
-                    className={`text-sm font-medium transition-colors ${
-                      selectedCategories.includes(category.id)
-                        ? "text-gray-900"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    {category.title}
-                  </span>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span
+                      className={`text-sm font-medium transition-colors truncate ${
+                        selectedCategories.includes(category.id)
+                          ? "text-gray-900"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {category.title}
+                    </span>
+                    {category.auctionCount !== undefined &&
+                      category.auctionCount > 0 && (
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full shrink-0">
+                          {category.auctionCount}
+                        </span>
+                      )}
+                  </div>
                 </label>
 
-                {isEditMode && (
+                {/* Edit and delete buttons hidden - TODO: Re-enable category management features later */}
+                {/* {isEditMode && (
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleEditCategory(category)}
@@ -200,7 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           ))

@@ -3,6 +3,7 @@ export interface Category {
   title: string;
   image?: string | null;
   imageUrl?: string | null; // Presigned URL for display
+  auctionCount?: number; // Total number of auctions in this category
   createdAt?: string;
   updatedAt?: string;
 }
