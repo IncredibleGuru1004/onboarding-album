@@ -176,6 +176,14 @@ const Modal = ({
                     <p className="text-gray-900 font-medium">{categoryTitle}</p>
                   </div>
                 )}
+                {auction.user && (
+                  <div>
+                    <p className="text-sm text-gray-500">Created by</p>
+                    <p className="text-gray-900 font-medium">
+                      {auction.user.name ?? auction.user.email ?? "Unknown"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
