@@ -23,6 +23,7 @@ import { AuctionService } from './auction.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @ApiTags('auctions')
 @Controller('auctions')
@@ -38,8 +39,15 @@ export class AuctionController {
     description: 'Auction successfully created',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createAuctionDto: CreateAuctionDto) {
-    return this.auctionService.create(createAuctionDto);
+  create(
+    @Body() createAuctionDto: CreateAuctionDto,
+    @GetUser() user: { id: string },
+  ) {
+    // Automatically set userId from authenticated user
+    return this.auctionService.create({
+      ...createAuctionDto,
+      userId: user.id,
+    });
   }
 
   @Get()
