@@ -22,18 +22,12 @@ import {
 interface AuctionFormData {
   title: string;
   categoryID: string;
-  year: string;
-  currentBid: string;
-  timeLeft: string;
   image: string;
 }
 
 const initialFormData: AuctionFormData = {
   title: "",
   categoryID: "",
-  year: "",
-  currentBid: "",
-  timeLeft: "",
   image: "",
 };
 
@@ -74,9 +68,6 @@ export default function AuctionModal() {
       setFormData({
         title: editingAuction.title,
         categoryID: editingAuction.categoryID || "",
-        year: editingAuction.year || "",
-        currentBid: editingAuction.currentBid || "",
-        timeLeft: editingAuction.timeLeft || "",
         image: editingAuction.image || "",
       });
     } else {
@@ -228,22 +219,6 @@ export default function AuctionModal() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input
-              label={t("year")}
-              placeholder={t("yearPlaceholder")}
-              value={formData.year}
-              onChange={(e) => updateField("year", e.target.value)}
-            />
-
-            <Input
-              label={t("timeLeft")}
-              placeholder={t("timeLeftPlaceholder")}
-              value={formData.timeLeft}
-              onChange={(e) => updateField("timeLeft", e.target.value)}
-            />
-          </div>
-
           <ImageUpload
             label={t("image") || "Image"}
             value={formData.image}
@@ -254,13 +229,6 @@ export default function AuctionModal() {
                 ? t("imageUrlRequired") || "Image is required"
                 : undefined
             }
-          />
-
-          <Input
-            label={t("currentBid")}
-            placeholder={t("currentBidPlaceholder")}
-            value={formData.currentBid}
-            onChange={(e) => updateField("currentBid", e.target.value)}
           />
 
           {error && (

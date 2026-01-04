@@ -170,38 +170,10 @@ const Modal = ({
               </div>
 
               <div className="mt-6 space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-lg text-gray-800">
-                    <span className="font-medium text-gray-600">
-                      {t("currentBid")}:
-                    </span>{" "}
-                    {auction.currentBid}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">{t("closesIn")}</p>
-                    <p className="text-gray-900 font-medium">
-                      {auction.timeLeft}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">{t("bids")}</p>
-                    <p className="text-gray-900 font-medium">
-                      {auction.bidsCount || 0}
-                    </p>
-                  </div>
-                </div>
                 {categoryTitle && (
                   <div>
                     <p className="text-sm text-gray-500">{t("category")}</p>
                     <p className="text-gray-900 font-medium">{categoryTitle}</p>
-                  </div>
-                )}
-                {auction.year && (
-                  <div>
-                    <p className="text-sm text-gray-500">{t("year")}</p>
-                    <p className="text-gray-900 font-medium">{auction.year}</p>
                   </div>
                 )}
               </div>

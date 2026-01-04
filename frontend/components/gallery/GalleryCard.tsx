@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Auction } from "@/types/auction";
@@ -18,15 +17,7 @@ export default function GalleryCard({
   onClick,
   categoryName,
 }: GalleryCardProps) {
-  const t = useTranslations("galleryCard");
-  const {
-    title,
-    timeLeft,
-    image,
-    imageUrl,
-    bidsCount = 32,
-    year = "Year 1012",
-  } = auction;
+  const { title, image, imageUrl } = auction;
 
   const [displayUrl, setDisplayUrl] = useState<string>(imageUrl || image || "");
   const [hasError, setHasError] = useState(false);
@@ -84,22 +75,12 @@ export default function GalleryCard({
           {title}
         </h1>
         <p className="font-inter font-medium text-[12px] text-[#8a8a8a] mt-1">
-          {year}{" "}
           {categoryName && (
             <>
               <span className="mx-1 text-gray-400">|</span> {categoryName}
             </>
           )}
         </p>
-
-        <div className="flex justify-between items-center mt-[40px]">
-          <p className="text-[12px] font-semibold font-poppins text-gray-700">
-            {bidsCount} {t("bidsSoFar")}
-          </p>
-          <p className="text-[12px] font-normal font-poppins text-[#2d3134]/60">
-            {t("closesIn")} {timeLeft}
-          </p>
-        </div>
       </div>
     </div>
   );

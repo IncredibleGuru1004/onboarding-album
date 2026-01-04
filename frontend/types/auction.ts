@@ -17,11 +17,6 @@ export interface Auction {
   updatedAt: string;
   category?: Category | null;
   user?: User | null;
-  // Frontend-only fields for display
-  currentBid?: string;
-  timeLeft?: string;
-  bidsCount?: number;
-  year?: string;
 }
 
 export interface CreateAuctionDto {
