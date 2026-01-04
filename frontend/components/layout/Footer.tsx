@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
 
 export const Footer = () => {
   const t = useTranslations("footer");
@@ -16,20 +15,6 @@ export const Footer = () => {
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             © {currentYear} {t("imageGallery")}. {t("allRightsReserved")}
           </p>
-          <div className="flex gap-6 text-sm text-zinc-600 dark:text-zinc-400">
-            <Link
-              href="/accessibility"
-              className="hover:text-zinc-900  transition-colors"
-            >
-              {t("accessibility")}
-            </Link>
-            <Link
-              href="/sitemap"
-              className="hover:text-zinc-900  transition-colors"
-            >
-              {t("sitemap")}
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
