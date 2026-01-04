@@ -35,12 +35,14 @@ export default function MyAuctionsPage() {
   const [sortBy, setSortBy] = useState<string>("newest");
 
   // Load my auctions on mount
-  useEffect(() => {
-    if (user?.id && myAuctions.length === 0 && !isLoadingMyAuctions) {
-      loadMyAuctions();
-    }
-  }, [user?.id, myAuctions.length, isLoadingMyAuctions, loadMyAuctions]);
+  const [hasLoadedMyAuctions, setHasLoadedMyAuctions] = useState(false);
 
+  useEffect(() => {
+    if (user?.id && !hasLoadedMyAuctions && !isLoadingMyAuctions) {
+      loadMyAuctions();
+      setHasLoadedMyAuctions(true);
+    }
+  }, [user?.id, hasLoadedMyAuctions, isLoadingMyAuctions, loadMyAuctions]);
   // Filter and sort
   const filteredAndSortedItems = useMemo(() => {
     let items = [...myAuctions];
