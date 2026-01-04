@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslations } from "next-intl";
 import { RootState, AppDispatch } from "@/store/store";
 import { useAuctions } from "@/hooks/useAuctions";
-import { useAuth } from "@/hooks/useAuth";
 import { selectAuctionModal, closeAuctionModal } from "@/store/auctionSlice";
 import { useModalFormReset, useModalCloseHandler } from "@/hooks/useModal";
 import { BaseModal } from "@/components/ui/BaseModal";
@@ -46,7 +45,6 @@ export default function AuctionModal() {
   const t = useTranslations("addAuction");
   const dispatch = useDispatch<AppDispatch>();
   const { addAuction, updateAuction, isLoading } = useAuctions();
-  const { user } = useAuth();
   const modal = useSelector(selectAuctionModal);
   const categories = useSelector(
     (state: RootState) => state.categories.categories,
@@ -127,11 +125,12 @@ export default function AuctionModal() {
       }
 
       try {
+        // Backend automatically extracts userId from JWT token
+        // No need to send it in the request body
         const auctionData = {
           title: formData.title.trim(),
           image: formData.image,
           categoryID: formData.categoryID || undefined,
-          userId: user?.id || undefined,
         };
 
         if (isEditMode && editingAuction) {
@@ -154,7 +153,6 @@ export default function AuctionModal() {
       formData,
       isEditMode,
       editingAuction,
-      user?.id,
       validateForm,
       updateAuction,
       addAuction,
